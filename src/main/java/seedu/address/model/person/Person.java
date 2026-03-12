@@ -20,6 +20,7 @@ public class Person {
     private final Name name;
     private final Phone phone;
     private final Email email;
+    private final String alias;
 
     // Data fields
     private final Address address;
@@ -35,6 +36,7 @@ public class Person {
         this.email = email;
         this.address = address;
         this.tags.addAll(tags);
+        this.alias = name.toString();
     }
 
     public Name getName() {
