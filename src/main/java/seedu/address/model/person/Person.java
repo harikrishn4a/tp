@@ -20,6 +20,7 @@ public class Person {
     private final Name name;
     private final Phone phone;
     private final Email email;
+    private final Alias alias;
     private final Stage stage;
 
     // Data fields
@@ -32,6 +33,7 @@ public class Person {
     public Person(Name name, Phone phone, Email email, Address address, Stage stage, Set<Tag> tags) {
         requireAllNonNull(name, phone, email, address, stage, tags);
         this.name = name;
+        this.alias = new Alias(name.toString());
         this.phone = phone;
         this.email = email;
         this.address = address;
@@ -41,6 +43,10 @@ public class Person {
 
     public Name getName() {
         return name;
+    }
+
+    public Alias getAlias() {
+        return alias;
     }
 
     public Phone getPhone() {
