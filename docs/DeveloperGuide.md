@@ -9,7 +9,7 @@ title: Developer Guide
 
 ## **Acknowledgements**
 
-* {list here sources of all reused/adapted ideas, code, documentation, and third-party libraries -- include links to the original source as well}
+* This project is based on the [AddressBook-Level3 (AB3)](https://github.com/se-edu/addressbook-level3) project created by the [SE-EDU initiative](https://se-education.org). The codebase, documentation structure, and architectural design were adapted from AB3 as a starting point.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -262,29 +262,48 @@ _{Explain here how the data archiving feature will be implemented}_
 
 **Target user profile**:
 
-* has a need to manage a significant number of contacts
-* prefer desktop apps over other types
+* an undercover law enforcement officer managing a network of suspects, informants, and persons of interest
+* needs to create and update contact profiles quickly and discreetly
+* requires fast retrieval of contact details under operational time pressure
+* needs to track the investigation stage of each contact
+* needs to log field encounters and observations tied to specific contacts
+* prefers desktop apps over other types
 * can type fast
 * prefers typing to mouse interactions
 * is reasonably comfortable using CLI apps
 
-**Value proposition**: manage contacts faster than a typical mouse/GUI driven app
+**Value proposition**: enable undercover officers to manage contact profiles, track investigation stages, and log field encounters faster and more discreetly than a typical mouse/GUI-driven app
 
 
 ### User stories
 
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-| Priority | As a …​                                    | I want to …​                     | So that I can…​                                                        |
-| -------- | ------------------------------------------ | ------------------------------ | ---------------------------------------------------------------------- |
-| `* * *`  | new user                                   | see usage instructions         | refer to instructions when I forget how to use the App                 |
-| `* * *`  | user                                       | add a new person               |                                                                        |
-| `* * *`  | user                                       | delete a person                | remove entries that I no longer need                                   |
-| `* * *`  | user                                       | find a person by name          | locate details of persons without having to go through the entire list |
-| `* *`    | user                                       | hide private contact details   | minimize chance of someone else seeing them by accident                |
-| `*`      | user with many persons in the address book | sort persons by name           | locate a person easily                                                 |
-
-*{More to be added}*
+| Priority | As a …​                                 | I want to …​                                            | So that I can…​                                                              |
+| -------- | --------------------------------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `* * *`  | undercover officer                      | create contact profiles                                 | keep all suspect details organised in one secure place                       |
+| `* * *`  | undercover officer                      | log encounters immediately after they happen            | preserve accurate details while they are still fresh                         |
+| `* * *`  | undercover officer                      | search contacts by name, alias, or keyword              | retrieve critical information quickly under time pressure                    |
+| `* * *`  | undercover officer                      | update contact profiles                                 | keep their information up to date                                            |
+| `* * *`  | undercover officer                      | delete contact profiles                                 | remove any profile if no longer required                                     |
+| `* * *`  | undercover officer                      | record aliases and multiple identifiers for a contact   | track individuals who use different identities                               |
+| `* * *`  | undercover officer                      | add an email address to a contact                       | contact them via email if needed                                             |
+| `* *`    | undercover officer                      | link contacts to each other                             | understand relationship networks within an investigation                     |
+| `* *`    | undercover officer                      | tag contacts with statuses (active, inactive, high risk)| prioritise follow-ups effectively                                            |
+| `* *`    | undercover officer                      | view a chronological timeline of interactions           | understand the progression of a case at a glance                             |
+| `* *`    | undercover officer                      | attach notes and contextual observations to a contact   | capture nuances that may not appear in formal reports                        |
+| `* *`    | undercover officer                      | quickly edit or update a contact's risk level           | reflect changes in behaviour or threat level                                 |
+| `* *`    | undercover officer                      | filter contacts by case or operation                    | focus only on relevant information                                           |
+| `* *`    | undercover officer                      | log the location of each encounter                      | identify geographic patterns in suspect activity                             |
+| `* *`    | undercover officer                      | log outcomes of interactions                            | track whether objectives were achieved                                       |
+| `* *`    | undercover officer with many contacts   | group contacts (e.g. Case 1, Case 2)                    | organise my contacts more easily                                             |
+| `*`      | undercover officer                      | mark follow-up reminders                                | ensure important leads are not forgotten                                     |
+| `*`      | undercover officer                      | upload images and supporting documents of a contact     | make relevant images and docs easily accessible                              |
+| `*`      | undercover officer                      | create a password to encrypt data on disk               | ensure my data won't get stolen if my machine is compromised                 |
+| `*`      | undercover officer                      | view all encounter locations on a map                   | see how territories are related                                              |
+| `*`      | undercover officer                      | export selected case information securely               | prepare formal reports efficiently                                           |
+| `*`      | undercover officer                      | view relationship maps between contacts                 | identify key influencers or central figures in a network                     |
+| `*`      | forgetful undercover officer            | set a reminder time for a contact                       | remember to call or follow up at the right time                              |
 
 ### Use cases
 
@@ -327,6 +346,10 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 * **Mainstream OS**: Windows, Linux, Unix, MacOS
 * **Private contact detail**: A contact detail that is not meant to be shared with others
+* **Contact**: A person of interest being tracked by an undercover officer, such as a suspect, informant, or associate
+* **Stage**: The current investigation stage of a contact. One of: `surveillance`, `approached`, `cooperating`, `arrested`, or `closed`
+* **Encounter**: A logged interaction between an undercover officer and a contact, recording the date-time and a description of what occurred
+* **Alias**: An alternative name or identifier used by a contact, allowing officers to track individuals who operate under multiple identities
 
 --------------------------------------------------------------------------------------------------------------------
 
