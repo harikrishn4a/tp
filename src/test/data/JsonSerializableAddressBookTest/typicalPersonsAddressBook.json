@@ -2,43 +2,36 @@
   "_comment": "AddressBook save file which contains the same Person values as in TypicalPersons#getTypicalAddressBook()",
   "persons" : [ {
     "name" : "Alice Pauline",
-    "email" : "alice@example.com",
     "address" : "123, Jurong West Ave 6, #08-111",
     "stage" : "surveillance",
     "tags" : [ "friends" ]
   }, {
     "name" : "Benson Meier",
-    "email" : "johnd@example.com",
     "address" : "311, Clementi Ave 2, #02-25",
     "stage" : "surveillance",
     "tags" : [ "owesMoney", "friends" ]
   }, {
     "name" : "Carl Kurz",
-    "email" : "heinz@example.com",
     "address" : "wall street",
     "stage" : "surveillance",
     "tags" : [ ]
   }, {
     "name" : "Daniel Meier",
-    "email" : "cornelia@example.com",
     "address" : "10th street",
     "stage" : "surveillance",
     "tags" : [ "friends" ]
   }, {
     "name" : "Elle Meyer",
-    "email" : "werner@example.com",
     "address" : "michegan ave",
     "stage" : "surveillance",
     "tags" : [ ]
   }, {
     "name" : "Fiona Kunz",
-    "email" : "lydia@example.com",
     "address" : "little tokyo",
     "stage" : "surveillance",
     "tags" : [ ]
   }, {
     "name" : "George Best",
-    "email" : "anna@example.com",
     "address" : "4th street",
     "stage" : "surveillance",
     "tags" : [ ]

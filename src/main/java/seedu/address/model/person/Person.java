@@ -18,8 +18,6 @@ public class Person {
 
     // Identity fields
     private final Name name;
-    private final Phone phone;
-    private final Email email;
     private final Stage stage;
 
     // Data fields
@@ -29,11 +27,9 @@ public class Person {
     /**
      * Every field must be present and not null.
      */
-    public Person(Name name, Phone phone, Email email, Address address, Stage stage, Set<Tag> tags) {
-        requireAllNonNull(name, phone, email, address, stage, tags);
+    public Person(Name name, Address address, Stage stage, Set<Tag> tags) {
+        requireAllNonNull(name, address, stage, tags);
         this.name = name;
-        this.phone = phone;
-        this.email = email;
         this.address = address;
         this.stage = stage;
         this.tags.addAll(tags);
@@ -41,15 +37,7 @@ public class Person {
 
     public Name getName() {
         return name;
-    }
-
-    public Phone getPhone() {
-        return phone;
-    }
-
-    public Email getEmail() {
-        return email;
-    }
+    }   
 
     public Address getAddress() {
         return address;
@@ -97,8 +85,6 @@ public class Person {
 
         Person otherPerson = (Person) other;
         return name.equals(otherPerson.name)
-                && phone.equals(otherPerson.phone)
-                && email.equals(otherPerson.email)
                 && address.equals(otherPerson.address)
                 && stage.equals(otherPerson.stage)
                 && tags.equals(otherPerson.tags);
@@ -107,15 +93,13 @@ public class Person {
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, address, stage, tags);
+        return Objects.hash(name, address, stage, tags);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .add("name", name)
-                .add("phone", phone)
-                .add("email", email)
                 .add("address", address)
                 .add("stage", stage)
                 .add("tags", tags)
