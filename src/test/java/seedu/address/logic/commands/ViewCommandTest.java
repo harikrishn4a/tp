@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.Messages;
+import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
@@ -32,10 +33,10 @@ public class ViewCommandTest {
         Person personToView = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
         ViewCommand viewCommand = new ViewCommand(INDEX_FIRST_PERSON);
 
-        String expectedMessage = Messages.format(personToView);
+        CommandResult expectedResult = new CommandResult(Messages.format(personToView), personToView);
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
 
-        assertCommandSuccess(viewCommand, model, expectedMessage, expectedModel);
+        assertCommandSuccess(viewCommand, model, expectedResult, expectedModel);
     }
 
     @Test
@@ -53,11 +54,11 @@ public class ViewCommandTest {
         Person personToView = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
         ViewCommand viewCommand = new ViewCommand(INDEX_FIRST_PERSON);
 
-        String expectedMessage = Messages.format(personToView);
+        CommandResult expectedResult = new CommandResult(Messages.format(personToView), personToView);
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         showPersonAtIndex(expectedModel, INDEX_FIRST_PERSON);
 
-        assertCommandSuccess(viewCommand, model, expectedMessage, expectedModel);
+        assertCommandSuccess(viewCommand, model, expectedResult, expectedModel);
     }
 
     @Test
@@ -70,6 +71,16 @@ public class ViewCommandTest {
         ViewCommand viewCommand = new ViewCommand(outOfBoundIndex);
 
         assertCommandFailure(viewCommand, model, Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+    }
+
+    @Test
+    public void execute_validIndex_commandResultContainsPersonToView() throws CommandException {
+        Person personToView = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        ViewCommand viewCommand = new ViewCommand(INDEX_FIRST_PERSON);
+
+        CommandResult result = viewCommand.execute(model);
+        assertTrue(result.getPersonToView().isPresent());
+        assertEquals(personToView, result.getPersonToView().get());
     }
 
     @Test

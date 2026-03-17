@@ -40,7 +40,7 @@ public class ViewCommand extends Command {
         }
 
         Person person = lastShownList.get(targetIndex.getZeroBased());
-        return new CommandResult(Messages.format(person));
+        return new CommandResult(Messages.format(person), person);
     }
 
     @Override

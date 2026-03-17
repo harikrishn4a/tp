@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fitToWidth="true" styleClass="pane-with-border"
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+  <VBox fx:id="viewPanel" spacing="6">
+    <padding>
+      <Insets top="15" right="15" bottom="15" left="15" />
+    </padding>
+
+    <Label fx:id="placeholder" text="Select a contact (view INDEX) to see profile."
+           styleClass="label-bright" wrapText="true" />
+
+    <VBox fx:id="profileBox" spacing="6" visible="false" managed="false">
+      <Label fx:id="nameLabel" styleClass="label-header" wrapText="true" />
+      <FlowPane fx:id="tagsPane" hgap="7" vgap="3" />
+
+      <Separator />
+
+      <Label text="Alias" styleClass="label-bright" />
+      <Label fx:id="aliasLabel" styleClass="label" wrapText="true" />
+
+      <Label text="Stage" styleClass="label-bright" />
+      <Label fx:id="stageLabel" styleClass="label" wrapText="true" />
+
+      <Label text="Phone" styleClass="label-bright" />
+      <Label fx:id="phoneLabel" styleClass="label" wrapText="true" />
+
+      <Label text="Email" styleClass="label-bright" />
+      <Label fx:id="emailLabel" styleClass="label" wrapText="true" />
+
+      <Label text="Address" styleClass="label-bright" />
+      <Label fx:id="addressLabel" styleClass="label" wrapText="true" />
+
+      <Separator />
+
+      <Label text="Encounter History" styleClass="label-bright" />
+      <VBox fx:id="encounterBox" spacing="4">
+        <Label fx:id="noEncountersLabel" text="No encounters logged."
+               styleClass="label" wrapText="true" />
+      </VBox>
+    </VBox>
+  </VBox>
+</ScrollPane>

@@ -33,6 +33,7 @@ public class MainWindow extends UiPart<Stage> {
     // Independent Ui parts residing in this Ui container
     private PersonListPanel personListPanel;
     private ResultDisplay resultDisplay;
+    private ViewPanel viewPanel;
     private HelpWindow helpWindow;
 
     @FXML
@@ -46,6 +47,9 @@ public class MainWindow extends UiPart<Stage> {
 
     @FXML
     private StackPane resultDisplayPlaceholder;
+
+    @FXML
+    private StackPane viewPanelPlaceholder;
 
     @FXML
     private StackPane statusbarPlaceholder;
@@ -116,6 +120,9 @@ public class MainWindow extends UiPart<Stage> {
         resultDisplay = new ResultDisplay();
         resultDisplayPlaceholder.getChildren().add(resultDisplay.getRoot());
 
+        viewPanel = new ViewPanel();
+        viewPanelPlaceholder.getChildren().add(viewPanel.getRoot());
+
         StatusBarFooter statusBarFooter = new StatusBarFooter(logic.getAddressBookFilePath());
         statusbarPlaceholder.getChildren().add(statusBarFooter.getRoot());
 
@@ -185,6 +192,8 @@ public class MainWindow extends UiPart<Stage> {
             if (commandResult.isExit()) {
                 handleExit();
             }
+
+            commandResult.getPersonToView().ifPresent(viewPanel::setPerson);
 
             return commandResult;
         } catch (CommandException | ParseException e) {
