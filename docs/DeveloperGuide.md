@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Developer Guide
+title: CrimeWatch Developer Guide
 ---
 * Table of Contents
 {:toc}
@@ -9,7 +9,7 @@ title: Developer Guide
 
 ## **Acknowledgements**
 
-* {list here sources of all reused/adapted ideas, code, documentation, and third-party libraries -- include links to the original source as well}
+* This project is based on the [AddressBook-Level3 (AB3)](https://github.com/se-edu/addressbook-level3) project created by the [SE-EDU initiative](https://se-education.org). The codebase, documentation structure, and architectural design were adapted from AB3 as a starting point.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -122,7 +122,7 @@ How the parsing works:
 
 The `Model` component,
 
-* stores the address book data i.e., all `Person` objects (which are contained in a `UniquePersonList` object).
+* stores CrimeWatch's data i.e., all `Person` objects (which are contained in a `UniquePersonList` object).
 * stores the currently 'selected' `Person` objects (e.g., results of a search query) as a separate _filtered_ list which is exposed to outsiders as an unmodifiable `ObservableList<Person>` that can be 'observed' e.g. the UI can be bound to this list so that the UI automatically updates when the data in the list change.
 * stores a `UserPref` object that represents the user’s preferences. This is exposed to the outside as a `ReadOnlyUserPref` objects.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they should make sense on their own without depending on other components)
@@ -141,7 +141,7 @@ The `Model` component,
 <img src="images/StorageClassDiagram.png" width="550" />
 
 The `Storage` component,
-* can save both address book data and user preference data in JSON format, and read them back into corresponding objects.
+* can save both CrimeWatch data and user preference data in JSON format, and read them back into corresponding objects.
 * inherits from both `AddressBookStorage` and `UserPrefStorage`, which means it can be treated as either one (if only the functionality of only one is needed).
 * depends on some classes in the `Model` component (because the `Storage` component's job is to save/retrieve objects that belong to the `Model`)
 
@@ -228,7 +228,7 @@ The following activity diagram summarizes what happens when a user executes a ne
 
 **Aspect: How undo & redo executes:**
 
-* **Alternative 1 (current choice):** Saves the entire address book.
+* **Alternative 1 (current choice):** Saves the entire CrimeWatch data.
   * Pros: Easy to implement.
   * Cons: May have performance issues in terms of memory usage.
 
@@ -262,42 +262,61 @@ _{Explain here how the data archiving feature will be implemented}_
 
 **Target user profile**:
 
-* has a need to manage a significant number of contacts
-* prefer desktop apps over other types
+* an undercover law enforcement officer managing a network of suspects, informants, and persons of interest
+* needs to create and update contact profiles quickly and discreetly
+* requires fast retrieval of contact details under operational time pressure
+* needs to track the investigation stage of each contact
+* needs to log field encounters and observations tied to specific contacts
+* prefers desktop apps over other types
 * can type fast
 * prefers typing to mouse interactions
 * is reasonably comfortable using CLI apps
 
-**Value proposition**: manage contacts faster than a typical mouse/GUI driven app
+**Value proposition**: enable undercover officers to manage contact profiles, track investigation stages, and log field encounters faster and more discreetly than a typical mouse/GUI-driven app
 
 
 ### User stories
 
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-| Priority | As a …​                                    | I want to …​                     | So that I can…​                                                        |
-| -------- | ------------------------------------------ | ------------------------------ | ---------------------------------------------------------------------- |
-| `* * *`  | new user                                   | see usage instructions         | refer to instructions when I forget how to use the App                 |
-| `* * *`  | user                                       | add a new person               |                                                                        |
-| `* * *`  | user                                       | delete a person                | remove entries that I no longer need                                   |
-| `* * *`  | user                                       | find a person by name          | locate details of persons without having to go through the entire list |
-| `* *`    | user                                       | hide private contact details   | minimize chance of someone else seeing them by accident                |
-| `*`      | user with many persons in the address book | sort persons by name           | locate a person easily                                                 |
-
-*{More to be added}*
+| Priority | As a …​                                 | I want to …​                                            | So that I can…​                                                              |
+| -------- | --------------------------------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `* * *`  | undercover officer                      | create contact profiles                                 | keep all suspect details organised in one secure place                       |
+| `* * *`  | undercover officer                      | log encounters immediately after they happen            | preserve accurate details while they are still fresh                         |
+| `* * *`  | undercover officer                      | search contacts by name, alias, or keyword              | retrieve critical information quickly under time pressure                    |
+| `* * *`  | undercover officer                      | update contact profiles                                 | keep their information up to date                                            |
+| `* * *`  | undercover officer                      | delete contact profiles                                 | remove any profile if no longer required                                     |
+| `* * *`  | undercover officer                      | record aliases and multiple identifiers for a contact   | track individuals who use different identities                               |
+| `* * *`  | undercover officer                      | add an email address to a contact                       | contact them via email if needed                                             |
+| `* *`    | undercover officer                      | link contacts to each other                             | understand relationship networks within an investigation                     |
+| `* *`    | undercover officer                      | tag contacts with statuses (active, inactive, high risk)| prioritise follow-ups effectively                                            |
+| `* *`    | undercover officer                      | view a chronological timeline of interactions           | understand the progression of a case at a glance                             |
+| `* *`    | undercover officer                      | attach notes and contextual observations to a contact   | capture nuances that may not appear in formal reports                        |
+| `* *`    | undercover officer                      | quickly edit or update a contact's risk level           | reflect changes in behaviour or threat level                                 |
+| `* *`    | undercover officer                      | filter contacts by case or operation                    | focus only on relevant information                                           |
+| `* *`    | undercover officer                      | log the location of each encounter                      | identify geographic patterns in suspect activity                             |
+| `* *`    | undercover officer                      | log outcomes of interactions                            | track whether objectives were achieved                                       |
+| `* *`    | undercover officer with many contacts   | group contacts (e.g. Case 1, Case 2)                    | organise my contacts more easily                                             |
+| `*`      | undercover officer                      | mark follow-up reminders                                | ensure important leads are not forgotten                                     |
+| `*`      | undercover officer                      | upload images and supporting documents of a contact     | make relevant images and docs easily accessible                              |
+| `*`      | undercover officer                      | create a password to encrypt data on disk               | ensure my data won't get stolen if my machine is compromised                 |
+| `*`      | undercover officer                      | view all encounter locations on a map                   | see how territories are related                                              |
+| `*`      | undercover officer                      | export selected case information securely               | prepare formal reports efficiently                                           |
+| `*`      | undercover officer                      | view relationship maps between contacts                 | identify key influencers or central figures in a network                     |
+| `*`      | forgetful undercover officer            | set a reminder time for a contact                       | remember to call or follow up at the right time                              |
 
 ### Use cases
 
-(For all use cases below, the **System** is the `AddressBook` and the **Actor** is the `user`, unless specified otherwise)
+(For all use cases below, the **System** is `CrimeWatch` and the **Actor** is the `officer`, unless specified otherwise)
 
 **Use case: Delete a person**
 
 **MSS**
 
 1.  User requests to list persons
-2.  AddressBook shows a list of persons
+2.  CrimeWatch shows a list of contacts
 3.  User requests to delete a specific person in the list
-4.  AddressBook deletes the person
+4.  CrimeWatch deletes the contact
 
     Use case ends.
 
@@ -309,7 +328,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 * 3a. The given index is invalid.
 
-    * 3a1. AddressBook shows an error message.
+    * 3a1. CrimeWatch shows an error message.
 
       Use case resumes at step 2.
 
@@ -327,6 +346,10 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 * **Mainstream OS**: Windows, Linux, Unix, MacOS
 * **Private contact detail**: A contact detail that is not meant to be shared with others
+* **Contact**: A person of interest being tracked by an undercover officer, such as a suspect, informant, or associate
+* **Stage**: The current investigation stage of a contact. One of: `surveillance`, `approached`, `cooperating`, `arrested`, or `closed`
+* **Encounter**: A logged interaction between an undercover officer and a contact, recording the date-time and a description of what occurred
+* **Alias**: An alternative name or identifier used by a contact, allowing officers to track individuals who operate under multiple identities
 
 --------------------------------------------------------------------------------------------------------------------
 
