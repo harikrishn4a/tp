@@ -30,15 +30,22 @@ public class Person {
     /**
      * Every field must be present and not null.
      */
-    public Person(Name name, Phone phone, Email email, Address address, Stage stage, Set<Tag> tags) {
-        requireAllNonNull(name, phone, email, address, stage, tags);
+    public Person(Name name, Alias alias, Phone phone, Email email, Address address, Stage stage, Set<Tag> tags) {
+        requireAllNonNull(name, alias, phone, email, address, stage, tags);
         this.name = name;
-        this.alias = new Alias(name.toString());
+        this.alias = alias;
         this.phone = phone;
         this.email = email;
         this.address = address;
         this.stage = stage;
         this.tags.addAll(tags);
+    }
+
+    /**
+     * Backward-compatible constructor that derives alias from name.
+     */
+    public Person(Name name, Phone phone, Email email, Address address, Stage stage, Set<Tag> tags) {
+        this(name, new Alias(name.toString()), phone, email, address, stage, tags);
     }
 
     public Name getName() {
@@ -103,6 +110,7 @@ public class Person {
 
         Person otherPerson = (Person) other;
         return name.equals(otherPerson.name)
+            && alias.equals(otherPerson.alias)
                 && phone.equals(otherPerson.phone)
                 && email.equals(otherPerson.email)
                 && address.equals(otherPerson.address)
@@ -113,13 +121,14 @@ public class Person {
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, address, stage, tags);
+        return Objects.hash(name, alias, phone, email, address, stage, tags);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .add("name", name)
+            .add("alias", alias)
                 .add("phone", phone)
                 .add("email", email)
                 .add("address", address)

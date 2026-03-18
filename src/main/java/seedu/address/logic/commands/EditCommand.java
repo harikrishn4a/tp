@@ -96,14 +96,15 @@ public class EditCommand extends Command {
         assert personToEdit != null;
 
         Name updatedName = editPersonDescriptor.getName().orElse(personToEdit.getName());
+        Alias updatedAlias = personToEdit.getAlias(); // Alias is not currently editable; preserve the existing alias.
         Phone updatedPhone = editPersonDescriptor.getPhone().orElse(personToEdit.getPhone());
         Email updatedEmail = editPersonDescriptor.getEmail().orElse(personToEdit.getEmail());
         Address updatedAddress = editPersonDescriptor.getAddress().orElse(personToEdit.getAddress());
+        Stage updatedStage = personToEdit.getStage(); // Stage is not currently editable; preserve the existing stage.
         Set<Tag> updatedTags = editPersonDescriptor.getTags().orElse(personToEdit.getTags());
 
-        // Stage is not currently editable; preserve the existing stage.
-        return new Person(updatedName, updatedPhone, updatedEmail,
-                updatedAddress, personToEdit.getStage(), updatedTags);
+        return new Person(updatedName, updatedAlias, updatedPhone, updatedEmail,
+                updatedAddress, updatedStage(), updatedTags);
     }
 
     @Override
