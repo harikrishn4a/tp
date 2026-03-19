@@ -52,7 +52,7 @@ public class AddCommandParser implements Parser<AddCommand> {
         Phone phone = ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get());
         Email email = ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get());
         Address address = ParserUtil.parseAddress(argMultimap.getValue(PREFIX_ADDRESS).get());
-        Stage stage = parseStage(argMultimap.getValue(PREFIX_STAGE).get());
+        Stage stage = ParserUtil.parseStage(argMultimap.getValue(PREFIX_STAGE).get());
         Set<Tag> tagList = ParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));
 
         Person person = new Person(name, alias, phone, email, address, stage, tagList);
@@ -67,17 +67,5 @@ public class AddCommandParser implements Parser<AddCommand> {
     private static boolean arePrefixesPresent(ArgumentMultimap argumentMultimap, Prefix... prefixes) {
         return Stream.of(prefixes).allMatch(prefix -> argumentMultimap.getValue(prefix).isPresent());
     }
-
-    /**
-     * Parses a raw stage string into a {@code Stage}, wrapping validation errors
-     * as {@code ParseException}.
-     */
-    private static Stage parseStage(String stage) throws ParseException {
-        try {
-            return Stage.fromString(stage);
-        } catch (IllegalArgumentException ex) {
-            throw new ParseException(Stage.MESSAGE_CONSTRAINTS);
-        }
-    }
-
+    
 }

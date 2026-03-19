@@ -14,6 +14,7 @@ import seedu.address.model.person.Alias;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.Stage;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -136,5 +137,17 @@ public class ParserUtil {
             throw new ParseException(Alias.MESSAGE_CONSTRAINTS);
         }
         return new Alias(trimmedAlias);
+    }
+
+    /**
+     * Parses a raw stage string into a {@code Stage}, wrapping validation errors
+     * as {@code ParseException}.
+     */
+    public static Stage parseStage(String stage) throws ParseException {
+        try {
+            return Stage.fromString(stage);
+        } catch (IllegalArgumentException ex) {
+            throw new ParseException(Stage.MESSAGE_CONSTRAINTS);
+        }
     }
 }
