@@ -1,204 +1,274 @@
+Updated user guide with the requested sections integrated and adapted to replace the original AB3 content. Source reference: 
+
 ---
-layout: page
-title: User Guide
+
+# User Guide (Updated)
+
+CrimeWatch is a **keyboard-driven CLI application for managing contacts and encounters**.
+
 ---
 
-AddressBook Level 3 (AB3) is a **desktop app for managing contacts, optimized for use via a Command Line Interface** (CLI) while still having the benefits of a Graphical User Interface (GUI). If you can type fast, AB3 can get your contact management tasks done faster than traditional GUI apps.
+## Getting Started
 
-* Table of Contents
-{:toc}
+CrimeWatch is a **keyboard-driven CLI application**.
 
---------------------------------------------------------------------------------------------------------------------
+* Commands are entered directly into the terminal
+* Each command follows a structured format using prefixes (e.g., `n/`, `a/`)
+* Inputs must follow strict validation rules
 
-## Quick start
+---
 
-1. Ensure you have Java `17` or above installed in your Computer.<br>
-   **Mac users:** Ensure you have the precise JDK version prescribed [here](https://se-education.org/guides/tutorials/javaInstallationMac.html).
+## Command Summary
 
-1. Download the latest `.jar` file from [here](https://github.com/se-edu/addressbook-level3/releases).
+| Feature         | Command Format                                                      |
+| --------------- | ------------------------------------------------------------------- |
+| Add Contact     | `add n/NAME a/ALIAS s/STAGE [r/RISK] [note/NOTES]`                  |
+| Delete Contact  | `delete INDEX`                                                      |
+| Log Encounter   | `log INDEX d/DATE t/TIME l/LOCATION desc/DESCRIPTION [out/OUTCOME]` |
+| View Contact    | `view INDEX`                                                        |
+| Search Contacts | `find KEYWORD [MORE_KEYWORDS]`                                      |
 
-1. Copy the file to the folder you want to use as the _home folder_ for your AddressBook.
+---
 
-1. Open a command terminal, `cd` into the folder you put the jar file in, and use the `java -jar addressbook.jar` command to run the application.<br>
-   A GUI similar to the below should appear in a few seconds. Note how the app contains some sample data.<br>
-   ![Ui](images/Ui.png)
+## Feature Guides
 
-1. Type the command in the command box and press Enter to execute it. e.g. typing **`help`** and pressing Enter will open the help window.<br>
-   Some example commands you can try:
+### 1. Add Contact
 
-   * `list` : Lists all contacts.
+Creates a new person-of-interest profile.
 
-   * `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01` : Adds a contact named `John Doe` to the Address Book.
+#### Command
 
-   * `delete 3` : Deletes the 3rd contact shown in the current list.
+```bash
+add n/NAME a/ALIAS s/STAGE [r/RISK] [note/NOTES]
+```
 
-   * `clear` : Deletes all contacts.
+#### Required Parameters
 
-   * `exit` : Exits the app.
+* `n/NAME` — Full name
+* `a/ALIAS` — One or more aliases (comma-separated)
+* `s/STAGE` — Investigation stage
 
-1. Refer to the [Features](#features) below for details of each command.
+#### Optional Parameters
 
---------------------------------------------------------------------------------------------------------------------
+* `r/RISK` — Risk level (default: medium)
+* `note/NOTES` — Additional notes (max 500 characters)
 
-## Features
+#### Example
 
-<div markdown="block" class="alert alert-info">
+```bash
+add n/John Tan a/Ah Boy s/surveillance
+add n/Michael Lee a/Big Mike s/approached r/high note/Seen at Marina Bay
+```
 
-**:information_source: Notes about the command format:**<br>
+#### Success Output
 
-* Words in `UPPER_CASE` are the parameters to be supplied by the user.<br>
-  e.g. in `add n/NAME`, `NAME` is a parameter which can be used as `add n/John Doe`.
+```
+New contact added: John Tan (Stage: surveillance, Risk: medium)
+```
 
-* Items in square brackets are optional.<br>
-  e.g `n/NAME [t/TAG]` can be used as `n/John Doe t/friend` or as `n/John Doe`.
+#### Duplicate Rule
 
-* Items with `…`​ after them can be used multiple times including zero times.<br>
-  e.g. `[t/TAG]…​` can be used as ` ` (i.e. 0 times), `t/friend`, `t/friend t/family` etc.
+A contact is considered duplicate if:
 
-* Parameters can be in any order.<br>
-  e.g. if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
+* Same name (case-insensitive), AND
+* At least one alias overlaps
 
-* Extraneous parameters for commands that do not take in parameters (such as `help`, `list`, `exit` and `clear`) will be ignored.<br>
-  e.g. if the command specifies `help 123`, it will be interpreted as `help`.
+---
 
-* If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
-</div>
+### 2. Delete Contact
 
-### Viewing help : `help`
+Removes a contact and all associated encounters permanently.
 
-Shows a message explaining how to access the help page.
+#### Command
 
-![help message](images/helpMessage.png)
+```bash
+delete INDEX
+```
 
-Format: `help`
+#### Example
 
+```bash
+delete 3
+```
 
-### Adding a person: `add`
+#### Success Output
 
-Adds a person to the address book.
+```
+Deleted contact: [Name]. All associated encounters are removed.
+```
 
-Format: `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS [t/TAG]…​`
+#### Error
 
-<div markdown="span" class="alert alert-primary">:bulb: **Tip:**
-A person can have any number of tags (including 0)
-</div>
+```
+Invalid index.
+```
 
-Examples:
-* `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01`
-* `add n/Betsy Crowe t/friend e/betsycrowe@example.com a/Newgate Prison p/1234567 t/criminal`
+---
 
-### Listing all persons : `list`
+### 3. Log Encounter
 
-Shows a list of all persons in the address book.
+Records an interaction with a contact.
 
-Format: `list`
+#### Command
 
-### Editing a person : `edit`
+```bash
+log INDEX d/DATE t/TIME l/LOCATION desc/DESCRIPTION [out/OUTCOME]
+```
 
-Edits an existing person in the address book.
+#### Required Parameters
 
-Format: `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`
+* `d/DATE` — Format: YYYY-MM-DD
+* `t/TIME` — Format: HH:mm (24-hour)
+* `l/LOCATION` — Encounter location
+* `desc/DESCRIPTION` — Description (1–500 characters)
 
-* Edits the person at the specified `INDEX`. The index refers to the index number shown in the displayed person list. The index **must be a positive integer** 1, 2, 3, …​
-* At least one of the optional fields must be provided.
-* Existing values will be updated to the input values.
-* When editing tags, the existing tags of the person will be removed i.e adding of tags is not cumulative.
-* You can remove all the person’s tags by typing `t/` without
-    specifying any tags after it.
+#### Optional
 
-Examples:
-*  `edit 1 p/91234567 e/johndoe@example.com` Edits the phone number and email address of the 1st person to be `91234567` and `johndoe@example.com` respectively.
-*  `edit 2 n/Betsy Crower t/` Edits the name of the 2nd person to be `Betsy Crower` and clears all existing tags.
+* `out/OUTCOME` — Result or follow-up (max 300 characters)
 
-### Locating persons by name or tag: `find`
+#### Example
 
-Finds persons whose names contain any of the given keywords and/or whose tags match any of the given tags.
+```bash
+log 1 d/2026-02-21 t/18:30 l/Maxwell Road desc/Met at coffee shop out/Agreed to cooperate
+```
 
-Format: `find [NAME_KEYWORD]... [t/TAG]...`
+#### Success Output
 
-* The search is case-insensitive for both names and tags (e.g. `hans` will match `Hans`, `criminal` will match `CrImInAl`).
-* The order of the name keywords does not matter. e.g. `Hans Bo` will match `Bo Hans`.
-* Name keywords search only the person's name.
-* Tag keywords search only the person's tags.
-* Only full words in names will be matched e.g. `Han` will not match `Hans`.
-* Persons matching at least one name keyword will be returned for name-only searches.
-* Persons matching at least one tag will be returned for tag-only searches.
-* If both name keywords and tags are provided, a person must match at least one name keyword and at least one tag.
+```
+Encounter logged for [Name] on 2026-02-21 18:30.
+```
 
-Examples:
-* `find John` returns `john` and `John Doe`
-* `find t/criminal` returns all persons tagged `criminal`
-* `find alex david` returns `Alex Yeoh`, `David Li`
-* `find alex t/criminal` returns persons whose names match `alex` and who are tagged `criminal`<br>
-  ![result for 'find alex david'](images/findAlexDavidResult.png)
+---
 
-### Deleting a person : `delete`
+### 4. View Contact
 
-Deletes the specified person from the address book.
+Displays full profile and encounter history.
 
-Format: `delete INDEX`
+#### Command
 
-* Deletes the person at the specified `INDEX`.
-* The index refers to the index number shown in the displayed person list.
-* The index **must be a positive integer** 1, 2, 3, …​
+```bash
+view INDEX
+```
 
-Examples:
-* `list` followed by `delete 2` deletes the 2nd person in the address book.
-* `find Betsy` followed by `delete 1` deletes the 1st person in the results of the `find` command.
+#### Output Includes
 
-### Clearing all entries : `clear`
+* Name
+* Aliases
+* Stage
+* Risk
+* Notes
+* Encounter history (chronological)
 
-Clears all entries from the address book.
+---
 
-Format: `clear`
+### 5. Search Contacts
 
-### Exiting the program : `exit`
+Find contacts using keywords.
 
-Exits the program.
+#### Command
 
-Format: `exit`
+```bash
+find KEYWORD [MORE_KEYWORDS]
+```
 
-### Saving the data
+#### Examples
 
-AddressBook data are saved in the hard disk automatically after any command that changes the data. There is no need to save manually.
+```bash
+find john
+find mike marina
+```
 
-### Editing the data file
+#### Behavior
 
-AddressBook data are saved automatically as a JSON file `[JAR file location]/data/addressbook.json`. Advanced users are welcome to update data directly by editing that data file.
+* Case-insensitive
+* Matches:
 
-<div markdown="span" class="alert alert-warning">:exclamation: **Caution:**
-If your changes to the data file makes its format invalid, AddressBook will discard all data and start with an empty data file at the next run. Hence, it is recommended to take a backup of the file before editing it.<br>
-Furthermore, certain edits can cause the AddressBook to behave in unexpected ways (e.g., if a value entered is outside of the acceptable range). Therefore, edit the data file only if you are confident that you can update it correctly.
-</div>
+  * Name
+  * Alias
+  * Notes
+* Partial matches allowed
 
-### Archiving data files `[coming in v2.0]`
+#### No Results Output
 
-_Details coming soon ..._
+```
+No contacts found matching the given keywords.
+```
 
---------------------------------------------------------------------------------------------------------------------
+---
 
-## FAQ
+## Data Rules & Validation
 
-**Q**: How do I transfer my data to another Computer?<br>
-**A**: Install the app in the other computer and overwrite the empty data file it creates with the file that contains the data of your previous AddressBook home folder.
+### Name (`n/`)
 
---------------------------------------------------------------------------------------------------------------------
+* 1–100 characters
+* Letters, spaces, apostrophes, hyphens only
+* No numbers or symbols
 
-## Known issues
+**Invalid Example**
 
-1. **When using multiple screens**, if you move the application to a secondary screen, and later switch to using only the primary screen, the GUI will open off-screen. The remedy is to delete the `preferences.json` file created by the application before running the application again.
-2. **If you minimize the Help Window** and then run the `help` command (or use the `Help` menu, or the keyboard shortcut `F1`) again, the original Help Window will remain minimized, and no new Help Window will appear. The remedy is to manually restore the minimized Help Window.
+```
+John123
+```
 
---------------------------------------------------------------------------------------------------------------------
+---
 
-## Command summary
+### Alias (`a/`)
 
-Action | Format, Examples
---------|------------------
-**Add** | `add n/NAME p/PHONE_NUMBER e/EMAIL a/ADDRESS [t/TAG]…​` <br> e.g., `add n/James Ho p/22224444 e/jamesho@example.com a/123, Clementi Rd, 1234665 t/friend t/colleague`
-**Clear** | `clear`
-**Delete** | `delete INDEX`<br> e.g., `delete 3`
-**Edit** | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [a/ADDRESS] [t/TAG]…​`<br> e.g.,`edit 2 n/James Lee e/jameslee@example.com`
-**Find** | `find [NAME_KEYWORD]... [t/TAG]...`<br> e.g., `find James t/criminal`
-**List** | `list`
-**Help** | `help`
+* 1–50 characters each
+* Alphanumeric and spaces only
+* Multiple aliases separated by commas
+
+---
+
+### Stage (`s/`)
+
+Allowed values:
+
+* surveillance
+* approached
+* cooperating
+* arrested
+* closed
+
+---
+
+### Risk (`r/`)
+
+* low
+* medium (default)
+* high
+
+---
+
+### Date (`d/`)
+
+* Format: YYYY-MM-DD
+* Must be a valid calendar date
+
+---
+
+### Time (`t/`)
+
+* Format: HH:mm (24-hour)
+
+---
+
+### Description (`desc/`)
+
+* 1–500 characters
+* Cannot be empty
+
+---
+
+### Notes (`note/`)
+
+* Up to 500 characters
+
+---
+
+## Notes
+
+* All commands must follow exact formats
+* Invalid input results in no changes
+* Error messages clearly indicate the issue
+* All operations are immediate and persistent
