@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -23,21 +22,20 @@
       <HBox spacing="4" alignment="CENTER_LEFT">
         <Label fx:id="stageLabel" styleClass="view-stage-badge" />
       </HBox>
-      <FlowPane fx:id="tagsPane" hgap="7" vgap="3" />
 
       <Separator styleClass="view-separator" />
 
-      <Label text="ALIAS" styleClass="view-field-label" />
-      <Label fx:id="aliasLabel" styleClass="view-value" wrapText="true" />
-
-      <Label text="PHONE" styleClass="view-field-label" />
-      <Label fx:id="phoneLabel" styleClass="view-value" wrapText="true" />
-
-      <Label text="EMAIL" styleClass="view-field-label" />
-      <Label fx:id="emailLabel" styleClass="view-value" wrapText="true" />
+      <Label text="ALIASES" styleClass="view-field-label" />
+      <Label fx:id="aliasesLabel" styleClass="view-value" wrapText="true" />
 
       <Label text="ADDRESS" styleClass="view-field-label" />
       <Label fx:id="addressLabel" styleClass="view-value" wrapText="true" />
+
+      <Label text="NOTES" styleClass="view-field-label" />
+      <Label fx:id="notesLabel" styleClass="view-value" wrapText="true" />
+
+      <Label text="RISK" styleClass="view-field-label" />
+      <Label fx:id="riskLabel" styleClass="view-value" wrapText="true" />
 
       <Separator styleClass="view-separator" />
 

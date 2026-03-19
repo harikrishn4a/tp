@@ -1,10 +1,7 @@
 package seedu.address.ui;
 
-import java.util.Comparator;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import seedu.address.model.person.Person;
@@ -25,17 +22,15 @@ public class ViewPanel extends UiPart<Region> {
     @FXML
     private Label nameLabel;
     @FXML
-    private FlowPane tagsPane;
-    @FXML
-    private Label aliasLabel;
+    private Label aliasesLabel;
     @FXML
     private Label stageLabel;
     @FXML
-    private Label phoneLabel;
-    @FXML
-    private Label emailLabel;
+    private Label riskLabel;
     @FXML
     private Label addressLabel;
+    @FXML
+    private Label notesLabel;
     @FXML
     private VBox encounterBox;
     @FXML
@@ -56,20 +51,10 @@ public class ViewPanel extends UiPart<Region> {
 
         nameLabel.setText(person.getName().fullName);
         stageLabel.setText(person.getStage().toString());
-
-        tagsPane.getChildren().clear();
-        person.getTags().stream()
-                .sorted(Comparator.comparing(tag -> tag.tagName))
-                .forEach(tag -> {
-                    Label tagLabel = new Label(tag.tagName);
-                    tagLabel.getStyleClass().add("tag-label");
-                    tagsPane.getChildren().add(tagLabel);
-                });
-
-        aliasLabel.setText(person.getAlias().toString());
-        phoneLabel.setText(person.getPhone().value);
-        emailLabel.setText(person.getEmail().value);
         addressLabel.setText(person.getAddress().value);
+        aliasesLabel.setText(String.join(", ", person.getAliases().stream().map(a -> a.value).toList()));
+        notesLabel.setText(person.getNotes().value);
+        riskLabel.setText(person.getRisk().toString());
 
         noEncountersLabel.setVisible(true);
         noEncountersLabel.setManaged(true);

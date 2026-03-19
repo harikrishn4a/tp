@@ -35,10 +35,11 @@ public class Alias {
      */
     public static boolean isValidAlias(String test) {
         requireNonNull(test);
-        if (test.isEmpty() || test.length() > MAX_LENGTH) {
+        String trimmed = test.trim();
+        if (trimmed.isEmpty() || trimmed.length() > MAX_LENGTH) {
             return false;
         }
-        return test.matches(VALIDATION_REGEX);
+        return trimmed.matches(VALIDATION_REGEX);
     }
 
     @Override
