@@ -2,8 +2,10 @@ package seedu.address.model.person;
 
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -26,12 +28,14 @@ public class Person {
     // Data fields
     private final Address address;
     private final Set<Tag> tags = new HashSet<>();
+    private final List<Encounter> encounters = new ArrayList<>();
 
     /**
-     * Every field must be present and not null.
+     * Full constructor - every field must be present and not null.
      */
-    public Person(Name name, Alias alias, Phone phone, Email email, Address address, Stage stage, Set<Tag> tags) {
-        requireAllNonNull(name, alias, phone, email, address, stage, tags);
+    public Person(Name name, Alias alias, Phone phone, Email email, Address address, Stage stage,
+                  Set<Tag> tags, List<Encounter> encounters) {
+        requireAllNonNull(name, alias, phone, email, address, stage, tags, encounters);
         this.name = name;
         this.alias = alias;
         this.phone = phone;
@@ -39,10 +43,18 @@ public class Person {
         this.address = address;
         this.stage = stage;
         this.tags.addAll(tags);
+        this.encounters.addAll(encounters);
     }
 
     /**
-     * Backward-compatible constructor that derives alias from name.
+     * Convenience constructor with no encounters (defaults to empty list).
+     */
+    public Person(Name name, Alias alias, Phone phone, Email email, Address address, Stage stage, Set<Tag> tags) {
+        this(name, alias, phone, email, address, stage, tags, Collections.emptyList());
+    }
+
+    /**
+     * Backward-compatible constructor that derives alias from name and has no encounters.
      */
     public Person(Name name, Phone phone, Email email, Address address, Stage stage, Set<Tag> tags) {
         this(name, new Alias(name.toString()), phone, email, address, stage, tags);
@@ -81,6 +93,14 @@ public class Person {
     }
 
     /**
+     * Returns an immutable encounter list, which throws {@code UnsupportedOperationException}
+     * if modification is attempted.
+     */
+    public List<Encounter> getEncounters() {
+        return Collections.unmodifiableList(encounters);
+    }
+
+    /**
      * Returns true if both persons have the same name.
      * This defines a weaker notion of equality between two persons.
      */
@@ -110,30 +130,32 @@ public class Person {
 
         Person otherPerson = (Person) other;
         return name.equals(otherPerson.name)
-            && alias.equals(otherPerson.alias)
+                && alias.equals(otherPerson.alias)
                 && phone.equals(otherPerson.phone)
                 && email.equals(otherPerson.email)
                 && address.equals(otherPerson.address)
                 && stage.equals(otherPerson.stage)
-                && tags.equals(otherPerson.tags);
+                && tags.equals(otherPerson.tags)
+                && encounters.equals(otherPerson.encounters);
     }
 
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, alias, phone, email, address, stage, tags);
+        return Objects.hash(name, alias, phone, email, address, stage, tags, encounters);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .add("name", name)
-            .add("alias", alias)
+                .add("alias", alias)
                 .add("phone", phone)
                 .add("email", email)
                 .add("address", address)
                 .add("stage", stage)
                 .add("tags", tags)
+                .add("encounters", encounters)
                 .toString();
     }
 

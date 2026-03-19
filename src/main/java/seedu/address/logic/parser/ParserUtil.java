@@ -2,6 +2,11 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +17,7 @@ import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Alias;
 import seedu.address.model.person.Email;
+import seedu.address.model.person.Encounter;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Phone;
 import seedu.address.model.person.Stage;
@@ -149,5 +155,83 @@ public class ParserUtil {
         } catch (IllegalArgumentException ex) {
             throw new ParseException(Stage.MESSAGE_CONSTRAINTS);
         }
+    }
+
+    /**
+     * Parses a {@code String date} in {@code yyyy-MM-dd} format into a {@code LocalDate}.
+     * Leading and trailing whitespaces will be trimmed.
+     *
+     * @throws ParseException if the given {@code date} is not a valid calendar date in YYYY-MM-DD format.
+     */
+    public static LocalDate parseDate(String date) throws ParseException {
+        requireNonNull(date);
+        String trimmed = date.trim();
+        try {
+            return LocalDate.parse(trimmed,
+                    DateTimeFormatter.ofPattern("uuuu-MM-dd").withResolverStyle(ResolverStyle.STRICT));
+        } catch (DateTimeParseException e) {
+            throw new ParseException("Invalid date. Use format YYYY-MM-DD.");
+        }
+    }
+
+    /**
+     * Parses a {@code String time} in {@code HH:mm} 24-hour format into a {@code LocalTime}.
+     * Leading and trailing whitespaces will be trimmed.
+     *
+     * @throws ParseException if the given {@code time} is not a valid 24-hour time in HH:mm format.
+     */
+    public static LocalTime parseTime(String time) throws ParseException {
+        requireNonNull(time);
+        String trimmed = time.trim();
+        try {
+            return LocalTime.parse(trimmed, DateTimeFormatter.ofPattern("HH:mm"));
+        } catch (DateTimeParseException e) {
+            throw new ParseException("Invalid time. Use 24-hour format HH:mm.");
+        }
+    }
+
+    /**
+     * Parses and validates an encounter {@code String location}.
+     * Leading and trailing whitespaces will be trimmed.
+     *
+     * @throws ParseException if the given {@code location} is blank.
+     */
+    public static String parseLocation(String location) throws ParseException {
+        requireNonNull(location);
+        String trimmed = location.trim();
+        if (!Encounter.isValidLocation(trimmed)) {
+            throw new ParseException(Encounter.MESSAGE_LOCATION_CONSTRAINTS);
+        }
+        return trimmed;
+    }
+
+    /**
+     * Parses and validates an encounter {@code String description} (1-500 characters).
+     * Leading and trailing whitespaces will be trimmed.
+     *
+     * @throws ParseException if the given {@code description} is blank or exceeds 500 characters.
+     */
+    public static String parseEncounterDescription(String description) throws ParseException {
+        requireNonNull(description);
+        String trimmed = description.trim();
+        if (!Encounter.isValidDescription(trimmed)) {
+            throw new ParseException(Encounter.MESSAGE_DESCRIPTION_CONSTRAINTS);
+        }
+        return trimmed;
+    }
+
+    /**
+     * Parses and validates an encounter {@code String outcome} (up to 300 characters).
+     * Leading and trailing whitespaces will be trimmed.
+     *
+     * @throws ParseException if the given {@code outcome} exceeds 300 characters.
+     */
+    public static String parseOutcome(String outcome) throws ParseException {
+        requireNonNull(outcome);
+        String trimmed = outcome.trim();
+        if (!Encounter.isValidOutcome(trimmed)) {
+            throw new ParseException(Encounter.MESSAGE_OUTCOME_CONSTRAINTS);
+        }
+        return trimmed;
     }
 }
