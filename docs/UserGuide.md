@@ -1,12 +1,4 @@
-Updated user guide with the requested sections integrated and adapted to replace the original AB3 content. Source reference: 
-
----
-
-# User Guide (Updated)
-
-CrimeWatch is a **keyboard-driven CLI application for managing contacts and encounters**.
-
----
+# User Guide
 
 ## Getting Started
 
@@ -22,7 +14,7 @@ CrimeWatch is a **keyboard-driven CLI application**.
 
 | Feature         | Command Format                                                      |
 | --------------- | ------------------------------------------------------------------- |
-| Add Contact     | `add n/NAME a/ALIAS s/STAGE [r/RISK] [note/NOTES]`                  |
+| Add Contact     | `add n/NAME p/PHONENO e/EMAIL a/ADDRESS s/STAGE [r/RISK] [t/TAG] [al/ALIAS] [note/NOTE]`                  |
 | Delete Contact  | `delete INDEX`                                                      |
 | Log Encounter   | `log INDEX d/DATE t/TIME l/LOCATION desc/DESCRIPTION [out/OUTCOME]` |
 | View Contact    | `view INDEX`                                                        |
@@ -39,25 +31,29 @@ Creates a new person-of-interest profile.
 #### Command
 
 ```bash
-add n/NAME a/ALIAS s/STAGE [r/RISK] [note/NOTES]
+add n/NAME p/PHONENO e/EMAIL a/ADDRESS s/STAGE [r/RISK] [t/TAG] [al/ALIAS] [note/NOTE]
 ```
 
 #### Required Parameters
 
 * `n/NAME` — Full name
-* `a/ALIAS` — One or more aliases (comma-separated)
+* `p/PHONENO` — Phone number
+* `e/EMAIL` — Email address
+* `a/ADDRESS` — Address
 * `s/STAGE` — Investigation stage
 
 #### Optional Parameters
 
-* `r/RISK` — Risk level (default: medium)
-* `note/NOTES` — Additional notes (max 500 characters)
+* `r/RISK` — Risk level (default: `medium`)
+* `t/TAG` — Contact tags
+* `al/ALIAS` — Alternate name
+* `note/NOTE` — Additional notes (max 500 characters)
 
 #### Example
 
 ```bash
-add n/John Tan a/Ah Boy s/surveillance
-add n/Michael Lee a/Big Mike s/approached r/high note/Seen at Marina Bay
+add n/John Tan p/91234567 e/john@example.com a/Blk 1 Maxwell Road s/surveillance
+add n/Michael Lee p/92345678 e/mike@example.com a/Marina Bay s/approached r/high t/suspect al/Big Mike note/Seen at coffee shop
 ```
 
 #### Success Output
@@ -71,7 +67,7 @@ New contact added: John Tan (Stage: surveillance, Risk: medium)
 A contact is considered duplicate if:
 
 * Same name (case-insensitive), AND
-* At least one alias overlaps
+* At least one alias overlaps (if aliases are provided)
 
 ---
 
