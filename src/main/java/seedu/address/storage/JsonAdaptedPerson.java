@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
+import seedu.address.model.person.Encounter;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
@@ -31,6 +32,7 @@ class JsonAdaptedPerson {
     private final String address;
     private final String stage;
     private final List<JsonAdaptedTag> tags = new ArrayList<>();
+    private final List<JsonAdaptedEncounter> encounters = new ArrayList<>();
 
     /**
      * Constructs a {@code JsonAdaptedPerson} with the given person details.
@@ -39,7 +41,8 @@ class JsonAdaptedPerson {
     public JsonAdaptedPerson(@JsonProperty("name") String name, @JsonProperty("phone") String phone,
             @JsonProperty("email") String email, @JsonProperty("address") String address,
             @JsonProperty("stage") String stage,
-            @JsonProperty("tags") List<JsonAdaptedTag> tags) {
+            @JsonProperty("tags") List<JsonAdaptedTag> tags,
+            @JsonProperty("encounters") List<JsonAdaptedEncounter> encounters) {
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -47,6 +50,9 @@ class JsonAdaptedPerson {
         this.stage = stage;
         if (tags != null) {
             this.tags.addAll(tags);
+        }
+        if (encounters != null) {
+            this.encounters.addAll(encounters);
         }
     }
 
@@ -62,6 +68,9 @@ class JsonAdaptedPerson {
         tags.addAll(source.getTags().stream()
                 .map(JsonAdaptedTag::new)
                 .collect(Collectors.toList()));
+        encounters.addAll(source.getEncounters().stream()
+                .map(JsonAdaptedEncounter::new)
+                .collect(Collectors.toList()));
     }
 
     /**
@@ -73,6 +82,11 @@ class JsonAdaptedPerson {
         final List<Tag> personTags = new ArrayList<>();
         for (JsonAdaptedTag tag : tags) {
             personTags.add(tag.toModelType());
+        }
+
+        final List<Encounter> personEncounters = new ArrayList<>();
+        for (JsonAdaptedEncounter encounter : encounters) {
+            personEncounters.add(encounter.toModelType());
         }
 
         if (name == null) {
@@ -118,7 +132,7 @@ class JsonAdaptedPerson {
         }
 
         final Set<Tag> modelTags = new HashSet<>(personTags);
-        return new Person(modelName, modelPhone, modelEmail, modelAddress, modelStage, modelTags);
+        return new Person(modelName, modelPhone, modelEmail, modelAddress, modelStage, modelTags, personEncounters);
     }
 
 }

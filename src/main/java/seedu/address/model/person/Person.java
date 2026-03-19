@@ -2,8 +2,10 @@ package seedu.address.model.person;
 
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -26,12 +28,14 @@ public class Person {
     // Data fields
     private final Address address;
     private final Set<Tag> tags = new HashSet<>();
+    private final List<Encounter> encounters = new ArrayList<>();
 
     /**
-     * Every field must be present and not null.
+     * Full constructor - every field must be present and not null.
      */
-    public Person(Name name, Phone phone, Email email, Address address, Stage stage, Set<Tag> tags) {
-        requireAllNonNull(name, phone, email, address, stage, tags);
+    public Person(Name name, Phone phone, Email email, Address address, Stage stage,
+                  Set<Tag> tags, List<Encounter> encounters) {
+        requireAllNonNull(name, phone, email, address, stage, tags, encounters);
         this.name = name;
         this.alias = new Alias(name.toString());
         this.phone = phone;
@@ -39,6 +43,15 @@ public class Person {
         this.address = address;
         this.stage = stage;
         this.tags.addAll(tags);
+        this.encounters.addAll(encounters);
+    }
+
+    /**
+     * Convenience constructor with no encounters (defaults to empty list).
+     * Every field must be present and not null.
+     */
+    public Person(Name name, Phone phone, Email email, Address address, Stage stage, Set<Tag> tags) {
+        this(name, phone, email, address, stage, tags, Collections.emptyList());
     }
 
     public Name getName() {
@@ -71,6 +84,14 @@ public class Person {
      */
     public Set<Tag> getTags() {
         return Collections.unmodifiableSet(tags);
+    }
+
+    /**
+     * Returns an immutable encounter list, which throws {@code UnsupportedOperationException}
+     * if modification is attempted.
+     */
+    public List<Encounter> getEncounters() {
+        return Collections.unmodifiableList(encounters);
     }
 
     /**
@@ -107,13 +128,14 @@ public class Person {
                 && email.equals(otherPerson.email)
                 && address.equals(otherPerson.address)
                 && stage.equals(otherPerson.stage)
-                && tags.equals(otherPerson.tags);
+                && tags.equals(otherPerson.tags)
+                && encounters.equals(otherPerson.encounters);
     }
 
     @Override
     public int hashCode() {
         // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, address, stage, tags);
+        return Objects.hash(name, phone, email, address, stage, tags, encounters);
     }
 
     @Override
@@ -125,6 +147,7 @@ public class Person {
                 .add("address", address)
                 .add("stage", stage)
                 .add("tags", tags)
+                .add("encounters", encounters)
                 .toString();
     }
 

@@ -1,10 +1,14 @@
 package seedu.address.testutil;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
+import seedu.address.model.person.Encounter;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
@@ -19,7 +23,8 @@ public class PersonBuilder {
     public static final String DEFAULT_NAME = "Amy Bee";
     public static final String DEFAULT_PHONE = "85355255";
     public static final String DEFAULT_EMAIL = "amy@gmail.com";
-    public static final String DEFAULT_ADDRESS = "123, Jurong West Ave 6, #08-111";
+    public static final String DEFAULT_ADDRESS =
+        "123, Jurong West Ave 6, #08-111";
 
     private Name name;
     private Phone phone;
@@ -27,6 +32,7 @@ public class PersonBuilder {
     private Address address;
     private seedu.address.model.person.Stage stage;
     private Set<Tag> tags;
+    private List<Encounter> encounters;
 
     /**
      * Creates a {@code PersonBuilder} with the default details.
@@ -38,6 +44,7 @@ public class PersonBuilder {
         address = new Address(DEFAULT_ADDRESS);
         stage = seedu.address.model.person.Stage.SURVEILLANCE;
         tags = new HashSet<>();
+        encounters = new ArrayList<>();
     }
 
     /**
@@ -50,6 +57,7 @@ public class PersonBuilder {
         address = personToCopy.getAddress();
         stage = personToCopy.getStage();
         tags = new HashSet<>(personToCopy.getTags());
+        encounters = new ArrayList<>(personToCopy.getEncounters());
     }
 
     /**
@@ -63,7 +71,7 @@ public class PersonBuilder {
     /**
      * Parses the {@code tags} into a {@code Set<Tag>} and set it to the {@code Person} that we are building.
      */
-    public PersonBuilder withTags(String ... tags) {
+    public PersonBuilder withTags(String... tags) {
         this.tags = SampleDataUtil.getTagSet(tags);
         return this;
     }
@@ -100,8 +108,15 @@ public class PersonBuilder {
         return this;
     }
 
-    public Person build() {
-        return new Person(name, phone, email, address, stage, tags);
+    /**
+     * Sets the {@code encounters} of the {@code Person} that we are building.
+     */
+    public PersonBuilder withEncounters(Encounter... encounters) {
+        this.encounters = new ArrayList<>(Arrays.asList(encounters));
+        return this;
     }
 
+    public Person build() {
+        return new Person(name, phone, email, address, stage, tags, encounters);
+    }
 }

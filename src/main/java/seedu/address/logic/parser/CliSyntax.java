@@ -13,4 +13,15 @@ public class CliSyntax {
     public static final Prefix PREFIX_TAG = new Prefix("t/");
     public static final Prefix PREFIX_STAGE = new Prefix("s/");
 
+    /* Log command prefix definitions */
+    public static final Prefix PREFIX_DATE = new Prefix("d/");
+    /**
+     * Note: PREFIX_TIME uses the same string value as PREFIX_TAG ("t/").
+     * This is intentional — PREFIX_TIME is only used in {@code LogCommandParser},
+     * while PREFIX_TAG is only used in add/edit parsers. They are never mixed in the same tokenize call.
+     */
+    public static final Prefix PREFIX_TIME = new Prefix("t/");
+    public static final Prefix PREFIX_LOCATION = new Prefix("l/");
+    public static final Prefix PREFIX_DESCRIPTION = new Prefix("desc/");
+    public static final Prefix PREFIX_OUTCOME = new Prefix("out/");
 }
