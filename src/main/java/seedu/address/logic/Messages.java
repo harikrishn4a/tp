@@ -45,6 +45,12 @@ public class Messages {
                 .append(person.getAddress())
                 .append("; Stage: ")
                 .append(person.getStage())
+                .append("; Aliases: ")
+                .append(String.join(", ", person.getAliases().stream().map(a -> a.value).toList()))
+                .append("; Notes: ")
+                .append(person.getNotes())
+                .append("; Risk: ")
+                .append(person.getRisk())
                 .append("; Tags: ");
         person.getTags().forEach(builder::append);
         return builder.toString();

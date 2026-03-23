@@ -1,13 +1,21 @@
 package seedu.address.testutil;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import seedu.address.model.person.Address;
+import seedu.address.model.person.Alias;
 import seedu.address.model.person.Email;
+import seedu.address.model.person.Encounter;
 import seedu.address.model.person.Name;
+import seedu.address.model.person.Notes;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.Risk;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.util.SampleDataUtil;
 
@@ -26,7 +34,11 @@ public class PersonBuilder {
     private Email email;
     private Address address;
     private seedu.address.model.person.Stage stage;
+    private List<Alias> aliases;
+    private Notes notes;
+    private Risk risk;
     private Set<Tag> tags;
+    private List<Encounter> encounters;
 
     /**
      * Creates a {@code PersonBuilder} with the default details.
@@ -37,7 +49,11 @@ public class PersonBuilder {
         email = new Email(DEFAULT_EMAIL);
         address = new Address(DEFAULT_ADDRESS);
         stage = seedu.address.model.person.Stage.SURVEILLANCE;
+        aliases = new ArrayList<>();
+        notes = new Notes("");
+        risk = Risk.getDefault();
         tags = new HashSet<>();
+        encounters = new ArrayList<>();
     }
 
     /**
@@ -49,7 +65,11 @@ public class PersonBuilder {
         email = personToCopy.getEmail();
         address = personToCopy.getAddress();
         stage = personToCopy.getStage();
+        aliases = new ArrayList<>(personToCopy.getAliases());
+        notes = personToCopy.getNotes();
+        risk = personToCopy.getRisk();
         tags = new HashSet<>(personToCopy.getTags());
+        encounters = new ArrayList<>(personToCopy.getEncounters());
     }
 
     /**
@@ -57,22 +77,6 @@ public class PersonBuilder {
      */
     public PersonBuilder withName(String name) {
         this.name = new Name(name);
-        return this;
-    }
-
-    /**
-     * Parses the {@code tags} into a {@code Set<Tag>} and set it to the {@code Person} that we are building.
-     */
-    public PersonBuilder withTags(String ... tags) {
-        this.tags = SampleDataUtil.getTagSet(tags);
-        return this;
-    }
-
-    /**
-     * Sets the {@code Address} of the {@code Person} that we are building.
-     */
-    public PersonBuilder withAddress(String address) {
-        this.address = new Address(address);
         return this;
     }
 
@@ -93,6 +97,14 @@ public class PersonBuilder {
     }
 
     /**
+     * Sets the {@code Address} of the {@code Person} that we are building.
+     */
+    public PersonBuilder withAddress(String address) {
+        this.address = new Address(address);
+        return this;
+    }
+
+    /**
      * Sets the {@code Stage} of the {@code Person} that we are building.
      */
     public PersonBuilder withStage(String stage) {
@@ -100,8 +112,55 @@ public class PersonBuilder {
         return this;
     }
 
-    public Person build() {
-        return new Person(name, phone, email, address, stage, tags);
+    /**
+     * Sets a single alias shortcut.
+     */
+    public PersonBuilder withAlias(String alias) {
+        this.aliases = List.of(new Alias(alias));
+        return this;
     }
 
+    /**
+     * Sets the aliases of the {@code Person} that we are building.
+     */
+    public PersonBuilder withAliases(String... aliases) {
+        this.aliases = Arrays.stream(aliases).map(Alias::new).collect(Collectors.toList());
+        return this;
+    }
+
+    /**
+     * Sets the {@code Notes} of the {@code Person} that we are building.
+     */
+    public PersonBuilder withNotes(String notes) {
+        this.notes = new Notes(notes);
+        return this;
+    }
+
+    /**
+     * Sets the {@code Risk} of the {@code Person} that we are building.
+     */
+    public PersonBuilder withRisk(String risk) {
+        this.risk = Risk.fromString(risk);
+        return this;
+    }
+
+    /**
+     * Parses the {@code tags} into a {@code Set<Tag>} and set it to the {@code Person} that we are building.
+     */
+    public PersonBuilder withTags(String... tags) {
+        this.tags = SampleDataUtil.getTagSet(tags);
+        return this;
+    }
+
+    /**
+     * Sets the {@code encounters} of the {@code Person} that we are building.
+     */
+    public PersonBuilder withEncounters(Encounter... encounters) {
+        this.encounters = new ArrayList<>(Arrays.asList(encounters));
+        return this;
+    }
+
+    public Person build() {
+        return new Person(name, phone, email, address, stage, aliases, notes, risk, tags, encounters);
+    }
 }

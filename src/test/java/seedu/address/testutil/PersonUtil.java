@@ -1,18 +1,18 @@
 package seedu.address.testutil;
 
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_ALIAS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTES;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_RISK;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STAGE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
-
-import java.util.Set;
 
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.EditCommand.EditPersonDescriptor;
 import seedu.address.model.person.Person;
-import seedu.address.model.tag.Tag;
 
 /**
  * A utility class for Person.
@@ -36,9 +36,16 @@ public class PersonUtil {
         sb.append(PREFIX_EMAIL + person.getEmail().value + " ");
         sb.append(PREFIX_ADDRESS + person.getAddress().value + " ");
         sb.append(PREFIX_STAGE + person.getStage().toString() + " ");
-        person.getTags().stream().forEach(
-            s -> sb.append(PREFIX_TAG + s.tagName + " ")
-        );
+        if (!person.getAliases().isEmpty()) {
+            sb.append(PREFIX_ALIAS)
+                    .append(String.join(", ", person.getAliases().stream().map(a -> a.value).toList()))
+                    .append(" ");
+        }
+        if (!person.getNotes().value.isEmpty()) {
+            sb.append(PREFIX_NOTES).append(person.getNotes().value).append(" ");
+        }
+        sb.append(PREFIX_RISK).append(person.getRisk().toString()).append(" ");
+        person.getTags().forEach(tag -> sb.append(PREFIX_TAG).append(tag.tagName).append(" "));
         return sb.toString();
     }
 
@@ -51,14 +58,13 @@ public class PersonUtil {
         descriptor.getPhone().ifPresent(phone -> sb.append(PREFIX_PHONE).append(phone.value).append(" "));
         descriptor.getEmail().ifPresent(email -> sb.append(PREFIX_EMAIL).append(email.value).append(" "));
         descriptor.getAddress().ifPresent(address -> sb.append(PREFIX_ADDRESS).append(address.value).append(" "));
-        if (descriptor.getTags().isPresent()) {
-            Set<Tag> tags = descriptor.getTags().get();
-            if (tags.isEmpty()) {
-                sb.append(PREFIX_TAG);
-            } else {
-                tags.forEach(s -> sb.append(PREFIX_TAG).append(s.tagName).append(" "));
-            }
-        }
+        descriptor.getAliases().ifPresent(aliases -> sb.append(PREFIX_ALIAS)
+                .append(String.join(", ", aliases.stream().map(a -> a.value).toList()))
+                .append(" "));
+        descriptor.getNotes().ifPresent(notes -> sb.append(PREFIX_NOTES).append(notes.value).append(" "));
+        descriptor.getRisk().ifPresent(risk -> sb.append(PREFIX_RISK).append(risk.toString()).append(" "));
+        descriptor.getTags().ifPresent(tags ->
+                tags.forEach(tag -> sb.append(PREFIX_TAG).append(tag.tagName).append(" ")));
         return sb.toString();
     }
 }

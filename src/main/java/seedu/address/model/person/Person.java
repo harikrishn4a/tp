@@ -2,8 +2,10 @@ package seedu.address.model.person;
 
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -11,7 +13,7 @@ import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.tag.Tag;
 
 /**
- * Represents a Person in the address book.
+ * Represents a Person in CrimeWatch.
  * Guarantees: details are present and not null, field values are validated, immutable.
  */
 public class Person {
@@ -20,33 +22,52 @@ public class Person {
     private final Name name;
     private final Phone phone;
     private final Email email;
-    private final Alias alias;
     private final Stage stage;
 
     // Data fields
     private final Address address;
+    private final List<Alias> aliases;
+    private final Notes notes;
+    private final Risk risk;
     private final Set<Tag> tags = new HashSet<>();
+    private final List<Encounter> encounters = new ArrayList<>();
 
     /**
-     * Every field must be present and not null.
+     * Full constructor - every field must be present and not null.
      */
-    public Person(Name name, Phone phone, Email email, Address address, Stage stage, Set<Tag> tags) {
-        requireAllNonNull(name, phone, email, address, stage, tags);
+    public Person(Name name, Phone phone, Email email, Address address, Stage stage,
+                  List<Alias> aliases, Notes notes, Risk risk, Set<Tag> tags, List<Encounter> encounters) {
+        requireAllNonNull(name, phone, email, address, stage, aliases, notes, risk, tags, encounters);
         this.name = name;
-        this.alias = new Alias(name.toString());
         this.phone = phone;
         this.email = email;
         this.address = address;
         this.stage = stage;
+        this.aliases = List.copyOf(aliases);
+        this.notes = notes;
+        this.risk = risk;
         this.tags.addAll(tags);
+        this.encounters.addAll(encounters);
+    }
+
+    /**
+     * Convenience constructor without encounters.
+     */
+    public Person(Name name, Phone phone, Email email, Address address, Stage stage,
+                  List<Alias> aliases, Notes notes, Risk risk, Set<Tag> tags) {
+        this(name, phone, email, address, stage, aliases, notes, risk, tags, Collections.emptyList());
+    }
+
+    /**
+     * Convenience constructor with default notes, risk, empty aliases, and no encounters.
+     */
+    public Person(Name name, Phone phone, Email email, Address address, Stage stage, Set<Tag> tags) {
+        this(name, phone, email, address, stage, List.of(), new Notes(""), Risk.getDefault(), tags,
+                Collections.emptyList());
     }
 
     public Name getName() {
         return name;
-    }
-
-    public Alias getAlias() {
-        return alias;
     }
 
     public Phone getPhone() {
@@ -61,8 +82,30 @@ public class Person {
         return address;
     }
 
+    public List<Alias> getAliases() {
+        return Collections.unmodifiableList(aliases);
+    }
+
+    /**
+     * Returns the first alias, or a derived alias from the name if none exist.
+     */
+    public Alias getAlias() {
+        if (!aliases.isEmpty()) {
+            return aliases.get(0);
+        }
+        return new Alias(name.fullName);
+    }
+
+    public Notes getNotes() {
+        return notes;
+    }
+
     public Stage getStage() {
         return stage;
+    }
+
+    public Risk getRisk() {
+        return risk;
     }
 
     /**
@@ -71,6 +114,14 @@ public class Person {
      */
     public Set<Tag> getTags() {
         return Collections.unmodifiableSet(tags);
+    }
+
+    /**
+     * Returns an immutable encounter list, which throws {@code UnsupportedOperationException}
+     * if modification is attempted.
+     */
+    public List<Encounter> getEncounters() {
+        return Collections.unmodifiableList(encounters);
     }
 
     /**
@@ -107,13 +158,16 @@ public class Person {
                 && email.equals(otherPerson.email)
                 && address.equals(otherPerson.address)
                 && stage.equals(otherPerson.stage)
-                && tags.equals(otherPerson.tags);
+                && aliases.equals(otherPerson.aliases)
+                && notes.equals(otherPerson.notes)
+                && risk.equals(otherPerson.risk)
+                && tags.equals(otherPerson.tags)
+                && encounters.equals(otherPerson.encounters);
     }
 
     @Override
     public int hashCode() {
-        // use this method for custom fields hashing instead of implementing your own
-        return Objects.hash(name, phone, email, address, stage, tags);
+        return Objects.hash(name, phone, email, address, stage, aliases, notes, risk, tags, encounters);
     }
 
     @Override
@@ -124,7 +178,11 @@ public class Person {
                 .add("email", email)
                 .add("address", address)
                 .add("stage", stage)
+                .add("aliases", aliases)
+                .add("notes", notes)
+                .add("risk", risk)
                 .add("tags", tags)
+                .add("encounters", encounters)
                 .toString();
     }
 

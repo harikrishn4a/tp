@@ -18,7 +18,7 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 [[portfolio](team/johndoe.md)]
 
 * Role: Project Tester
-* Responsibilities: Testing 
+* Responsibilities: Testing
 
 ### Chang Jia Jun
 

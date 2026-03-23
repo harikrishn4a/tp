@@ -5,12 +5,21 @@
     "email": "alice@example.com",
     "address": "123, Jurong West Ave 6, #08-111",
     "stage": "surveillance",
-    "tags": [ "friends" ]
+    "aliases": [],
+    "notes": "",
+    "risk": "low",
+    "tags": [],
+    "encounters": []
   }, {
     "name": "Alice Pauline",
     "phone": "94351253",
     "email": "pauline@example.com",
     "address": "4th street",
-    "stage": "surveillance"
+    "stage": "surveillance",
+    "aliases": [],
+    "notes": "",
+    "risk": "high",
+    "tags": [],
+    "encounters": []
   } ]
 }
