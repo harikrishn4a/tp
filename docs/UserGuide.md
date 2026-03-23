@@ -20,10 +20,10 @@ AddressBook Level 3 (AB3) is a desktop application for managing contacts. You ca
 
 2. Next, download the latest `.jar` file from [here](https://github.com/se-edu/addressbook-level3/releases).
 
-3. Then, move the 'crimewatch.jar' file to the folder you want to use as the _home folder_ for your AddressBook. (A new, empty folder is recommended)
+3. Then, move the 'crimewatch.jar' file to the folder you want to use as the _home folder_ for your AddressBook. (A new, empty folder is recommended) <br>
 ![Moving .jar file to folder](images/MoveFile.gif)
 
-5. Now, open a command terminal from the folder you put the .jar file in. In the terminal, use the `java -jar addressbook.jar` command to run the application.
+5. Now, open a command terminal from the folder you put the .jar file in. In the terminal, use the `java -jar addressbook.jar` command to run the application. <br>
 ![Opening the .jar file](images/OpenFile.gif)
 
 6. The crimewatch app should appear! By default, the app has some sample data. <br>
