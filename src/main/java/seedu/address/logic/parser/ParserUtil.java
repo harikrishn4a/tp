@@ -9,7 +9,9 @@ import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.StringUtil;
@@ -19,7 +21,9 @@ import seedu.address.model.person.Alias;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Encounter;
 import seedu.address.model.person.Name;
+import seedu.address.model.person.Notes;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.Risk;
 import seedu.address.model.person.Stage;
 import seedu.address.model.tag.Tag;
 
@@ -74,6 +78,21 @@ public class ParserUtil {
     }
 
     /**
+     * Parses a {@code String email} into an {@code Email}.
+     * Leading and trailing whitespaces will be trimmed.
+     *
+     * @throws ParseException if the given {@code email} is invalid.
+     */
+    public static Email parseEmail(String email) throws ParseException {
+        requireNonNull(email);
+        String trimmedEmail = email.trim();
+        if (!Email.isValidEmail(trimmedEmail)) {
+            throw new ParseException(Email.MESSAGE_CONSTRAINTS);
+        }
+        return new Email(trimmedEmail);
+    }
+
+    /**
      * Parses a {@code String address} into an {@code Address}.
      * Leading and trailing whitespaces will be trimmed.
      *
@@ -89,18 +108,61 @@ public class ParserUtil {
     }
 
     /**
-     * Parses a {@code String email} into an {@code Email}.
-     * Leading and trailing whitespaces will be trimmed.
+     * Parses a raw {@code al/} string into a list of {@code Alias}.
+     * Values are comma-separated. Leading/trailing whitespaces around each alias will be trimmed.
      *
-     * @throws ParseException if the given {@code email} is invalid.
+     * <p>An empty input returns an empty alias list.</p>
+     *
+     * @throws ParseException if any alias token is invalid.
      */
-    public static Email parseEmail(String email) throws ParseException {
-        requireNonNull(email);
-        String trimmedEmail = email.trim();
-        if (!Email.isValidEmail(trimmedEmail)) {
-            throw new ParseException(Email.MESSAGE_CONSTRAINTS);
+    public static List<Alias> parseAliases(String rawAliases) throws ParseException {
+        requireNonNull(rawAliases);
+        String trimmed = rawAliases.trim();
+        if (trimmed.isEmpty()) {
+            return List.of();
         }
-        return new Email(trimmedEmail);
+
+        List<String> tokens = List.of(trimmed.split(","));
+        try {
+            return tokens.stream()
+                    .map(String::trim)
+                    .map(token -> {
+                        if (token.isEmpty() || !Alias.isValidAlias(token)) {
+                            throw new IllegalArgumentException("Invalid alias token");
+                        }
+                        return new Alias(token);
+                    })
+                    .collect(Collectors.toList());
+        } catch (IllegalArgumentException ex) {
+            throw new ParseException(Alias.MESSAGE_CONSTRAINTS);
+        }
+    }
+
+    /**
+     * Parses a {@code String notes} into {@code Notes}.
+     *
+     * @throws ParseException if the given {@code notes} is invalid.
+     */
+    public static Notes parseNotes(String notes) throws ParseException {
+        requireNonNull(notes);
+        if (!Notes.isValidNotes(notes)) {
+            throw new ParseException(Notes.MESSAGE_CONSTRAINTS);
+        }
+        return new Notes(notes);
+    }
+
+    /**
+     * Parses a {@code String risk} into a {@code Risk}.
+     *
+     * @throws ParseException if the given {@code risk} is invalid.
+     */
+    public static Risk parseRisk(String risk) throws ParseException {
+        requireNonNull(risk);
+        try {
+            return Risk.fromString(risk);
+        } catch (IllegalArgumentException ex) {
+            throw new ParseException(Risk.MESSAGE_CONSTRAINTS);
+        }
     }
 
     /**

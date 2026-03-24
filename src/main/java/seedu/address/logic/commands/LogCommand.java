@@ -74,11 +74,13 @@ public class LogCommand extends Command {
 
         Person updatedPerson = new Person(
                 personToLog.getName(),
-                personToLog.getAlias(),
                 personToLog.getPhone(),
                 personToLog.getEmail(),
                 personToLog.getAddress(),
                 personToLog.getStage(),
+                personToLog.getAliases(),
+                personToLog.getNotes(),
+                personToLog.getRisk(),
                 personToLog.getTags(),
                 updatedEncounters);
 

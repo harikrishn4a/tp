@@ -2,13 +2,16 @@ package seedu.address.logic.commands;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_ALIAS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTES;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_RISK;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_STAGE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -25,13 +28,15 @@ import seedu.address.model.person.Address;
 import seedu.address.model.person.Alias;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
+import seedu.address.model.person.Notes;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
+import seedu.address.model.person.Risk;
 import seedu.address.model.person.Stage;
 import seedu.address.model.tag.Tag;
 
 /**
- * Edits the details of an existing person in the address book.
+ * Edits the details of an existing person in CrimeWatch.
  */
 public class EditCommand extends Command {
 
@@ -45,6 +50,10 @@ public class EditCommand extends Command {
             + "[" + PREFIX_PHONE + "PHONE] "
             + "[" + PREFIX_EMAIL + "EMAIL] "
             + "[" + PREFIX_ADDRESS + "ADDRESS] "
+            + "[" + PREFIX_STAGE + "STAGE] "
+            + "[" + PREFIX_ALIAS + "ALIAS(,ALIAS...)] "
+            + "[" + PREFIX_NOTES + "NOTES] "
+            + "[" + PREFIX_RISK + "RISK] "
             + "[" + PREFIX_TAG + "TAG]...\n"
             + "Example: " + COMMAND_WORD + " 1 "
             + PREFIX_PHONE + "91234567 "
@@ -52,7 +61,7 @@ public class EditCommand extends Command {
 
     public static final String MESSAGE_EDIT_PERSON_SUCCESS = "Edited Person: %1$s";
     public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided.";
-    public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in the address book.";
+    public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in CrimeWatch.";
 
     private final Index index;
     private final EditPersonDescriptor editPersonDescriptor;
@@ -98,15 +107,17 @@ public class EditCommand extends Command {
         assert personToEdit != null;
 
         Name updatedName = editPersonDescriptor.getName().orElse(personToEdit.getName());
-        Alias updatedAlias = editPersonDescriptor.getAlias().orElse(personToEdit.getAlias());
         Phone updatedPhone = editPersonDescriptor.getPhone().orElse(personToEdit.getPhone());
         Email updatedEmail = editPersonDescriptor.getEmail().orElse(personToEdit.getEmail());
         Address updatedAddress = editPersonDescriptor.getAddress().orElse(personToEdit.getAddress());
         Stage updatedStage = editPersonDescriptor.getStage().orElse(personToEdit.getStage());
+        List<Alias> updatedAliases = editPersonDescriptor.getAliases().orElse(personToEdit.getAliases());
+        Notes updatedNotes = editPersonDescriptor.getNotes().orElse(personToEdit.getNotes());
+        Risk updatedRisk = editPersonDescriptor.getRisk().orElse(personToEdit.getRisk());
         Set<Tag> updatedTags = editPersonDescriptor.getTags().orElse(personToEdit.getTags());
 
-        return new Person(updatedName, updatedAlias, updatedPhone, updatedEmail,
-            updatedAddress, updatedStage, updatedTags);
+        return new Person(updatedName, updatedPhone, updatedEmail, updatedAddress, updatedStage,
+                updatedAliases, updatedNotes, updatedRisk, updatedTags, personToEdit.getEncounters());
     }
 
     @Override
@@ -139,11 +150,13 @@ public class EditCommand extends Command {
      */
     public static class EditPersonDescriptor {
         private Name name;
-        private Alias alias;
         private Phone phone;
         private Email email;
         private Address address;
         private Stage stage;
+        private List<Alias> aliases;
+        private Notes notes;
+        private Risk risk;
         private Set<Tag> tags;
 
         public EditPersonDescriptor() {}
@@ -154,11 +167,13 @@ public class EditCommand extends Command {
          */
         public EditPersonDescriptor(EditPersonDescriptor toCopy) {
             setName(toCopy.name);
-            setAlias(toCopy.alias);
             setPhone(toCopy.phone);
             setEmail(toCopy.email);
             setAddress(toCopy.address);
             setStage(toCopy.stage);
+            setAliases(toCopy.aliases);
+            setNotes(toCopy.notes);
+            setRisk(toCopy.risk);
             setTags(toCopy.tags);
         }
 
@@ -166,7 +181,7 @@ public class EditCommand extends Command {
          * Returns true if at least one field is edited.
          */
         public boolean isAnyFieldEdited() {
-            return CollectionUtil.isAnyNonNull(name, alias, phone, email, address, stage, tags);
+            return CollectionUtil.isAnyNonNull(name, phone, email, address, stage, aliases, notes, risk, tags);
         }
 
         public void setName(Name name) {
@@ -175,14 +190,6 @@ public class EditCommand extends Command {
 
         public Optional<Name> getName() {
             return Optional.ofNullable(name);
-        }
-
-        public void setAlias(Alias alias) {
-            this.alias = alias;
-        }
-
-        public Optional<Alias> getAlias() {
-            return Optional.ofNullable(alias);
         }
 
         public void setPhone(Phone phone) {
@@ -217,6 +224,30 @@ public class EditCommand extends Command {
             return Optional.ofNullable(stage);
         }
 
+        public void setAliases(List<Alias> aliases) {
+            this.aliases = (aliases != null) ? List.copyOf(aliases) : null;
+        }
+
+        public Optional<List<Alias>> getAliases() {
+            return Optional.ofNullable(aliases);
+        }
+
+        public void setNotes(Notes notes) {
+            this.notes = notes;
+        }
+
+        public Optional<Notes> getNotes() {
+            return Optional.ofNullable(notes);
+        }
+
+        public void setRisk(Risk risk) {
+            this.risk = risk;
+        }
+
+        public Optional<Risk> getRisk() {
+            return Optional.ofNullable(risk);
+        }
+
         /**
          * Sets {@code tags} to this object's {@code tags}.
          * A defensive copy of {@code tags} is used internally.
@@ -228,10 +259,9 @@ public class EditCommand extends Command {
         /**
          * Returns an unmodifiable tag set, which throws {@code UnsupportedOperationException}
          * if modification is attempted.
-         * Returns {@code Optional#empty()} if {@code tags} is null.
          */
         public Optional<Set<Tag>> getTags() {
-            return (tags != null) ? Optional.of(Collections.unmodifiableSet(tags)) : Optional.empty();
+            return Optional.ofNullable(tags);
         }
 
         @Override
@@ -247,11 +277,13 @@ public class EditCommand extends Command {
 
             EditPersonDescriptor otherEditPersonDescriptor = (EditPersonDescriptor) other;
             return Objects.equals(name, otherEditPersonDescriptor.name)
-                    && Objects.equals(alias, otherEditPersonDescriptor.alias)
                     && Objects.equals(phone, otherEditPersonDescriptor.phone)
                     && Objects.equals(email, otherEditPersonDescriptor.email)
                     && Objects.equals(address, otherEditPersonDescriptor.address)
                     && Objects.equals(stage, otherEditPersonDescriptor.stage)
+                    && Objects.equals(aliases, otherEditPersonDescriptor.aliases)
+                    && Objects.equals(notes, otherEditPersonDescriptor.notes)
+                    && Objects.equals(risk, otherEditPersonDescriptor.risk)
                     && Objects.equals(tags, otherEditPersonDescriptor.tags);
         }
 
@@ -259,11 +291,13 @@ public class EditCommand extends Command {
         public String toString() {
             return new ToStringBuilder(this)
                     .add("name", name)
-                    .add("alias", alias)
                     .add("phone", phone)
                     .add("email", email)
                     .add("address", address)
                     .add("stage", stage)
+                    .add("aliases", aliases)
+                    .add("notes", notes)
+                    .add("risk", risk)
                     .add("tags", tags)
                     .toString();
         }

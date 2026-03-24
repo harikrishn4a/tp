@@ -29,10 +29,12 @@
       </HBox>
       <FlowPane fx:id="tags" />
       <Label fx:id="stage" styleClass="cell_small_label" text="\$stage" />
-      <Label fx:id="alias" styleClass="cell_small_label" text="\$alias" />
       <Label fx:id="phone" styleClass="cell_small_label" text="\$phone" />
-      <Label fx:id="address" styleClass="cell_small_label" text="\$address" />
       <Label fx:id="email" styleClass="cell_small_label" text="\$email" />
+      <Label fx:id="address" styleClass="cell_small_label" text="\$address" />
+      <Label fx:id="aliases" styleClass="cell_small_label" text="\$aliases" />
+      <Label fx:id="notes" styleClass="cell_small_label" text="\$notes" />
+      <Label fx:id="risk" styleClass="cell_small_label" text="\$risk" />
     </VBox>
   </GridPane>
 </HBox>

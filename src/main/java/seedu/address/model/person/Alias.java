@@ -4,43 +4,47 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
 
 /**
- * Represents a Person's alias in the address book.
- * Guarantees: immutable; is valid as declared in {@link #isValidName(String)}
+ * Represents a Person's alias in the CrimeWatch.
+ * Guarantees: immutable; is valid as declared in {@link #isValidAlias(String)}
  */
 public class Alias {
 
+    public static final int MAX_LENGTH = 50;
     public static final String MESSAGE_CONSTRAINTS =
-            "Aliases should only contain alphanumeric characters and spaces, and it should not be blank";
+            "Invalid alias. Alias must be non-empty, 1 to 50 characters long, and contain only alphanumeric "
+                    + "characters and spaces.";
 
-    /*
-     * The first character of the address must not be a whitespace,
-     * otherwise " " (a blank string) becomes a valid input.
-     */
-    public static final String VALIDATION_REGEX = "[\\p{Alnum}][\\p{Alnum} ]*";
+    private static final String VALIDATION_REGEX = "[A-Za-z0-9 ]+";
 
-    public final String aliasString;
+    public final String value;
 
     /**
-     * Constructs a {@code Alias}.
+     * Constructs an {@code Alias}.
      *
      * @param alias A valid alias.
      */
     public Alias(String alias) {
         requireNonNull(alias);
-        checkArgument(isValidAlias(alias), MESSAGE_CONSTRAINTS);
-        aliasString = alias;
+        String trimmed = alias.trim();
+        checkArgument(isValidAlias(trimmed), MESSAGE_CONSTRAINTS);
+        value = trimmed;
     }
 
     /**
-     * Returns true if a given string is a valid alias.
+     * Returns if a given string is a valid alias.
      */
     public static boolean isValidAlias(String test) {
-        return test.matches(VALIDATION_REGEX);
+        requireNonNull(test);
+        String trimmed = test.trim();
+        if (trimmed.isEmpty() || trimmed.length() > MAX_LENGTH) {
+            return false;
+        }
+        return trimmed.matches(VALIDATION_REGEX);
     }
 
     @Override
     public String toString() {
-        return aliasString;
+        return value;
     }
 
     @Override
@@ -49,18 +53,17 @@ public class Alias {
             return true;
         }
 
-        // instanceof handles nulls
         if (!(other instanceof Alias)) {
             return false;
         }
 
         Alias otherAlias = (Alias) other;
-        return aliasString.equals(otherAlias.aliasString);
+        return value.equals(otherAlias.value);
     }
 
     @Override
     public int hashCode() {
-        return aliasString.hashCode();
+        return value.hashCode();
     }
-
 }
+
