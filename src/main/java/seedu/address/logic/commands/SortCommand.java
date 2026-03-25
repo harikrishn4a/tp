@@ -9,15 +9,12 @@ import java.util.Optional;
 
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.Model;
-import seedu.address.model.person.Encounter;
 import seedu.address.model.person.Person;
-import seedu.address.model.tag.Tag;
 
 /**
  * Sorts the contact list by a supported criterion.
  *
- * <p>Note: in this step, this command only prepares criterion/comparator logic.
- * Parser and model integration are implemented in later steps.</p>
+ * <p>The selected criterion is applied as a view-level comparator via the model.</p>
  */
 public class SortCommand extends Command {
 
@@ -43,6 +40,7 @@ public class SortCommand extends Command {
     @Override
     public CommandResult execute(Model model) {
         requireNonNull(model);
+        model.setPersonSortComparator(getComparator());
         return new CommandResult(String.format(MESSAGE_SUCCESS, criterion.getToken()));
     }
 
@@ -145,9 +143,11 @@ public class SortCommand extends Command {
         }
 
         private static String getLatestEncounterLocation(Person person) {
-            return person.getEncounters().isEmpty()
-                    ? null
-                    : person.getEncounters().get(person.getEncounters().size() - 1).location;
+            if (person.getEncounters().isEmpty()) {
+                return null;
+            }
+            String latestLocation = person.getEncounters().get(person.getEncounters().size() - 1).location;
+            return normalizeLocationForSort(latestLocation);
         }
 
         private static String getSmallestTagName(Person person) {
@@ -161,6 +161,18 @@ public class SortCommand extends Command {
             return person.getEncounters().isEmpty()
                     ? null
                     : person.getEncounters().get(person.getEncounters().size() - 1).dateTime;
+        }
+
+        /**
+         * Normalizes encounter location for stable alphabetical sorting.
+         * Mirrors Encounter/ParserUtil expectations that location is non-blank text.
+         */
+        private static String normalizeLocationForSort(String location) {
+            if (location == null) {
+                return null;
+            }
+            String normalized = location.trim().replaceAll("\\s+", " ");
+            return normalized.isEmpty() ? null : normalized;
         }
     }
 }
