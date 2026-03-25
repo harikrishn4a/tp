@@ -32,6 +32,14 @@ public class Password {
     }
 
     /**
+     * Constructs a default {@code Password}.
+     * Default password is "password123".
+     */
+    public Password() {
+        this("password123");
+    }
+
+    /**
      * Returns true if a given string is a valid password.
      */
     public static boolean isValidPassword(String test) {

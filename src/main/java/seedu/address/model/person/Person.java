@@ -1,5 +1,6 @@
 package seedu.address.model.person;
 
+import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.util.ArrayList;
@@ -31,13 +32,15 @@ public class Person {
     private final Risk risk;
     private final Set<Tag> tags = new HashSet<>();
     private final List<Encounter> encounters = new ArrayList<>();
+    private final Password password = new Password();
 
     /**
      * Full constructor - every field must be present and not null.
      */
     public Person(Name name, Phone phone, Email email, Address address, Stage stage,
-                  List<Alias> aliases, Notes notes, Risk risk, Set<Tag> tags, List<Encounter> encounters) {
-        requireAllNonNull(name, phone, email, address, stage, aliases, notes, risk, tags, encounters);
+                  List<Alias> aliases, Notes notes, Risk risk, Set<Tag> tags, List<Encounter> encounters,
+                  Password password) {
+        requireAllNonNull(name, phone, email, address, stage, aliases, notes, risk, tags, encounters, password);
         this.name = name;
         this.phone = phone;
         this.email = email;
@@ -48,6 +51,15 @@ public class Person {
         this.risk = risk;
         this.tags.addAll(tags);
         this.encounters.addAll(encounters);
+        this.password = password;
+    }
+
+    /** 
+     * Convenience constructor without password.
+     */
+    public Person(Name name, Phone phone, Email email, Address address, Stage stage,
+                  List<Alias> aliases, Notes notes, Risk risk, Set<Tag> tags, List<Encounter> encounters) {
+        this(name, phone, email, address, stage, aliases, notes, risk, tags, encounters, new Password());
     }
 
     /**
@@ -122,6 +134,13 @@ public class Person {
      */
     public List<Encounter> getEncounters() {
         return Collections.unmodifiableList(encounters);
+    }
+
+    /** 
+     * Returns the password of the person.
+     */
+    public Password getPassword() {
+        return password;
     }
 
     /**
