@@ -155,6 +155,58 @@ Classes used by multiple components are in the `seedu.address.commons` package.
 
 This section describes some noteworthy details on how certain features are implemented.
 
+### Add command
+
+#### Command format
+
+The current `add` command format is:
+
+`add n/NAME a/ADDRESS s/STAGE [al/ALIAS(,ALIAS...)] [note/NOTES] [r/RISK] [t/TAG]...`
+
+Required fields:
+- `n/` name
+- `a/` address
+- `s/` stage
+
+Optional fields:
+- `al/` aliases (comma-separated)
+- `note/` notes
+- `r/` risk (defaults to `medium`)
+- `t/` tags (repeatable)
+
+#### Parsing flow
+
+`AddCommandParser` tokenizes by all supported prefixes, validates required prefixes, checks duplicate single-value prefixes, then builds a `Person`.
+
+Implementation references:
+- parser: [`src/main/java/seedu/address/logic/parser/AddCommandParser.java`](../src/main/java/seedu/address/logic/parser/AddCommandParser.java)
+- command: [`src/main/java/seedu/address/logic/commands/AddCommand.java`](../src/main/java/seedu/address/logic/commands/AddCommand.java)
+
+Key parser behavior:
+- Rejects missing required prefixes with `MESSAGE_INVALID_COMMAND_FORMAT`.
+- Uses `verifyNoDuplicatePrefixesFor(...)` for `n/`, `a/`, `al/`, `note/`, `r/`, `s/`.
+- Parses aliases via `ParserUtil.parseAliases(...)`; empty alias payload is rejected.
+- Applies default risk via `Risk.getDefault()` when `r/` is omitted.
+- Parses tags from all `t/` occurrences into a `Set<Tag>`.
+
+#### Field constraints
+
+Validation is enforced in model/value objects and parser utilities:
+- `Name`: alphanumeric + spaces, non-blank.
+- `Alias`: trimmed, 1-50 chars, alphanumeric + spaces.
+- `Stage`: one of `surveillance`, `approached`, `cooperating`, `arrested`, `closed`.
+- `Notes`: optional text, max 500 chars, no newlines.
+- `Risk`: one of `low`, `medium`, `high` (case-insensitive parser).
+- `Tag`: alphanumeric.
+
+Relevant classes:
+- [`src/main/java/seedu/address/logic/parser/ParserUtil.java`](../src/main/java/seedu/address/logic/parser/ParserUtil.java)
+- [`src/main/java/seedu/address/model/person/Name.java`](../src/main/java/seedu/address/model/person/Name.java)
+- [`src/main/java/seedu/address/model/person/Alias.java`](../src/main/java/seedu/address/model/person/Alias.java)
+- [`src/main/java/seedu/address/model/person/Stage.java`](../src/main/java/seedu/address/model/person/Stage.java)
+- [`src/main/java/seedu/address/model/person/Notes.java`](../src/main/java/seedu/address/model/person/Notes.java)
+- [`src/main/java/seedu/address/model/person/Risk.java`](../src/main/java/seedu/address/model/person/Risk.java)
+- [`src/main/java/seedu/address/model/tag/Tag.java`](../src/main/java/seedu/address/model/tag/Tag.java)
 ### Sort feature
 
 #### Overview

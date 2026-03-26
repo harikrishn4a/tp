@@ -61,7 +61,7 @@ CrimeWatch is a CLI-based contact tracking tool for managing **person-of-interes
 
    * `list` : Lists all contacts.
 
-   * `add n/John Doe p/98765432 e/johnd@example.com a/John street, block 123, #01-01` : Adds a contact named `John Doe` to the Address Book.
+   * `add n/John Doe a/311, Clementi Ave 2, #02-25 s/surveillance al/Johnny note/Met at cafe r/high t/friend` : Adds a contact named `John Doe` with stage and optional fields.
 
    * `delete 3` : Deletes the 3rd contact shown in the current list.
 
@@ -125,6 +125,24 @@ Creates a new contact profile (suspect / person of interest).
 **Format**
 `add n/NAME a/ALIAS s/STAGE [r/RISK] [note/NOTES]`
 
+Format: `add n/NAME a/ADDRESS s/STAGE [al/ALIAS(,ALIAS...)] [note/NOTES] [r/RISK] [t/TAG]...`
+
+<div markdown="span" class="alert alert-primary">:bulb: **Tip:**
+A person can have any number of tags (including 0), and aliases are comma-separated if more than one is provided.
+</div>
+
+Parameters:
+- `n/NAME` (required): contact name (alphanumeric + spaces, not blank)
+- `a/ADDRESS` (required): contact address
+- `s/STAGE` (required): one of `surveillance`, `approached`, `cooperating`, `arrested`, `closed` (case-insensitive)
+- `al/ALIAS(,ALIAS...)` (optional): alias list, comma-separated
+- `note/NOTES` (optional): notes up to 500 characters, no newlines
+- `r/RISK` (optional): one of `low`, `medium`, `high` (default: `medium`)
+- `t/TAG` (optional, repeatable): tag(s), alphanumeric
+
+Examples:
+* `add n/John Doe a/311, Clementi Ave 2, #02-25 s/surveillance`
+* `add n/Michael Lee a/Marina Bay Sands s/approached al/Big Mike, MLee note/Seen at Marina Bay r/high t/priority t/network`
 **Parameters**
 - `n/NAME` (compulsory): full name
 - `a/ALIAS` (compulsory): one or more aliases (**comma-separated**)
