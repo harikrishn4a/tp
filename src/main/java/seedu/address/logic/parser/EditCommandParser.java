@@ -7,6 +7,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_ALIAS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTES;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_PASSWORD;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_RISK;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STAGE;
@@ -41,7 +42,8 @@ public class EditCommandParser implements Parser<EditCommand> {
         requireNonNull(args);
         ArgumentMultimap argMultimap =
                 ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL,
-                        PREFIX_ADDRESS, PREFIX_STAGE, PREFIX_ALIAS, PREFIX_NOTES, PREFIX_RISK, PREFIX_TAG);
+                    PREFIX_ADDRESS, PREFIX_STAGE, PREFIX_ALIAS, PREFIX_NOTES,
+                    PREFIX_RISK, PREFIX_PASSWORD, PREFIX_TAG);
 
         Index index;
 
@@ -52,7 +54,7 @@ public class EditCommandParser implements Parser<EditCommand> {
         }
 
         argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL,
-                PREFIX_ADDRESS, PREFIX_STAGE, PREFIX_ALIAS, PREFIX_NOTES, PREFIX_RISK);
+            PREFIX_ADDRESS, PREFIX_STAGE, PREFIX_ALIAS, PREFIX_NOTES, PREFIX_RISK, PREFIX_PASSWORD);
 
         EditPersonDescriptor editPersonDescriptor = new EditPersonDescriptor();
 
@@ -82,6 +84,14 @@ public class EditCommandParser implements Parser<EditCommand> {
         if (argMultimap.getValue(PREFIX_RISK).isPresent()) {
             Risk risk = ParserUtil.parseRisk(argMultimap.getValue(PREFIX_RISK).get());
             editPersonDescriptor.setRisk(risk);
+        }
+        if (argMultimap.getValue(PREFIX_PASSWORD).isPresent()) {
+            String rawPassword = argMultimap.getValue(PREFIX_PASSWORD).get();
+            if (rawPassword.trim().isEmpty()) {
+                editPersonDescriptor.clearPassword();
+            } else {
+                editPersonDescriptor.setPassword(ParserUtil.parsePassword(rawPassword));
+            }
         }
         parseTagsForEdit(argMultimap.getAllValues(PREFIX_TAG)).ifPresent(editPersonDescriptor::setTags);
 

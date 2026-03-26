@@ -21,13 +21,26 @@ public class ViewCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Displays the full profile of the contact identified by the index number used in the displayed list.\n"
-            + "Parameters: INDEX (must be a positive integer)\n"
-            + "Example: " + COMMAND_WORD + " 1";
+            + "Parameters: INDEX (must be a positive integer) [pw/PASSWORD]\n"
+            + "Example: " + COMMAND_WORD + " 1 pw/hunter2";
+
+    public static final String MESSAGE_PASSWORD_REQUIRED =
+            "This contact is password-protected. Use view INDEX pw/PASSWORD.";
+    public static final String MESSAGE_INCORRECT_PASSWORD = "Incorrect password for this contact.";
 
     private final Index targetIndex;
+    private final String providedPassword;
 
     public ViewCommand(Index targetIndex) {
+        this(targetIndex, null);
+    }
+
+    /**
+     * Creates a view command for an index with an optional password.
+     */
+    public ViewCommand(Index targetIndex, String providedPassword) {
         this.targetIndex = targetIndex;
+        this.providedPassword = providedPassword;
     }
 
     @Override
@@ -40,6 +53,14 @@ public class ViewCommand extends Command {
         }
 
         Person person = lastShownList.get(targetIndex.getZeroBased());
+        if (person.hasPassword()) {
+            if (providedPassword == null) {
+                throw new CommandException(MESSAGE_PASSWORD_REQUIRED);
+            }
+            if (!person.isPasswordMatch(providedPassword)) {
+                throw new CommandException(MESSAGE_INCORRECT_PASSWORD);
+            }
+        }
         return new CommandResult(Messages.format(person), person);
     }
 
@@ -52,13 +73,15 @@ public class ViewCommand extends Command {
             return false;
         }
         ViewCommand otherViewCommand = (ViewCommand) other;
-        return targetIndex.equals(otherViewCommand.targetIndex);
+        return targetIndex.equals(otherViewCommand.targetIndex)
+            && java.util.Objects.equals(providedPassword, otherViewCommand.providedPassword);
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .add("targetIndex", targetIndex)
+            .add("hasProvidedPassword", providedPassword != null)
                 .toString();
     }
 }

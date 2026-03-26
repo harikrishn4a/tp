@@ -22,6 +22,7 @@ import seedu.address.model.person.Email;
 import seedu.address.model.person.Encounter;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Notes;
+import seedu.address.model.person.Password;
 import seedu.address.model.person.Phone;
 import seedu.address.model.person.Risk;
 import seedu.address.model.person.Stage;
@@ -217,6 +218,21 @@ public class ParserUtil {
         } catch (IllegalArgumentException ex) {
             throw new ParseException(Stage.MESSAGE_CONSTRAINTS);
         }
+    }
+
+    /**
+     * Parses a {@code String password} into a {@code Password}.
+     * Leading and trailing whitespaces will be trimmed.
+     *
+     * @throws ParseException if the given {@code password} is invalid.
+     */
+    public static Password parsePassword(String password) throws ParseException {
+        requireNonNull(password);
+        String trimmedPassword = password.trim();
+        if (!Password.isValidPassword(trimmedPassword)) {
+            throw new ParseException(Password.MESSAGE_CONSTRAINTS);
+        }
+        return new Password(trimmedPassword);
     }
 
     /**

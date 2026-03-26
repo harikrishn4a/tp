@@ -39,6 +39,11 @@ public class EditPersonDescriptorBuilder {
         descriptor.setNotes(person.getNotes());
         descriptor.setRisk(person.getRisk());
         descriptor.setTags(person.getTags());
+        if (person.getPassword() == null) {
+            descriptor.clearPassword();
+        } else {
+            descriptor.setPassword(person.getPassword());
+        }
     }
 
     /**
@@ -86,6 +91,22 @@ public class EditPersonDescriptorBuilder {
      */
     public EditPersonDescriptorBuilder withRisk(String risk) {
         descriptor.setRisk(Risk.fromString(risk));
+        return this;
+    }
+
+    /**
+     * Sets the password in the descriptor.
+     */
+    public EditPersonDescriptorBuilder withPassword(String password) {
+        descriptor.setPassword(new seedu.address.model.person.Password(password));
+        return this;
+    }
+
+    /**
+     * Clears the password in the descriptor.
+     */
+    public EditPersonDescriptorBuilder withoutPassword() {
+        descriptor.clearPassword();
         return this;
     }
 

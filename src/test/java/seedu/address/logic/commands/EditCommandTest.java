@@ -14,6 +14,9 @@ import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_PERSON;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
@@ -23,6 +26,7 @@ import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
+import seedu.address.model.person.Encounter;
 import seedu.address.model.person.Person;
 import seedu.address.testutil.EditPersonDescriptorBuilder;
 import seedu.address.testutil.PersonBuilder;
@@ -143,6 +147,35 @@ public class EditCommandTest {
                 new EditPersonDescriptorBuilder().withName(VALID_NAME_BOB).build());
 
         assertCommandFailure(editCommand, model, Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+    }
+
+    @Test
+    public void execute_editFieldsSpecified_preservesEncounters() {
+        Encounter existingEncounter = new Encounter(
+                LocalDateTime.of(2026, 3, 10, 9, 30),
+                "Maxwell Road",
+                "Observed handoff",
+                Optional.of("Follow-up required"));
+        Person personWithEncounter = new PersonBuilder(
+                model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased()))
+                .withEncounters(existingEncounter)
+                .build();
+        model.setPerson(model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased()), personWithEncounter);
+
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withRisk(VALID_RISK_HIGH).build();
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor);
+
+        Person expectedEditedPerson = new PersonBuilder(personWithEncounter).withRisk(VALID_RISK_HIGH).build();
+        String expectedMessage =
+                String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(expectedEditedPerson));
+
+        Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+        expectedModel.setPerson(personWithEncounter, expectedEditedPerson);
+
+        assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
+        assertEquals(1, model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased()).getEncounters().size());
+        assertEquals(existingEncounter, model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased())
+                .getEncounters().get(0));
     }
 
     @Test

@@ -11,7 +11,7 @@ import java.util.Optional;
 import seedu.address.commons.util.ToStringBuilder;
 
 /**
- * Represents an Encounter with a Person in the address book.
+ * Represents an Encounter with a Person in CrimeWatch.
  * Guarantees: immutable; all required fields are present and not null; all fields satisfy their constraints.
  */
 public class Encounter {

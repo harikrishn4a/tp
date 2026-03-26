@@ -10,7 +10,7 @@ import seedu.address.model.Model;
 import seedu.address.model.person.Person;
 
 /**
- * Finds and lists all persons in address book whose names match the supplied criteria.
+ * Finds and lists all persons in CrimeWatch whose names match the supplied criteria.
  */
 public class FindCommand extends Command {
 

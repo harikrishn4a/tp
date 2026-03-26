@@ -51,6 +51,8 @@ public class Messages {
                 .append(person.getNotes())
                 .append("; Risk: ")
                 .append(person.getRisk())
+                .append("; Protected: ")
+                .append(person.hasPassword() ? "yes" : "no")
                 .append("; Tags: ");
         person.getTags().forEach(builder::append);
         return builder.toString();

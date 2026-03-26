@@ -1,6 +1,7 @@
 package seedu.address.logic.parser;
 
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_PASSWORD;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.ViewCommand;
@@ -18,8 +19,15 @@ public class ViewCommandParser implements Parser<ViewCommand> {
      */
     public ViewCommand parse(String args) throws ParseException {
         try {
-            Index index = ParserUtil.parseIndex(args);
-            return new ViewCommand(index);
+            ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, PREFIX_PASSWORD);
+            argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_PASSWORD);
+
+            Index index = ParserUtil.parseIndex(argMultimap.getPreamble());
+            String password = null;
+            if (argMultimap.getValue(PREFIX_PASSWORD).isPresent()) {
+                password = ParserUtil.parsePassword(argMultimap.getValue(PREFIX_PASSWORD).get()).toString();
+            }
+            return new ViewCommand(index, password);
         } catch (ParseException pe) {
             throw new ParseException(
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, ViewCommand.MESSAGE_USAGE), pe);

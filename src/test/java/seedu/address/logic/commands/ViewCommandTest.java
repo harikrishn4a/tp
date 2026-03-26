@@ -19,6 +19,7 @@ import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.person.Person;
+import seedu.address.testutil.PersonBuilder;
 
 /**
  * Contains integration tests (interaction with the Model) and unit tests for
@@ -84,12 +85,37 @@ public class ViewCommandTest {
     }
 
     @Test
+    public void execute_protectedContactWithoutPassword_throwsCommandException() {
+        Person original = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person protectedPerson = new PersonBuilder(original).withPassword("secret").build();
+        model.setPerson(original, protectedPerson);
+
+        ViewCommand viewCommand = new ViewCommand(INDEX_FIRST_PERSON);
+        assertCommandFailure(viewCommand, model, ViewCommand.MESSAGE_PASSWORD_REQUIRED);
+    }
+
+    @Test
+    public void execute_protectedContactWithCorrectPassword_success() {
+        Person original = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person protectedPerson = new PersonBuilder(original).withPassword("secret").build();
+        model.setPerson(original, protectedPerson);
+
+        ViewCommand viewCommand = new ViewCommand(INDEX_FIRST_PERSON, "secret");
+        CommandResult expectedResult = new CommandResult(Messages.format(protectedPerson), protectedPerson);
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+
+        assertCommandSuccess(viewCommand, model, expectedResult, expectedModel);
+    }
+
+    @Test
     public void equals() {
         ViewCommand viewFirstCommand = new ViewCommand(INDEX_FIRST_PERSON);
         ViewCommand viewSecondCommand = new ViewCommand(INDEX_SECOND_PERSON);
+        ViewCommand viewFirstWithPasswordCommand = new ViewCommand(INDEX_FIRST_PERSON, "secret");
 
         assertTrue(viewFirstCommand.equals(viewFirstCommand));
         assertTrue(viewFirstCommand.equals(new ViewCommand(INDEX_FIRST_PERSON)));
+        assertFalse(viewFirstCommand.equals(viewFirstWithPasswordCommand));
         assertFalse(viewFirstCommand.equals(1));
         assertFalse(viewFirstCommand.equals(null));
         assertFalse(viewFirstCommand.equals(viewSecondCommand));
@@ -99,7 +125,8 @@ public class ViewCommandTest {
     public void toStringMethod() {
         Index targetIndex = Index.fromOneBased(1);
         ViewCommand viewCommand = new ViewCommand(targetIndex);
-        String expected = ViewCommand.class.getCanonicalName() + "{targetIndex=" + targetIndex + "}";
+        String expected = ViewCommand.class.getCanonicalName()
+            + "{targetIndex=" + targetIndex + ", hasProvidedPassword=false}";
         assertEquals(expected, viewCommand.toString());
     }
 }

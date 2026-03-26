@@ -202,6 +202,18 @@ public class MainWindow extends UiPart<Stage> {
     }
 
     /**
+     * Restores the content area to show only the person list (hides the view panel).
+     */
+    private void hideViewPanel() {
+        if (contentAreaPlaceholder.getChildren().size() == 1
+                && contentAreaPlaceholder.getChildren().get(0) instanceof SplitPane) {
+            SplitPane splitPane = (SplitPane) contentAreaPlaceholder.getChildren().remove(0);
+            VBox personListVBox = (VBox) splitPane.getItems().get(0);
+            contentAreaPlaceholder.getChildren().add(personListVBox);
+        }
+    }
+
+    /**
      * Executes the command and returns the result.
      *
      * @see seedu.address.logic.Logic#execute(String)
@@ -220,7 +232,11 @@ public class MainWindow extends UiPart<Stage> {
                 handleExit();
             }
 
-            commandResult.getPersonToView().ifPresent(this::showViewPanel);
+            if (commandResult.getPersonToView().isPresent()) {
+                showViewPanel(commandResult.getPersonToView().get());
+            } else {
+                hideViewPanel();
+            }
 
             return commandResult;
         } catch (CommandException | ParseException e) {

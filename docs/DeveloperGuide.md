@@ -208,6 +208,80 @@ Relevant classes:
 - [`src/main/java/seedu/address/model/person/Risk.java`](../src/main/java/seedu/address/model/person/Risk.java)
 - [`src/main/java/seedu/address/model/tag/Tag.java`](../src/main/java/seedu/address/model/tag/Tag.java)
 
+### Sort feature
+
+#### Overview
+
+The `sort` feature reorders the currently displayed contact list by a selected criterion:
+- `location`
+- `tag`
+- `alphabetical`
+- `status`
+- `recent`
+
+This is implemented as a **view-level sort**. It does not mutate persisted `AddressBook` ordering in storage.
+
+#### Command flow
+
+1. User enters `sort CRITERION`.
+2. `AddressBookParser` routes the command word `sort` to `SortCommandParser`.
+3. `SortCommandParser` validates that there is exactly one token and maps it to `SortCriterion`.
+4. `SortCommand#execute(Model)` calls `model.setPersonSortComparator(...)` with the criterion comparator.
+5. UI updates automatically because it is bound to `Model#getFilteredPersonList()`.
+
+Key classes:
+- [`src/main/java/seedu/address/logic/parser/AddressBookParser.java`](../src/main/java/seedu/address/logic/parser/AddressBookParser.java)
+- [`src/main/java/seedu/address/logic/parser/SortCommandParser.java`](../src/main/java/seedu/address/logic/parser/SortCommandParser.java)
+- [`src/main/java/seedu/address/logic/commands/SortCommand.java`](../src/main/java/seedu/address/logic/commands/SortCommand.java)
+
+#### Model integration
+
+Sorting support is added to the `Model` API:
+- `setPersonSortComparator(Comparator<Person>)`
+- `clearPersonSortComparator()`
+
+`ModelManager` now keeps:
+- `FilteredList<Person> filteredPersons` for filtering
+- `SortedList<Person> sortedPersons` wrapping `filteredPersons` for sorting
+
+`getFilteredPersonList()` returns `sortedPersons`, so existing UI wiring works without extra UI changes.
+
+Key classes:
+- [`src/main/java/seedu/address/model/Model.java`](../src/main/java/seedu/address/model/Model.java)
+- [`src/main/java/seedu/address/model/ModelManager.java`](../src/main/java/seedu/address/model/ModelManager.java)
+
+#### Comparator behavior
+
+Implemented in `SortCommand.SortCriterion`:
+- `alphabetical`: by `Person#getName()`
+- `status`: by `Person#getStage().toString()`, then by name
+- `tag`: by alphabetically smallest tag name, nulls last, then by name
+- `location`: by latest encounter location, normalized (trim + collapse spaces), nulls last, then by name
+- `recent`: by latest encounter datetime descending (most recent first), then by name
+
+For contacts with missing values (e.g., no encounters/no tags), comparators use `nullsLast(...)` so they appear at the end for those criteria.
+
+#### Defensive parsing and validation
+
+`SortCommandParser` rejects:
+- missing criterion
+- multiple tokens
+- unsupported criterion
+
+All invalid forms throw `ParseException` with `MESSAGE_INVALID_COMMAND_FORMAT` and command usage.
+
+#### Tests
+
+Parser tests:
+- [`src/test/java/seedu/address/logic/parser/SortCommandParserTest.java`](../src/test/java/seedu/address/logic/parser/SortCommandParserTest.java)
+- registration coverage in [`src/test/java/seedu/address/logic/parser/AddressBookParserTest.java`](../src/test/java/seedu/address/logic/parser/AddressBookParserTest.java)
+
+Command/model integration tests:
+- [`src/test/java/seedu/address/logic/commands/SortCommandTest.java`](../src/test/java/seedu/address/logic/commands/SortCommandTest.java)
+
+Compatibility updates:
+- `Model` test stubs implement the new methods, e.g. in [`src/test/java/seedu/address/logic/commands/AddCommandTest.java`](../src/test/java/seedu/address/logic/commands/AddCommandTest.java)
+
 ### \[Proposed\] Undo/redo feature
 
 #### Proposed Implementation
@@ -382,6 +456,70 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 * 3a. The given index is invalid.
 
     * 3a1. CrimeWatch shows an error message.
+
+      Use case resumes at step 2.
+
+**Use case: Edit a person**
+
+**MSS**
+
+1.  User requests to list persons
+2.  CrimeWatch shows a list of contacts
+3.  User requests to edit a specific person in the list with one or more fields
+4.  CrimeWatch updates only the provided fields for that contact
+
+    Use case ends.
+
+**Extensions**
+
+* 2a. The list is empty.
+
+  Use case ends.
+
+* 3a. The given index is invalid.
+
+    * 3a1. CrimeWatch shows an error message.
+
+      Use case resumes at step 2.
+
+* 3b. No editable field is provided.
+
+    * 3b1. CrimeWatch shows an error message.
+
+      Use case resumes at step 2.
+
+**Use case: Edit an encounter**
+
+**MSS**
+
+1.  User requests to view a contact profile
+2.  CrimeWatch shows encounter cards with encounter indices
+3.  User requests to edit a specific encounter using `PERSON_INDEX` and `ENCOUNTER_INDEX`
+4.  CrimeWatch updates only the provided encounter fields
+
+    Use case ends.
+
+**Extensions**
+
+* 2a. The contact has no encounters.
+
+  Use case ends.
+
+* 3a. The given person index is invalid.
+
+    * 3a1. CrimeWatch shows an error message.
+
+      Use case resumes at step 2.
+
+* 3b. The given encounter index is invalid.
+
+    * 3b1. CrimeWatch shows an error message.
+
+      Use case resumes at step 2.
+
+* 3c. No editable field is provided.
+
+    * 3c1. CrimeWatch shows an error message.
 
       Use case resumes at step 2.
 

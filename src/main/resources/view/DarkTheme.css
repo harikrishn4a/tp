@@ -413,3 +413,41 @@
     -fx-font-size: 10pt;
     -fx-font-family: "Segoe UI";
 }
+
+.view-risk-badge {
+    -fx-font-size: 9pt;
+    -fx-font-family: "Segoe UI Semibold";
+    -fx-text-fill: white;
+    -fx-padding: 2 8 2 8;
+    -fx-background-radius: 3;
+}
+
+.view-risk-low {
+    -fx-background-color: #2e7d32;
+}
+
+.view-risk-medium {
+    -fx-background-color: #f57c00;
+}
+
+.view-risk-high {
+    -fx-background-color: #c62828;
+}
+
+.encounter-card {
+    -fx-background-color: derive(#1d1d1d, 30%);
+    -fx-background-radius: 4;
+}
+
+.encounter-header {
+    -fx-font-size: 10pt;
+    -fx-font-family: "Segoe UI Semibold";
+    -fx-text-fill: #85b8cb;
+}
+
+.encounter-outcome {
+    -fx-font-size: 10pt;
+    -fx-font-family: "Segoe UI";
+    -fx-text-fill: #b0b0b0;
+    -fx-font-style: italic;
+}

@@ -13,6 +13,7 @@ import seedu.address.model.person.Email;
 import seedu.address.model.person.Encounter;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Notes;
+import seedu.address.model.person.Password;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
 import seedu.address.model.person.Risk;
@@ -39,6 +40,7 @@ public class PersonBuilder {
     private Risk risk;
     private Set<Tag> tags;
     private List<Encounter> encounters;
+    private Password password;
 
     /**
      * Creates a {@code PersonBuilder} with the default details.
@@ -54,6 +56,7 @@ public class PersonBuilder {
         risk = Risk.getDefault();
         tags = new HashSet<>();
         encounters = new ArrayList<>();
+        password = null;
     }
 
     /**
@@ -70,6 +73,7 @@ public class PersonBuilder {
         risk = personToCopy.getRisk();
         tags = new HashSet<>(personToCopy.getTags());
         encounters = new ArrayList<>(personToCopy.getEncounters());
+        password = personToCopy.getPassword();
     }
 
     /**
@@ -160,7 +164,23 @@ public class PersonBuilder {
         return this;
     }
 
+    /**
+     * Sets the password for the person.
+     */
+    public PersonBuilder withPassword(String password) {
+        this.password = new Password(password);
+        return this;
+    }
+
+    /**
+     * Clears password protection for the person.
+     */
+    public PersonBuilder withoutPassword() {
+        this.password = null;
+        return this;
+    }
+
     public Person build() {
-        return new Person(name, phone, email, address, stage, aliases, notes, risk, tags, encounters);
+        return new Person(name, phone, email, address, stage, aliases, notes, risk, tags, encounters, password);
     }
 }

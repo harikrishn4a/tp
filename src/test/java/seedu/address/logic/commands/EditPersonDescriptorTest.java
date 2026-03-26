@@ -59,7 +59,9 @@ public class EditPersonDescriptorTest {
                 + editPersonDescriptor.getAliases().orElse(null) + ", notes="
                 + editPersonDescriptor.getNotes().orElse(null) + ", risk="
                 + editPersonDescriptor.getRisk().orElse(null) + ", tags="
-                + editPersonDescriptor.getTags().orElse(null) + "}";
+                + editPersonDescriptor.getTags().orElse(null) + ", password="
+                + editPersonDescriptor.getPassword().orElse(null) + ", isPasswordEdited="
+                + editPersonDescriptor.isPasswordEdited() + "}";
         assertEquals(expected, editPersonDescriptor.toString());
     }
 }

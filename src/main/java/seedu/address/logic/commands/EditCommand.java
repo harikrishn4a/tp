@@ -6,6 +6,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_ALIAS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTES;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_PASSWORD;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_RISK;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STAGE;
@@ -29,6 +30,7 @@ import seedu.address.model.person.Alias;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Notes;
+import seedu.address.model.person.Password;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Phone;
 import seedu.address.model.person.Risk;
@@ -36,7 +38,7 @@ import seedu.address.model.person.Stage;
 import seedu.address.model.tag.Tag;
 
 /**
- * Edits the details of an existing person in the address book.
+ * Edits the details of an existing person in CrimeWatch.
  */
 public class EditCommand extends Command {
 
@@ -54,6 +56,7 @@ public class EditCommand extends Command {
             + "[" + PREFIX_ALIAS + "ALIAS(,ALIAS...)] "
             + "[" + PREFIX_NOTES + "NOTES] "
             + "[" + PREFIX_RISK + "RISK] "
+            + "[" + PREFIX_PASSWORD + "PASSWORD] "
             + "[" + PREFIX_TAG + "TAG]...\n"
             + "Example: " + COMMAND_WORD + " 1 "
             + PREFIX_PHONE + "91234567 "
@@ -61,7 +64,7 @@ public class EditCommand extends Command {
 
     public static final String MESSAGE_EDIT_PERSON_SUCCESS = "Edited Person: %1$s";
     public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided.";
-    public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in the address book.";
+    public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in CrimeWatch.";
 
     private final Index index;
     private final EditPersonDescriptor editPersonDescriptor;
@@ -115,9 +118,14 @@ public class EditCommand extends Command {
         Notes updatedNotes = editPersonDescriptor.getNotes().orElse(personToEdit.getNotes());
         Risk updatedRisk = editPersonDescriptor.getRisk().orElse(personToEdit.getRisk());
         Set<Tag> updatedTags = editPersonDescriptor.getTags().orElse(personToEdit.getTags());
+        Password updatedPassword = personToEdit.getPassword();
+        if (editPersonDescriptor.isPasswordEdited()) {
+            updatedPassword = editPersonDescriptor.getPassword().orElse(null);
+        }
 
         return new Person(updatedName, updatedPhone, updatedEmail, updatedAddress, updatedStage,
-                updatedAliases, updatedNotes, updatedRisk, updatedTags, personToEdit.getEncounters());
+            updatedAliases, updatedNotes, updatedRisk, updatedTags, personToEdit.getEncounters(),
+            updatedPassword);
     }
 
     @Override
@@ -158,6 +166,8 @@ public class EditCommand extends Command {
         private Notes notes;
         private Risk risk;
         private Set<Tag> tags;
+        private Password password;
+        private boolean isPasswordEdited;
 
         public EditPersonDescriptor() {}
 
@@ -175,13 +185,21 @@ public class EditCommand extends Command {
             setNotes(toCopy.notes);
             setRisk(toCopy.risk);
             setTags(toCopy.tags);
+            if (toCopy.isPasswordEdited) {
+                if (toCopy.password == null) {
+                    clearPassword();
+                } else {
+                    setPassword(toCopy.password);
+                }
+            }
         }
 
         /**
          * Returns true if at least one field is edited.
          */
         public boolean isAnyFieldEdited() {
-            return CollectionUtil.isAnyNonNull(name, phone, email, address, stage, aliases, notes, risk, tags);
+            return CollectionUtil.isAnyNonNull(name, phone, email, address, stage, aliases, notes, risk, tags)
+                    || isPasswordEdited;
         }
 
         public void setName(Name name) {
@@ -264,6 +282,36 @@ public class EditCommand extends Command {
             return Optional.ofNullable(tags);
         }
 
+        /**
+         * Sets the password to update for the edited person.
+         */
+        public void setPassword(Password password) {
+            this.password = password;
+            this.isPasswordEdited = true;
+        }
+
+        /**
+         * Marks password protection for removal on the edited person.
+         */
+        public void clearPassword() {
+            this.password = null;
+            this.isPasswordEdited = true;
+        }
+
+        /**
+         * Returns the password that should be applied after editing, if any.
+         */
+        public Optional<Password> getPassword() {
+            return Optional.ofNullable(password);
+        }
+
+        /**
+         * Returns true if the password field was explicitly edited.
+         */
+        public boolean isPasswordEdited() {
+            return isPasswordEdited;
+        }
+
         @Override
         public boolean equals(Object other) {
             if (other == this) {
@@ -284,7 +332,9 @@ public class EditCommand extends Command {
                     && Objects.equals(aliases, otherEditPersonDescriptor.aliases)
                     && Objects.equals(notes, otherEditPersonDescriptor.notes)
                     && Objects.equals(risk, otherEditPersonDescriptor.risk)
-                    && Objects.equals(tags, otherEditPersonDescriptor.tags);
+                    && Objects.equals(tags, otherEditPersonDescriptor.tags)
+                    && Objects.equals(password, otherEditPersonDescriptor.password)
+                    && isPasswordEdited == otherEditPersonDescriptor.isPasswordEdited;
         }
 
         @Override
@@ -299,6 +349,8 @@ public class EditCommand extends Command {
                     .add("notes", notes)
                     .add("risk", risk)
                     .add("tags", tags)
+                    .add("password", password)
+                    .add("isPasswordEdited", isPasswordEdited)
                     .toString();
         }
     }

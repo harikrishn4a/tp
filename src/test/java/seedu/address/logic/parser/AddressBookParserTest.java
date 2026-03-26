@@ -18,10 +18,12 @@ import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.DeleteCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditCommand.EditPersonDescriptor;
+import seedu.address.logic.commands.EditEncounterCommand;
 import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListCommand;
+import seedu.address.logic.commands.SortCommand;
 import seedu.address.logic.commands.ViewCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
@@ -69,6 +71,20 @@ public class AddressBookParserTest {
     }
 
     @Test
+    public void parseCommand_editEncounter() throws Exception {
+        EditEncounterCommand.EditEncounterDescriptor descriptor = new EditEncounterCommand.EditEncounterDescriptor();
+        descriptor.setDescription("Updated encounter");
+        EditEncounterCommand expectedCommand =
+                new EditEncounterCommand(INDEX_FIRST_PERSON, INDEX_FIRST_PERSON, descriptor);
+
+        EditEncounterCommand command = (EditEncounterCommand) parser.parseCommand(
+                EditEncounterCommand.COMMAND_WORD + " "
+                        + INDEX_FIRST_PERSON.getOneBased() + " "
+                        + INDEX_FIRST_PERSON.getOneBased() + " desc/Updated encounter");
+        assertEquals(expectedCommand, command);
+    }
+
+    @Test
     public void parseCommand_exit() throws Exception {
         assertTrue(parser.parseCommand(ExitCommand.COMMAND_WORD) instanceof ExitCommand);
         assertTrue(parser.parseCommand(ExitCommand.COMMAND_WORD + " 3") instanceof ExitCommand);
@@ -100,6 +116,12 @@ public class AddressBookParserTest {
         ViewCommand command = (ViewCommand) parser.parseCommand(
                 ViewCommand.COMMAND_WORD + " " + INDEX_FIRST_PERSON.getOneBased());
         assertEquals(new ViewCommand(INDEX_FIRST_PERSON), command);
+    }
+
+    @Test
+    public void parseCommand_sort() throws Exception {
+        SortCommand command = (SortCommand) parser.parseCommand(SortCommand.COMMAND_WORD + " location");
+        assertEquals(new SortCommand(SortCommand.SortCriterion.LOCATION), command);
     }
 
     @Test

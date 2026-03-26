@@ -1,5 +1,7 @@
-[![CI Status](https://github.com/se-edu/addressbook-level3/workflows/Java%20CI/badge.svg)](https://github.com/se-edu/addressbook-level3/actions)
-
+[![CI Status](https://github.com/AY2526S2-CS2103T-T16-4/tp/workflows/Java%20CI/badge.svg)](https://github.com/AY2526S2-CS2103T-T16-4/tp/actions)
+![Java](https://img.shields.io/badge/Java-17-informational)
+![contributors](https://img.shields.io/badge/contributors-5-brightgreen)
+![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg)
 ![Ui](docs/images/Ui.png)
 
 # CrimeWatch
