@@ -6,13 +6,14 @@ title: User Guide
 This guide is intended for users who prefer fast, keyboard-driven workflows. You should be comfortable with basic computer operations such as installing software and using a command terminal. No programming experience is required.
 
 ## What is CrimeWatch?
-CrimeWatch is a CLI-based contact tracking tool for managing **person-of-interest profiles** and their **encounter logs**. The MVP supports exactly these five features:
+CrimeWatch is a CLI-based contact tracking tool for managing **person-of-interest profiles** and their **encounter logs**. The MVP supports exactly these six features:
 
 1. Add Contact
 2. Delete Contact
 3. Log Encounter
 4. View Contact
 5. Search Contacts
+6. Sort Contacts
    
 * Table of Contents
 {:toc}
@@ -242,6 +243,38 @@ Retrieves contacts by keyword across multiple fields.
 
 --------------------------------------------------------------------------------------------------------------------
 
+### 6) Sort Contacts: `sort`
+
+Sorts the currently displayed contact list by a chosen criterion.
+
+**Format**
+`sort CRITERION`
+
+**Allowed criteria** (case-insensitive)
+- `location`
+- `tag`
+- `alphabetical`
+- `status`
+- `recent`
+
+**Examples**
+- `sort location`
+- `sort tag`
+- `sort alphabetical`
+- `sort status`
+- `sort recent`
+
+**Behaviour**
+- Sorting is applied to the displayed list view.
+- `sort location`: uses each contact's most recently logged encounter location; contacts without encounters appear last.
+- `sort tag`: uses each contact's alphabetically smallest tag; contacts without tags appear last.
+- `sort alphabetical`: sorts by contact name (A-Z).
+- `sort status`: sorts by stage/status alphabetically.
+- `sort recent`: sorts by most recently encountered first.
+- Ties are resolved by contact name in alphabetical order.
+
+--------------------------------------------------------------------------------------------------------------------
+
 ### Clearing all entries : `clear`
 
 Clears all entries from the address book.
@@ -296,3 +329,4 @@ Delete Contact | `delete INDEX` | `delete 3`
 Log Encounter | `log INDEX d/DATE t/TIME l/LOCATION desc/DESCRIPTION [out/OUTCOME]` | `log 1 d/2026-02-21 t/18:30 l/Maxwell Road desc/Met...`
 View Contact | `view INDEX` | `view 1`
 Search Contacts | `find KEYWORD [MORE_KEYWORDS]` | `find mike marina`
+Sort Contacts | `sort CRITERION` | `sort location`
