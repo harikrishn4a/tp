@@ -2,6 +2,7 @@ package seedu.address.logic.commands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -54,7 +55,8 @@ public class ExportCommandTest {
             "\"2025-06-01 09:00\",\"Spotted \"\"suspect\"\", leaving\",\"\",\"Bob Brown\",\"armed, friends\"";
 
     private static final String EXPECTED_ALICE_ROW =
-            "\"2026-02-21 18:30\",\"Met \"\"suspect\"\", near docks\",\"Agreed \"\"cooperate\"\"\",\"Alice Pauline\",\"armed, friends\"";
+            "\"2026-02-21 18:30\",\"Met \"\"suspect\"\", near docks\",\"Agreed \"\"cooperate\"\"\","
+            + "\"Alice Pauline\",\"armed, friends\"";
 
     @BeforeEach
     public void clearExports() throws Exception {
