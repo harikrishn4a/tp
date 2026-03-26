@@ -332,6 +332,70 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
       Use case resumes at step 2.
 
+**Use case: Edit a person**
+
+**MSS**
+
+1.  User requests to list persons
+2.  CrimeWatch shows a list of contacts
+3.  User requests to edit a specific person in the list with one or more fields
+4.  CrimeWatch updates only the provided fields for that contact
+
+    Use case ends.
+
+**Extensions**
+
+* 2a. The list is empty.
+
+  Use case ends.
+
+* 3a. The given index is invalid.
+
+    * 3a1. CrimeWatch shows an error message.
+
+      Use case resumes at step 2.
+
+* 3b. No editable field is provided.
+
+    * 3b1. CrimeWatch shows an error message.
+
+      Use case resumes at step 2.
+
+**Use case: Edit an encounter**
+
+**MSS**
+
+1.  User requests to view a contact profile
+2.  CrimeWatch shows encounter cards with encounter indices
+3.  User requests to edit a specific encounter using `PERSON_INDEX` and `ENCOUNTER_INDEX`
+4.  CrimeWatch updates only the provided encounter fields
+
+    Use case ends.
+
+**Extensions**
+
+* 2a. The contact has no encounters.
+
+  Use case ends.
+
+* 3a. The given person index is invalid.
+
+    * 3a1. CrimeWatch shows an error message.
+
+      Use case resumes at step 2.
+
+* 3b. The given encounter index is invalid.
+
+    * 3b1. CrimeWatch shows an error message.
+
+      Use case resumes at step 2.
+
+* 3c. No editable field is provided.
+
+    * 3c1. CrimeWatch shows an error message.
+
+      Use case resumes at step 2.
+
 *{More to be added}*
 
 ### Non-Functional Requirements

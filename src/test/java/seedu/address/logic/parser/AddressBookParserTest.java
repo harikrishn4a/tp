@@ -18,6 +18,7 @@ import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.DeleteCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditCommand.EditPersonDescriptor;
+import seedu.address.logic.commands.EditEncounterCommand;
 import seedu.address.logic.commands.ExitCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
@@ -66,6 +67,20 @@ public class AddressBookParserTest {
         EditCommand command = (EditCommand) parser.parseCommand(EditCommand.COMMAND_WORD + " "
                 + INDEX_FIRST_PERSON.getOneBased() + " " + PersonUtil.getEditPersonDescriptorDetails(descriptor));
         assertEquals(new EditCommand(INDEX_FIRST_PERSON, descriptor), command);
+    }
+
+    @Test
+    public void parseCommand_editEncounter() throws Exception {
+        EditEncounterCommand.EditEncounterDescriptor descriptor = new EditEncounterCommand.EditEncounterDescriptor();
+        descriptor.setDescription("Updated encounter");
+        EditEncounterCommand expectedCommand =
+                new EditEncounterCommand(INDEX_FIRST_PERSON, INDEX_FIRST_PERSON, descriptor);
+
+        EditEncounterCommand command = (EditEncounterCommand) parser.parseCommand(
+                EditEncounterCommand.COMMAND_WORD + " "
+                        + INDEX_FIRST_PERSON.getOneBased() + " "
+                        + INDEX_FIRST_PERSON.getOneBased() + " desc/Updated encounter");
+        assertEquals(expectedCommand, command);
     }
 
     @Test
