@@ -6,16 +6,6 @@ title: User Guide
 This guide is intended for users who prefer fast, keyboard-driven workflows. You should be comfortable with basic computer operations such as installing software and using a command terminal. No programming experience is required.
 
 ## What is CrimeWatch?
-<<<<<<< HEAD
-CrimeWatch is a CLI-based contact tracking tool for managing **person-of-interest profiles** and their **encounter logs**. The MVP supports exactly these six features:
-
-1. Add Contact
-2. Delete Contact
-3. Log Encounter
-4. View Contact
-5. Search Contacts
-6. Export encounters (CSV)
-=======
 CrimeWatch is a CLI-based contact tracking tool for managing **person-of-interest profiles** and their **encounter logs**. It supports the following features:
 
 1. Add Contact
@@ -25,6 +15,8 @@ CrimeWatch is a CLI-based contact tracking tool for managing **person-of-interes
 5. Edit Encounter
 6. View Contact
 7. Search Contacts
+8. Export encounters (CSV)
+9. Sort Contacts
 
 ## Command summary
 
@@ -37,8 +29,9 @@ CrimeWatch is a CLI-based contact tracking tool for managing **person-of-interes
 | Edit Encounter | `editencounter PERSON_INDEX ENCOUNTER_INDEX [d/DATE] [t/TIME] [l/LOCATION] [desc/DESCRIPTION] [out/OUTCOME]` |
 | View Contact | `view INDEX` |
 | Search Contacts | `find KEYWORD [MORE_KEYWORDS]` |
+| Export encounters (CSV) | `export l/LOCATION` |
+| Sort Contacts | `sort CRITERION` |
 
->>>>>>> upstream/master
    
 * Table of Contents
 {:toc}
@@ -326,8 +319,7 @@ Retrieves contacts by keyword across multiple fields.
 
 --------------------------------------------------------------------------------------------------------------------
 
-<<<<<<< HEAD
-### 6) Export encounters to CSV: `export`
+### 8) Export encounters to CSV: `export`
 
 Exports all encounters whose **location** matches the value you give, to a UTF-8 CSV file. Rows are sorted by encounter date-time (earliest first).
 
@@ -351,8 +343,10 @@ Exports all encounters whose **location** matches the value you give, to a UTF-8
 - **Invalid format** (e.g. missing `l/`, wrong shape): invalid command format message referencing `export` usage.
 - **Blank location** (after trim): `Encounter location can take any value, and should not be blank`
 - **Write error** (e.g. cannot create `exports/`): `Failed to export to <path>: <reason>`
-=======
-### 6) Sort Contacts: `sort`
+
+--------------------------------------------------------------------------------------------------------------------
+
+### 9) Sort Contacts: `sort`
 
 Sorts the currently displayed contact list by a chosen criterion.
 
@@ -381,7 +375,6 @@ Sorts the currently displayed contact list by a chosen criterion.
 - `sort status`: sorts by stage/status alphabetically.
 - `sort recent`: sorts by most recently encountered first.
 - Ties are resolved by contact name in alphabetical order.
->>>>>>> upstream/master
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -441,8 +434,5 @@ Log Encounter | `log INDEX d/DATE t/TIME l/LOCATION desc/DESCRIPTION [out/OUTCOM
 Edit Encounter | `editencounter PERSON_INDEX ENCOUNTER_INDEX [d/DATE] [t/TIME] [l/LOCATION] [desc/DESCRIPTION] [out/OUTCOME]` | `editencounter 1 1 desc/Updated notes`
 View Contact | `view INDEX` | `view 1`
 Search Contacts | `find KEYWORD [MORE_KEYWORDS]` | `find mike marina`
-<<<<<<< HEAD
 Export encounters (CSV) | `export l/LOCATION` | `export l/Harbor District`
-=======
 Sort Contacts | `sort CRITERION` | `sort location`
->>>>>>> upstream/master
