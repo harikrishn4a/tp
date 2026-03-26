@@ -1,6 +1,7 @@
 package seedu.address.logic.commands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -99,6 +100,37 @@ public class ExportCommandTest {
                 Files.deleteIfExists(exportedFile);
             }
         }
+    }
+
+    @Test
+    public void execute_noMatchingEncounters_throwsCommandExceptionAndDoesNotCreateFile() throws Exception {
+        ExportCommand command = new ExportCommand("Nowhere Land");
+
+        Person bob = new PersonBuilder().withName("Bob Brown")
+                .withTags("friends", "armed")
+                .withEncounters(BOB_ENCOUNTER)
+                .build();
+
+        Person alice = new PersonBuilder().withName("Alice Pauline")
+                .withTags("friends", "armed")
+                .withEncounters(ALICE_ENCOUNTER, NON_MATCHING_ENCOUNTER)
+                .build();
+
+        AddressBook addressBook = new AddressBook();
+        addressBook.addPerson(alice);
+        addressBook.addPerson(bob);
+
+        Model model = new ModelManager(addressBook, new UserPrefs());
+
+        Path exportDir = Paths.get("exports");
+        Files.createDirectories(exportDir);
+        Set<String> existingFiles = listExistingExportFiles(exportDir);
+
+        String expectedMessage = String.format(ExportCommand.MESSAGE_NO_SUCH_LOCATION, "Nowhere Land");
+        assertCommandFailure(command, model, expectedMessage);
+
+        List<Path> newFiles = listNewExportFiles(exportDir, existingFiles);
+        assertEquals(0, newFiles.size());
     }
 
     private static Set<String> listExistingExportFiles(Path exportDir) throws Exception {

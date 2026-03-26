@@ -34,6 +34,8 @@ public class ExportCommand extends Command {
             + "Example: " + COMMAND_WORD + " l/Harbor District";
 
     public static final String MESSAGE_SUCCESS = "Exported %1$d matching encounters to %2$s.";
+    public static final String MESSAGE_NO_SUCH_LOCATION =
+            "No encounters found at location %1$s.";
     public static final String MESSAGE_FILE_WRITE_FAILED = "Failed to export to %1$s: %2$s";
 
     private static final DateTimeFormatter EXPORT_TIMESTAMP_FORMAT =
@@ -86,38 +88,40 @@ public class ExportCommand extends Command {
 
         List<Person> people = model.getAddressBook().getPersonList();
 
+        // Collect matching rows first so we can fail early without creating an empty CSV.
+        List<ExportRow> rows = new ArrayList<>();
+        for (Person person : people) {
+            String contactName = person.getName().fullName;
+            String contactTags = person.getTags().stream()
+                    .sorted(Comparator.comparing(tag -> tag.tagName))
+                    .map(tag -> tag.tagName)
+                    .collect(Collectors.joining(", "));
+
+            for (Encounter encounter : person.getEncounters()) {
+                if (matchesLocation(encounter, location)) {
+                    rows.add(new ExportRow(
+                            encounter.dateTime,
+                            encounter.getFormattedDateTime(),
+                            encounter.description,
+                            encounter.outcome.orElse(""),
+                            contactName,
+                            contactTags));
+                }
+            }
+        }
+
+        if (rows.isEmpty()) {
+            throw new CommandException(String.format(MESSAGE_NO_SUCH_LOCATION, location));
+        }
+
+        rows.sort(Comparator.comparing(row -> row.encounterDateTime));
+
         try {
             Files.createDirectories(exportDir);
 
-            int matchedCount = 0;
             try (BufferedWriter writer = Files.newBufferedWriter(exportFile, StandardCharsets.UTF_8)) {
                 writer.write("encounterTimestamp,encounterDescription,encounterOutcome,contactName,contactTags");
                 writer.newLine();
-
-                List<ExportRow> rows = new ArrayList<>();
-
-                for (Person person : people) {
-                    String contactName = person.getName().fullName;
-                    String contactTags = person.getTags().stream()
-                            .sorted(Comparator.comparing(tag -> tag.tagName))
-                            .map(tag -> tag.tagName)
-                            .collect(Collectors.joining(", "));
-
-                    for (Encounter encounter : person.getEncounters()) {
-                        if (matchesLocation(encounter, location)) {
-                            rows.add(new ExportRow(
-                                    encounter.dateTime,
-                                    encounter.getFormattedDateTime(),
-                                    encounter.description,
-                                    encounter.outcome.orElse(""),
-                                    contactName,
-                                    contactTags));
-                            matchedCount++;
-                        }
-                    }
-                }
-
-                rows.sort(Comparator.comparing(row -> row.encounterDateTime));
 
                 for (ExportRow row : rows) {
                     writer.write(csvField(row.encounterTimestamp) + ","
@@ -129,7 +133,7 @@ public class ExportCommand extends Command {
                 }
             }
 
-            return new CommandResult(String.format(MESSAGE_SUCCESS, matchedCount, exportFile));
+            return new CommandResult(String.format(MESSAGE_SUCCESS, rows.size(), exportFile));
         } catch (IOException ioe) {
             throw new CommandException(
                     String.format(MESSAGE_FILE_WRITE_FAILED, exportFile, ioe.getMessage()), ioe);
