@@ -8,7 +8,7 @@ title: User Guide
 
 ## What is CrimeWatch?
 
-CrimeWatch is a **command-line contact tracking tool** designed specifically for **law enforcement undercover agents and investigators** to manage suspect profiles and investigation encounters. Instead of carrying physical notebooks or risky digital records on your phone, CrimeWatch allows you to securely and efficiently track suspects, their aliases, risk levels, and encounter history from a single CLI interface.
+CrimeWatch is a **desktop contact tracking application** designed specifically for **law enforcement undercover agents and investigators** to manage suspect profiles and investigation encounters. Instead of carrying physical notebooks or risky digital records on your phone, CrimeWatch allows you to securely and efficiently track suspects, their aliases, risk levels, and encounter history by entering typed commands in the app.
 
 ### Why CrimeWatch?
 
@@ -16,16 +16,16 @@ Traditional contact apps clutter investigations with unnecessary fields and lack
 
 - **Suspect-focused tracking**: Manage suspects (not regular contacts) with investigation stages and risk levels
 - **Encounter logging**: Record every interaction location, time, and observations for building case evidence
-- **Quick, keyboard-driven**: Fast command-line interface—no clicking through menus, no distractions
+- **Quick, keyboard-driven**: Fast typed-command workflow in a desktop app—no clicking through menus, no distractions
 - **Secure data structure**: Stores only investigation-relevant information
 - **Bulk reporting**: Export encounter logs by location for case analysis
 
 ### Who is this guide for?
 
-This guide is intended for **undercover agents, detective investigators, and law enforcement personnel** who prefer fast, keyboard-driven workflows over graphical interfaces. You should be comfortable with:
-- Basic computer operations (installing software, using command terminals)
+This guide is intended for **undercover agents, detective investigators, and law enforcement personnel** who prefer fast, keyboard-driven workflows. You should be comfortable with:
+- Basic computer operations (installing software and launching desktop applications)
 - Following structured command formats
-- Working in a CLI environment
+- Entering typed commands in an application command box
 
 No programming experience is required.
 
@@ -38,7 +38,7 @@ No programming experience is required.
 
 ### Key Features
 
-CrimeWatch supports 11 core features: **Add**, **Edit**, **Delete** contacts | **Log** and **Edit** encounters | **View** contact details | **Set reminders** | **Search** by keywords | **Export** to CSV | **Sort** the contact list | **Protect** sensitive contacts with passwords. See [Command summary](#command-summary) for detailed formats.
+CrimeWatch supports 11 core features: **Add**, **Edit**, and **Delete** contacts; **Log** and **Edit** encounters; **View** contact details; **Set reminders**; **Search** by keywords; **Export** to CSV; **Sort** the contact list; and **Protect** sensitive contacts with passwords. See [Command summary](#command-summary) for detailed formats.
 
 ### Password Feature
 
@@ -102,20 +102,23 @@ view 1
 
 3. Move the `.jar` file into a folder you want to use as your CrimeWatch home folder.
   A new empty folder is recommended.
-  ![Moving .jar file to folder](images/MoveFile.gif)
+  ![Moving .jar file to folder](images/ug-move-to-home-folder.png)
 
-4. Open a terminal in that folder and run:
+4. Open a terminal in that folder:
+  ![Open Terminal from folder](images/ug-open-terminal.png)
+
+5. Run the command to launch the app:
 
    ```bash
    java -jar crimewatch.jar
    ```
 
-   ![Opening the .jar file](images/OpenFile.gif)
+   ![Opening the .jar file](images/ug-terminal-command.png)
 
 5. Confirm the app opens and sample data is visible.
    ![Ui](images/Ui.png)
 
-6. Try this 60-second CLI tutorial:
+6. Try this 60-second typed-command tutorial:
    - `help` to open this user guide.
    - `list` to show all contacts.
    - `add n/John Doe a/JD s/surveillance r/high note/Observed near station` to add a suspect profile.
