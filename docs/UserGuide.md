@@ -508,20 +508,3 @@ _Details coming soon ..._
 2. **If you minimize the Help Window** and then run the `help` command (or use the `Help` menu, or the keyboard shortcut `F1`) again, the original Help Window will remain minimized, and no new Help Window will appear. The remedy is to manually restore the minimized Help Window.
 
 --------------------------------------------------------------------------------------------------------------------
-
-## Command summary
-
-Action | Format | Example
----|---|---
-Add Contact | `add n/NAME a/ALIAS s/STAGE [r/RISK] [note/NOTES] [pw/PASSWORD]` | `add n/John Tan a/Ah Boy s/surveillance pw/password123`
-Edit Contact | `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/STAGE] [al/ALIAS(,ALIAS...)] [note/NOTES] [r/RISK] [pw/PASSWORD] [t/TAG]...` | `edit 1 pw/newpassword`
-Delete Contact | `delete INDEX` | `delete 3`
-Log Encounter | `log INDEX d/DATE t/TIME l/LOCATION desc/DESCRIPTION [out/OUTCOME]` | `log 1 d/2026-02-21 t/18:30 l/Maxwell Road desc/Met...`
-Edit Encounter | `editencounter PERSON_INDEX ENCOUNTER_INDEX [d/DATE] [t/TIME] [l/LOCATION] [desc/DESCRIPTION] [out/OUTCOME]` | `editencounter 1 1 desc/Updated notes`
-View Contact | `view INDEX [pw/PASSWORD]` | `view 1 pw/password123`
-Set Reminder | `remind INDEX d/DATE t/TIME note/NOTE` | `remind 1 d/2026-03-28 t/20:00 note/Meet informant`
-Search Contacts | `find KEYWORD [MORE_KEYWORDS]` | `find mike marina`
-Export encounters (CSV) | `export l/LOCATION` | `export l/Harbor District`
-Sort Contacts | `sort CRITERION` | `sort location`
-Clear All Data | `clear` | `clear`
-Exit Application | `exit` | `exit`
