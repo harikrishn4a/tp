@@ -1,6 +1,6 @@
 ---
 layout: page
-title: CrimeWatch Developer Guide
+title: Developer Guide
 ---
 * Table of Contents
 {:toc}
