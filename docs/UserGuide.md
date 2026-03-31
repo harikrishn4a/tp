@@ -164,36 +164,9 @@ Creates a new suspect profile with aliases, investigation stage, and risk level.
 - `add n/Michael Lee a/Big Mike s/approached r/high note/Seen at Marina Bay`
 - `add n/John Doe a/JD s/surveillance pw/password123`
 
-#### Validation rules
-
-**NAME**
-- Length: 1–100 characters
-- Allowed characters: letters, spaces, apostrophes, hyphens
-- Leading/trailing spaces ignored; multiple internal spaces collapsed
-- Error if invalid: `Invalid name. Name must contain only letters, spaces, apostrophes or hyphens, and cannot be empty.`
-
-**ALIAS**
-- 1–50 characters per alias
-- Allowed characters: alphanumeric and spaces
-- Multiple aliases separated by commas (e.g., `a/Ah Boy, Johnny T`)
-- Error if invalid: `Invalid alias. Alias must be non-empty and alphanumeric.`
-
-**STAGE** (case-insensitive)
-Allowed values: `surveillance`, `approached`, `cooperating`, `arrested`, `closed`
-- Error if invalid: `Invalid stage. Allowed values: surveillance, approached, cooperating, arrested, closed.`
-
-**RISK** (optional)
-Allowed values: `low`, `medium`, `high` (default: `medium`)
-
-**PASSWORD** (optional)
-- Allowed characters: alphanumeric and spaces only
-
-#### Duplicate detection
-A new contact is considered a duplicate if:
-- NAME is identical (case-insensitive, trimmed), **and**
-- at least one ALIAS overlaps.
-
-Error if duplicate: `Duplicate contact detected. A contact with similar name and alias already exists.`
+**Validation**
+- Names must be unique
+- All required fields must be present
 
 **Success output**
 `New contact added: [Name] (Stage: X, Risk: Y)`
@@ -264,7 +237,7 @@ Records an interaction with a contact and appends it to the contact’s encounte
 **Example**
 `log 1 d/2026-02-21 t/18:30 l/Maxwell Road desc/Met at coffee shop out/Agreed to cooperate`
 
-#### Validation rules
+**Validation**
 - DATE must be a valid calendar date
   Error: `Invalid date. Use format YYYY-MM-DD.`
 - TIME must be valid 24-hour `HH:mm`
@@ -429,12 +402,12 @@ Exports all encounters whose **location** matches the value you give, to a UTF-8
 **Example**
 `export l/Harbor District`
 
-#### Behavior
+**Behavior**
 - Matching is **case-insensitive**. Leading and trailing spaces on your input and on each stored encounter location are ignored; the trimmed strings must be equal.
 - The file is written under the app home directory to `exports/CrimeWatch-export-<timestamp>.csv`, where `<timestamp>` is in `yyyyMMdd-HHmmss` form (local time when the command runs).
 - CSV columns (header row): `encounterTimestamp`, `encounterDescription`, `encounterOutcome`, `contactName`, `contactTags`. Tags for a contact are comma-separated and sorted alphabetically. Fields are quoted and follow standard CSV escaping for double quotes.
 
-#### Outcomes
+**Outcomes**
 - **Success:** `Exported N matching encounters to exports/CrimeWatch-export-<timestamp>.csv.` (with the actual path shown).
 - **No matching encounters:** the command fails with `No encounters found at location <your location>.` — **no file** is created.
 - **Invalid format** (e.g. missing `l/`, wrong shape): invalid command format message referencing `export` usage.
