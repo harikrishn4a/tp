@@ -40,37 +40,6 @@ No programming experience is required.
 
 CrimeWatch supports 11 core features: **Add**, **Edit**, and **Delete** contacts; **Log** and **Edit** encounters; **View** contact details; **Set reminders**; **Search** by keywords; **Export** to CSV; **Sort** the contact list; and **Protect** sensitive contacts with passwords. See [Command summary](#command-summary) for detailed formats.
 
-### Password Feature
-
-Optional, contact-level password protection. Each contact can be protected with a password to restrict viewing its full details.
-
-| Feature | Description |
-|---------|-------------|
-| **Scope** | Per-contact (individual contacts can be protected) |
-| **Type** | Optional (contacts do not require passwords) |
-| **Usage** | Add `pw/PASSWORD` to `add` or `edit` commands to protect; provide it with `view` to access |
-| **Validation** | Alphanumeric characters and spaces only |
-
-**Usage**
-
-```bash
-# Add contact with password protection
-add n/John Doe a/JD s/surveillance pw/password123
-
-# Update/remove password
-edit 1 pw/newpassword
-edit 1 pw/
-
-# View protected contact
-view 1 pw/password123
-view 1
-```
-
-**Behavior**
-- Without password: contact viewable normally.
-- With password: `view` requires correct password to display full details.
-- Passwords are stored in plain text (not production-ready).
-
 ## Command summary
 
 | Feature | Command format | Go to |
