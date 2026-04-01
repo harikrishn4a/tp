@@ -149,11 +149,11 @@ Format: `help`
 Creates a new suspect profile with aliases, investigation stage, and risk level.
 
 **Format**
-`add n/NAME a/ALIAS s/STAGE [r/RISK] [note/NOTES] [pw/PASSWORD]`
+`add n/NAME al/ALIAS s/STAGE [r/RISK] [note/NOTES] [pw/PASSWORD]`
 
 **Parameters**
 - `n/NAME` (required): suspect's full name (alphanumeric + spaces, not blank)
-- `a/ALIAS` (required): one or more aliases, **comma-separated** (e.g. `a/Ah Boy, Johnny T`)
+- `al/ALIAS` (required): one or more aliases, **comma-separated** (e.g. `a/Ah Boy, Johnny T`)
 - `s/STAGE` (required): investigation stage
 - `r/RISK` (optional): risk level—one of `low`, `medium`, `high` (default: `medium`)
 - `note/NOTES` (optional): initial notes (up to 500 characters, no newlines)
