@@ -47,4 +47,9 @@ public interface Logic {
      * Set the user prefs' GUI settings.
      */
     void setGuiSettings(GuiSettings guiSettings);
+
+    /**
+     * Returns true if the address book file was present but failed to load (corrupted or invalid).
+     */
+    boolean isAddressBookDataCorrupted();
 }

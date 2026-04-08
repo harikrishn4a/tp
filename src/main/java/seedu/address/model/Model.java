@@ -107,4 +107,12 @@ public interface Model {
      * @throws NullPointerException if {@code predicate} is null.
      */
     void updateFilteredPersonList(Predicate<Person> predicate);
+
+    /**
+     * Returns true if the address book file existed but could not be loaded (e.g. corrupted JSON).
+     * When true, the app uses an empty in-memory book and must not overwrite the file on disk.
+     */
+    default boolean isAddressBookDataCorrupted() {
+        return false;
+    }
 }

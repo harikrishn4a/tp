@@ -11,6 +11,7 @@ import seedu.address.MainApp;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.util.StringUtil;
 import seedu.address.logic.Logic;
+import seedu.address.logic.Messages;
 
 /**
  * The manager of the UI component.
@@ -43,6 +44,13 @@ public class UiManager implements Ui {
             mainWindow = new MainWindow(primaryStage, logic);
             mainWindow.show(); //This should be called before creating other UI parts
             mainWindow.fillInnerParts();
+
+            if (logic.isAddressBookDataCorrupted()) {
+                showAlertDialogAndWait(mainWindow.getPrimaryStage(), Alert.AlertType.ERROR,
+                        Messages.MESSAGE_ADDRESS_BOOK_DATA_CORRUPTED_ALERT_TITLE,
+                        null,
+                        Messages.MESSAGE_ADDRESS_BOOK_DATA_CORRUPTED_ALERT_CONTENT);
+            }
 
         } catch (Throwable e) {
             logger.severe(StringUtil.getDetails(e));
