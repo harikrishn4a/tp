@@ -186,6 +186,7 @@ Updates details of an existing contact without deleting and re-adding the profil
 - `INDEX` (compulsory): target contact in current list
 - At least one prefixed field must be provided
 - Any omitted field remains unchanged
+- `p/PHONE` (optional): Singapore phone number, exactly 8 digits and must start with `6`, `8`, or `9`
 
 **Examples**
 - `edit 1 p/91234567 e/johndoe@example.com`
@@ -197,6 +198,7 @@ Updates details of an existing contact without deleting and re-adding the profil
 - INDEX must exist in the current list.
 - Provided fields follow the same validation rules as `add`.
 - Repeating non-tag prefixes in the same command is not allowed.
+- For `p/PHONE`, only valid Singapore numbers are accepted: exactly 8 digits, starting with `6`, `8`, or `9`.
 
 **Success output**
 `Edited Person: [person details]`
