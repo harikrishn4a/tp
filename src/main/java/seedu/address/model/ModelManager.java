@@ -124,7 +124,8 @@ public class ModelManager implements Model {
     public void addReminderToContact(Index index, Reminder reminder) {
         requireAllNonNull(index, reminder);
 
-        Person target = filteredPersons.get(index.getZeroBased());
+        // Index-based commands operate on the currently displayed (sorted/filtered) list.
+        Person target = sortedPersons.get(index.getZeroBased());
         List<Reminder> updatedReminders = new ArrayList<>(target.getReminders());
         updatedReminders.add(reminder);
         Collections.sort(updatedReminders);
