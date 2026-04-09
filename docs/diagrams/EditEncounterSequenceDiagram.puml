@@ -1,0 +1,40 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+
+Actor User as user USER_COLOR
+
+box Logic LOGIC_COLOR_T1
+participant "e:EditEncounterCommand" as EditEncounterCommand LOGIC_COLOR
+end box
+
+box Model MODEL_COLOR_T1
+participant ":Model" as Model MODEL_COLOR
+participant "p:Person" as Person MODEL_COLOR
+end box
+
+user -[USER_COLOR]> EditEncounterCommand : editencounter P_IDX E_IDX ...
+activate EditEncounterCommand
+
+EditEncounterCommand -> Model : getFilteredPersonList()
+activate Model
+Model --> EditEncounterCommand : personToEdit
+deactivate Model
+
+EditEncounterCommand -> Person : getEncounters()
+activate Person
+Person --> EditEncounterCommand : existing encounters
+deactivate Person
+
+EditEncounterCommand -> EditEncounterCommand : encounterZeroBased =\nsize - E_IDX(oneBased)
+EditEncounterCommand -> EditEncounterCommand : replace one encounter\nin copied list
+EditEncounterCommand -> EditEncounterCommand : rebuild Person\n(preserve reminders/password)
+
+EditEncounterCommand -> Model : setPerson(old, edited)
+activate Model
+Model --> EditEncounterCommand : updated
+deactivate Model
+
+EditEncounterCommand --> user : CommandResult(feedback, personToView)
+deactivate EditEncounterCommand
+@enduml

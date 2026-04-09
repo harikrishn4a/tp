@@ -1,0 +1,42 @@
+@startuml
+!include style.puml
+skinparam ArrowFontStyle plain
+
+Actor User as user USER_COLOR
+
+box Logic LOGIC_COLOR_T1
+participant "r:RemindCommand" as RemindCommand LOGIC_COLOR
+end box
+
+box Model MODEL_COLOR_T1
+participant ":ModelManager" as ModelManager MODEL_COLOR
+participant "sortedPersons:SortedList<Person>" as SortedList MODEL_COLOR
+end box
+
+user -[USER_COLOR]> RemindCommand : remind INDEX d/... t/... note/...
+activate RemindCommand
+
+RemindCommand -> ModelManager : getFilteredPersonList()\n(bounds check)
+activate ModelManager
+ModelManager --> RemindCommand : filtered list
+deactivate ModelManager
+
+RemindCommand -> ModelManager : addReminderToContact(index, reminder)
+activate ModelManager
+
+ModelManager -> SortedList : get(index.zeroBased)
+activate SortedList
+SortedList --> ModelManager : target Person
+deactivate SortedList
+
+ModelManager -> ModelManager : copy reminders
+ModelManager -> ModelManager : add reminder
+ModelManager -> ModelManager : sort reminders
+ModelManager -> ModelManager : setPerson(target, updatedPerson)
+
+ModelManager --> RemindCommand : done
+deactivate ModelManager
+
+RemindCommand --> user : Reminder set for ...
+deactivate RemindCommand
+@enduml
