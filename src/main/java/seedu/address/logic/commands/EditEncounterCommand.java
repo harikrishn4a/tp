@@ -95,7 +95,7 @@ public class EditEncounterCommand extends Command {
         Person editedPerson = createEditedPerson(personToEdit, updatedEncounters);
 
         model.setPerson(personToEdit, editedPerson);
-        return createSuccessResult(encounterDisplayOneBased, personToEdit);
+        return createSuccessResult(encounterDisplayOneBased, editedPerson);
     }
 
     /**
@@ -132,8 +132,10 @@ public class EditEncounterCommand extends Command {
     /**
      * Creates the success result for a completed encounter edit.
      */
-    private CommandResult createSuccessResult(int encounterDisplayOneBased, Person personToEdit) {
-        return new CommandResult(String.format(MESSAGE_SUCCESS, encounterDisplayOneBased, personToEdit.getName()));
+    private CommandResult createSuccessResult(int encounterDisplayOneBased, Person editedPerson) {
+        return new CommandResult(
+                String.format(MESSAGE_SUCCESS, encounterDisplayOneBased, editedPerson.getName()),
+                editedPerson);
     }
 
     private static Encounter createEditedEncounter(Encounter encounterToEdit, EditEncounterDescriptor descriptor) {
