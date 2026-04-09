@@ -9,8 +9,11 @@ title: Developer Guide
 
 ## **Acknowledgements**
 
-* This project is based on [AddressBook-Level3 (AB3)](https://github.com/se-edu/addressbook-level3) by the [SE-EDU initiative](https://se-education.org).
-* The codebase and documentation structure were adapted from AB3 and extended for the CrimeWatch domain.
+AI tools such as Claude, ChatGPT was used to support:
+- Drafting and refining documentation (Developer Guide and User Guide)
+- Generating and improving test case structures
+- Suggesting code refactoring and design clarifications
+- All AI-generated content was reviewed, validated, and adapted by the development team to ensure correctness and alignment with project requirements.
 
 --------------------------------------------------------------------------------------------------------------------
 
