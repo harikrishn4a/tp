@@ -25,15 +25,9 @@ Refer to [_Setting up and getting started_](SettingUp.md).
 
 ## **Design**
 
-<div markdown="span" class="alert alert-primary">
-:bulb: **Tip:** PlantUML source files are in `docs/diagrams`. This guide assumes rendered diagram images are also available under `docs/diagrams`.
-</div>
-
 ### Architecture
 
-![Architecture Diagram](diagrams/ArchitectureDiagram.png)
-
-> **UML Placeholder**: Replace `diagrams/ArchitectureDiagram.png` with the rendered output of `docs/diagrams/ArchitectureDiagram.puml`.
+![Architecture Diagram](images/ArchitectureDiagram.png)
 
 CrimeWatch follows a layered architecture with five main parts:
 * `UI`: renders data and captures user input.
@@ -57,13 +51,9 @@ At runtime, a typical command follows this high-level flow:
 
 The diagram above summarizes the end-to-end interaction across `UI`, `Logic`, `Model`, and `Storage` for a typical command execution.
 
-![Architecture Sequence Diagram](diagrams/ArchitectureSequenceDiagram.png)
+![Architecture Sequence Diagram](images/ArchitectureSequenceDiagram.png)
 
-> **UML Placeholder**: Replace `diagrams/ArchitectureSequenceDiagram.png` with the rendered output of `docs/diagrams/ArchitectureSequenceDiagram.puml`.
-
-![Component Managers Diagram](diagrams/ComponentManagers.png)
-
-> **UML Placeholder**: Replace `diagrams/ComponentManagers.png` with the rendered output of `docs/diagrams/ComponentManagers.puml`.
+![Component Managers Diagram](images/ComponentManagers.png)
 
 ---
 
@@ -73,9 +63,7 @@ The diagram above summarizes the end-to-end interaction across `UI`, `Logic`, `M
 
 [`Ui.java`](../src/main/java/seedu/address/ui/Ui.java)
 
-![UI Class Diagram](diagrams/UiClassDiagram.png)
-
-> **UML Placeholder**: Replace `diagrams/UiClassDiagram.png` with the rendered output of `docs/diagrams/UiClassDiagram.puml`.
+![UI Class Diagram](images/UiClassDiagram.png)
 
 The UI is JavaFX-based and centered around `MainWindow`, which composes:
 * `CommandBox` for command input.
@@ -100,9 +88,7 @@ Design notes:
 
 [`Logic.java`](../src/main/java/seedu/address/logic/Logic.java)
 
-![Logic Class Diagram](diagrams/LogicClassDiagram.png)
-
-> **UML Placeholder**: Replace `diagrams/LogicClassDiagram.png` with the rendered output of `docs/diagrams/LogicClassDiagram.puml`.
+![Logic Class Diagram](images/LogicClassDiagram.png).
 
 The diagram above treats concrete command types as `XYZCommand` to keep the high-level view compact.
 The following class diagram zooms into that placeholder and shows the concrete command hierarchy, together
@@ -124,9 +110,7 @@ The `Logic` component processes command text in this pipeline:
 4. `CommandResult` is returned to `UI`.
 5. `LogicManager` persists state by calling `storage.saveAddressBook(...)`.
 
-![Parser Classes Diagram](diagrams/ParserClasses.png)
-
-> **UML Placeholder**: Replace `diagrams/ParserClasses.png` with the rendered output of `docs/diagrams/ParserClasses.puml`.
+![Parser Classes Diagram](images/ParserClasses.png)
 
 Parser design:
 * Command parsers implement the common `Parser<T>` interface.
@@ -142,9 +126,7 @@ Parser design:
 
 [`Model.java`](../src/main/java/seedu/address/model/Model.java)
 
-![Model Class Diagram](diagrams/ModelClassDiagram.png)
-
-> **UML Placeholder**: Replace `diagrams/ModelClassDiagram.png` with the rendered output of `docs/diagrams/ModelClassDiagram.puml`.
+![Model Class Diagram](images/ModelClassDiagram.png).
 
 `ModelManager` stores in-memory app state:
 * `AddressBook` for canonical contact data.
@@ -170,9 +152,7 @@ Design notes:
 
 [`Storage.java`](../src/main/java/seedu/address/storage/Storage.java)
 
-![Storage Class Diagram](diagrams/StorageClassDiagram.png)
-
-> **UML Placeholder**: Replace `diagrams/StorageClassDiagram.png` with the rendered output of `docs/diagrams/StorageClassDiagram.puml`.
+![Storage Class Diagram](images/StorageClassDiagram.png)
 
 Storage uses JSON persistence:
 * `StorageManager` coordinates address book and preferences storage.
