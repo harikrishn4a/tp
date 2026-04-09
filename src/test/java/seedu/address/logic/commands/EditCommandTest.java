@@ -53,7 +53,8 @@ public class EditCommandTest {
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setPerson(model.getFilteredPersonList().get(0), editedPerson);
 
-        assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
+        CommandResult expectedResult = new CommandResult(expectedMessage, editedPerson);
+        assertCommandSuccess(editCommand, model, expectedResult, expectedModel);
     }
 
     @Test
@@ -74,7 +75,8 @@ public class EditCommandTest {
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setPerson(lastPerson, editedPerson);
 
-        assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
+        CommandResult expectedResult = new CommandResult(expectedMessage, editedPerson);
+        assertCommandSuccess(editCommand, model, expectedResult, expectedModel);
     }
 
     @Test
@@ -86,7 +88,8 @@ public class EditCommandTest {
 
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
 
-        assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
+        CommandResult expectedResult = new CommandResult(expectedMessage, editedPerson);
+        assertCommandSuccess(editCommand, model, expectedResult, expectedModel);
     }
 
     @Test
@@ -103,7 +106,8 @@ public class EditCommandTest {
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setPerson(model.getFilteredPersonList().get(0), editedPerson);
 
-        assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
+        CommandResult expectedResult = new CommandResult(expectedMessage, editedPerson);
+        assertCommandSuccess(editCommand, model, expectedResult, expectedModel);
     }
 
     @Test
@@ -176,7 +180,8 @@ public class EditCommandTest {
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setPerson(personWithEncounter, expectedEditedPerson);
 
-        assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
+        CommandResult expectedResult = new CommandResult(expectedMessage, expectedEditedPerson);
+        assertCommandSuccess(editCommand, model, expectedResult, expectedModel);
         assertEquals(1, model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased()).getEncounters().size());
         assertEquals(existingEncounter, model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased())
                 .getEncounters().get(0));
@@ -226,7 +231,8 @@ public class EditCommandTest {
         Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
         expectedModel.setPerson(personWithReminder, expectedEditedPerson);
 
-        assertCommandSuccess(editCommand, model, expectedMessage, expectedModel);
+        CommandResult expectedResult = new CommandResult(expectedMessage, expectedEditedPerson);
+        assertCommandSuccess(editCommand, model, expectedResult, expectedModel);
         assertEquals(java.util.List.of(existingReminder),
                 model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased()).getReminders());
     }
