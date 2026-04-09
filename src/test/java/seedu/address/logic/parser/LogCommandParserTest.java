@@ -5,6 +5,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_LOCATION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_OUTCOME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_PASSWORD;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TIME;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
@@ -32,6 +33,7 @@ public class LogCommandParserTest {
     private static final String LOCATION_DESC = " " + PREFIX_LOCATION + VALID_LOCATION;
     private static final String DESCRIPTION_DESC = " " + PREFIX_DESCRIPTION + VALID_DESCRIPTION;
     private static final String OUTCOME_DESC = " " + PREFIX_OUTCOME + VALID_OUTCOME;
+    private static final String PW_DESC = " " + PREFIX_PASSWORD + "hunter2";
 
     private static final String INVALID_DATE_DESC = " " + PREFIX_DATE + "21-02-2026"; // wrong format
     private static final String INVALID_DATE_NONEXISTENT = " " + PREFIX_DATE + "2026-02-30"; // non-existent date
@@ -55,6 +57,20 @@ public class LogCommandParserTest {
                 parser,
                 VALID_INDEX + DATE_DESC + TIME_DESC + LOCATION_DESC + DESCRIPTION_DESC,
                 new LogCommand(INDEX_FIRST_PERSON, expectedEncounter));
+    }
+
+    @Test
+    public void parse_passwordPresent_success() {
+        Encounter expectedEncounter = new Encounter(
+                LocalDateTime.of(2026, 2, 21, 18, 30),
+                VALID_LOCATION,
+                VALID_DESCRIPTION,
+                Optional.empty());
+
+        assertParseSuccess(
+                parser,
+                VALID_INDEX + DATE_DESC + TIME_DESC + LOCATION_DESC + DESCRIPTION_DESC + PW_DESC,
+                new LogCommand(INDEX_FIRST_PERSON, expectedEncounter, Optional.of("hunter2")));
     }
 
     @Test
@@ -253,5 +269,13 @@ public class LogCommandParserTest {
                 VALID_INDEX + DATE_DESC + TIME_DESC + LOCATION_DESC
                         + DESCRIPTION_DESC + DESCRIPTION_DESC,
                 seedu.address.logic.Messages.getErrorMessageForDuplicatePrefixes(PREFIX_DESCRIPTION));
+    }
+
+    @Test
+    public void parse_duplicatePasswordPrefix_throwsParseException() {
+        assertParseFailure(
+                parser,
+                VALID_INDEX + DATE_DESC + TIME_DESC + LOCATION_DESC + DESCRIPTION_DESC + PW_DESC + PW_DESC,
+                seedu.address.logic.Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PASSWORD));
     }
 }

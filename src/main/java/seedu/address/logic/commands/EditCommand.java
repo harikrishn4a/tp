@@ -24,6 +24,8 @@ import seedu.address.commons.util.CollectionUtil;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
+import seedu.address.logic.parser.ParserUtil;
+import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.Model;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Alias;
@@ -58,27 +60,51 @@ public class EditCommand extends Command {
             + "[" + PREFIX_RISK + "RISK] "
             + "[" + PREFIX_PASSWORD + "PASSWORD] "
             + "[" + PREFIX_TAG + "TAG]...\n"
+            + "If the contact is password-protected, " + PREFIX_PASSWORD + " must be the current password.\n"
             + "Example: " + COMMAND_WORD + " 1 "
             + PREFIX_PHONE + "91234567 "
-            + PREFIX_EMAIL + "johndoe@example.com";
+            + PREFIX_EMAIL + "johndoe@example.com\n"
+            + "Example (protected): " + COMMAND_WORD + " 1 "
+            + PREFIX_NAME + "Jane Doe "
+            + PREFIX_PASSWORD + "hunter2";
 
     public static final String MESSAGE_EDIT_PERSON_SUCCESS = "Edited Person: %1$s";
     public static final String MESSAGE_NOT_EDITED = "At least one field to edit must be provided.";
     public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in CrimeWatch.";
+    public static final String MESSAGE_PASSWORD_REQUIRED_FOR_EDIT =
+            "This contact is password-protected. Include " + PREFIX_PASSWORD + "CURRENT_PASSWORD in your edit.";
 
     private final Index index;
     private final EditPersonDescriptor editPersonDescriptor;
+    /**
+     * Value after {@code pw/} when the user included it in the command line.
+     * {@link Optional#empty()} means {@code pw/} was not present; {@link Optional#of} with an empty string
+     * means {@code pw/} with no value (clear password on an unprotected contact).
+     */
+    private final Optional<String> passwordPrefix;
 
     /**
      * @param index of the person in the filtered person list to edit
      * @param editPersonDescriptor details to edit the person with
      */
     public EditCommand(Index index, EditPersonDescriptor editPersonDescriptor) {
+        this(index, editPersonDescriptor, Optional.empty());
+    }
+
+    /**
+     * @param index of the person in the filtered person list to edit
+     * @param editPersonDescriptor details to edit the person with
+     * @param passwordPrefix raw string after {@code pw/}, or empty if {@code pw/} was not in the command
+     */
+    public EditCommand(Index index, EditPersonDescriptor editPersonDescriptor,
+            Optional<String> passwordPrefix) {
         requireNonNull(index);
         requireNonNull(editPersonDescriptor);
+        requireNonNull(passwordPrefix);
 
         this.index = index;
         this.editPersonDescriptor = new EditPersonDescriptor(editPersonDescriptor);
+        this.passwordPrefix = passwordPrefix;
     }
 
     @Override
@@ -91,7 +117,17 @@ public class EditCommand extends Command {
         }
 
         Person personToEdit = lastShownList.get(index.getZeroBased());
-        Person editedPerson = createEditedPerson(personToEdit, editPersonDescriptor);
+
+        if (personToEdit.hasPassword()) {
+            if (passwordPrefix.isEmpty()) {
+                throw new CommandException(MESSAGE_PASSWORD_REQUIRED_FOR_EDIT);
+            }
+            if (!personToEdit.isPasswordMatch(passwordPrefix.get())) {
+                throw new CommandException(ViewCommand.MESSAGE_INCORRECT_PASSWORD);
+            }
+        }
+
+        Person editedPerson = createEditedPerson(personToEdit, editPersonDescriptor, passwordPrefix);
 
         if (!personToEdit.isSamePerson(editedPerson) && model.hasPerson(editedPerson)) {
             throw new CommandException(MESSAGE_DUPLICATE_PERSON);
@@ -108,7 +144,8 @@ public class EditCommand extends Command {
      * Creates and returns a {@code Person} with the details of {@code personToEdit}
      * edited with {@code editPersonDescriptor}.
      */
-    private static Person createEditedPerson(Person personToEdit, EditPersonDescriptor editPersonDescriptor) {
+    private static Person createEditedPerson(Person personToEdit, EditPersonDescriptor editPersonDescriptor,
+            Optional<String> passwordPrefix) throws CommandException {
         assert personToEdit != null;
 
         Name updatedName = editPersonDescriptor.getName().orElse(personToEdit.getName());
@@ -120,14 +157,35 @@ public class EditCommand extends Command {
         Notes updatedNotes = editPersonDescriptor.getNotes().orElse(personToEdit.getNotes());
         Risk updatedRisk = editPersonDescriptor.getRisk().orElse(personToEdit.getRisk());
         Set<Tag> updatedTags = editPersonDescriptor.getTags().orElse(personToEdit.getTags());
-        Password updatedPassword = personToEdit.getPassword();
-        if (editPersonDescriptor.isPasswordEdited()) {
-            updatedPassword = editPersonDescriptor.getPassword().orElse(null);
-        }
+        Password updatedPassword = resolveUpdatedPassword(personToEdit, editPersonDescriptor, passwordPrefix);
 
         return new Person(updatedName, updatedPhone, updatedEmail, updatedAddress, updatedStage,
             updatedAliases, updatedNotes, updatedRisk, updatedTags, personToEdit.getEncounters(),
             personToEdit.getReminders(), updatedPassword);
+    }
+
+    /**
+     * Resolves the password field after applying the descriptor and {@code pw/} from the command line.
+     * For a password-protected contact, {@code pw/} is only used for authentication in {@link #execute};
+     * the stored password is unchanged unless the descriptor explicitly edits it (e.g. in tests).
+     */
+    private static Password resolveUpdatedPassword(Person personToEdit, EditPersonDescriptor descriptor,
+            Optional<String> passwordPrefix) throws CommandException {
+        if (descriptor.isPasswordEdited()) {
+            return descriptor.getPassword().orElse(null);
+        }
+        if (!personToEdit.hasPassword() && passwordPrefix.isPresent()) {
+            String raw = passwordPrefix.get();
+            if (raw.isEmpty()) {
+                return null;
+            }
+            try {
+                return ParserUtil.parsePassword(raw);
+            } catch (ParseException e) {
+                throw new CommandException(e.getMessage());
+            }
+        }
+        return personToEdit.getPassword();
     }
 
     @Override
@@ -143,7 +201,8 @@ public class EditCommand extends Command {
 
         EditCommand otherEditCommand = (EditCommand) other;
         return index.equals(otherEditCommand.index)
-                && editPersonDescriptor.equals(otherEditCommand.editPersonDescriptor);
+                && editPersonDescriptor.equals(otherEditCommand.editPersonDescriptor)
+                && passwordPrefix.equals(otherEditCommand.passwordPrefix);
     }
 
     @Override
@@ -151,6 +210,7 @@ public class EditCommand extends Command {
         return new ToStringBuilder(this)
                 .add("index", index)
                 .add("editPersonDescriptor", editPersonDescriptor)
+                .add("passwordPrefixProvided", passwordPrefix.isPresent())
                 .toString();
     }
 

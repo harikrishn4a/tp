@@ -5,6 +5,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_LOCATION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_OUTCOME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_PASSWORD;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TIME;
 
 import java.time.LocalDate;
@@ -32,7 +33,7 @@ public class LogCommandParser implements Parser<LogCommand> {
     @Override
     public LogCommand parse(String args) throws ParseException {
         ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(
-                args, PREFIX_DATE, PREFIX_TIME, PREFIX_LOCATION, PREFIX_DESCRIPTION, PREFIX_OUTCOME);
+                args, PREFIX_DATE, PREFIX_TIME, PREFIX_LOCATION, PREFIX_DESCRIPTION, PREFIX_OUTCOME, PREFIX_PASSWORD);
 
         if (!arePrefixesPresent(argMultimap, PREFIX_DATE, PREFIX_TIME, PREFIX_LOCATION, PREFIX_DESCRIPTION)
                 || argMultimap.getPreamble().isEmpty()) {
@@ -49,7 +50,7 @@ public class LogCommandParser implements Parser<LogCommand> {
         }
 
         argMultimap.verifyNoDuplicatePrefixesFor(
-                PREFIX_DATE, PREFIX_TIME, PREFIX_LOCATION, PREFIX_DESCRIPTION, PREFIX_OUTCOME);
+                PREFIX_DATE, PREFIX_TIME, PREFIX_LOCATION, PREFIX_DESCRIPTION, PREFIX_OUTCOME, PREFIX_PASSWORD);
 
         LocalDate date = ParserUtil.parseDate(argMultimap.getValue(PREFIX_DATE).get());
         LocalTime time = ParserUtil.parseTime(argMultimap.getValue(PREFIX_TIME).get());
@@ -66,7 +67,13 @@ public class LogCommandParser implements Parser<LogCommand> {
         }
 
         Encounter encounter = new Encounter(dateTime, location, description, outcome);
-        return new LogCommand(index, encounter);
+
+        boolean passwordPrefixPresent = argMultimap.getValue(PREFIX_PASSWORD).isPresent();
+        Optional<String> passwordPrefix = passwordPrefixPresent
+                ? Optional.of(argMultimap.getValue(PREFIX_PASSWORD).get())
+                : Optional.empty();
+
+        return new LogCommand(index, encounter, passwordPrefix);
     }
 
     private static boolean arePrefixesPresent(ArgumentMultimap argumentMultimap, Prefix... prefixes) {

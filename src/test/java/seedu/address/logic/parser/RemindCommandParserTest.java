@@ -3,6 +3,7 @@ package seedu.address.logic.parser;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NOTES;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_PASSWORD;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TIME;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
@@ -10,6 +11,7 @@ import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
@@ -31,6 +33,7 @@ public class RemindCommandParserTest {
     private static final String INVALID_DATE_DESC = " " + PREFIX_DATE + "28-03-2026";
     private static final String INVALID_TIME_DESC = " " + PREFIX_TIME + "8pm";
     private static final String INVALID_NOTE_DESC = " " + PREFIX_NOTES + "   ";
+    private static final String PW_DESC = " " + PREFIX_PASSWORD + "hunter2";
 
     private final RemindCommandParser parser = new RemindCommandParser();
 
@@ -39,6 +42,13 @@ public class RemindCommandParserTest {
         Reminder reminder = new Reminder(LocalDate.of(2026, 3, 28), LocalTime.of(20, 0), VALID_NOTE);
         assertParseSuccess(parser, VALID_INDEX + DATE_DESC + TIME_DESC + NOTE_DESC,
                 new RemindCommand(INDEX_FIRST_PERSON, reminder));
+    }
+
+    @Test
+    public void parse_passwordPresent_success() {
+        Reminder reminder = new Reminder(LocalDate.of(2026, 3, 28), LocalTime.of(20, 0), VALID_NOTE);
+        assertParseSuccess(parser, VALID_INDEX + DATE_DESC + TIME_DESC + NOTE_DESC + PW_DESC,
+                new RemindCommand(INDEX_FIRST_PERSON, reminder, Optional.of("hunter2")));
     }
 
     @Test
@@ -99,5 +109,11 @@ public class RemindCommandParserTest {
     public void parse_duplicateNotePrefix_failure() {
         assertParseFailure(parser, VALID_INDEX + DATE_DESC + TIME_DESC + NOTE_DESC + NOTE_DESC,
                 Messages.getErrorMessageForDuplicatePrefixes(PREFIX_NOTES));
+    }
+
+    @Test
+    public void parse_duplicatePasswordPrefix_failure() {
+        assertParseFailure(parser, VALID_INDEX + DATE_DESC + TIME_DESC + NOTE_DESC + PW_DESC + PW_DESC,
+                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PASSWORD));
     }
 }

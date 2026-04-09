@@ -49,13 +49,13 @@ CrimeWatch supports 11 core features: **Add**, **Edit**, and **Delete** contacts
 | Add Contact | `add n/NAME p/PHONE e/EMAIL a/ADDRESS s/STAGE [al/ALIAS(,ALIAS...)] [note/NOTES] [r/RISK] [pw/PASSWORD] [t/TAG]...` | [1) Add Contact](#1-add-contact-add) |
 | Edit Contact | `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/STAGE] [al/ALIAS(,ALIAS...)] [note/NOTES] [r/RISK] [pw/PASSWORD] [t/TAG]...` | [2) Edit Contact](#2-edit-contact-edit) |
 | Delete Contact | `delete INDEX` | [3) Delete Contact](#3-delete-contact-delete) |
-| Log Encounter | `log INDEX d/DATE t/TIME l/LOCATION desc/DESCRIPTION [out/OUTCOME]` | [4) Log Encounter](#4-log-encounter-log) |
+| Log Encounter | `log INDEX d/DATE t/TIME l/LOCATION desc/DESCRIPTION [out/OUTCOME] [pw/PASSWORD]` | [4) Log Encounter](#4-log-encounter-log) |
 | Edit Encounter | `editencounter PERSON_INDEX ENCOUNTER_INDEX [d/DATE] [t/TIME] [l/LOCATION] [desc/DESCRIPTION] [out/OUTCOME]` | [5) Edit Encounter](#5-edit-encounter-editencounter) |
+| Set Reminder | `remind INDEX d/DATE t/TIME note/NOTE [pw/PASSWORD]` | [6) Set Reminder](#6-set-reminder-remind) |
 | View Contact | `view INDEX [pw/PASSWORD]` | [7) View Contact](#7-view-contact-view) |
-| Set Reminder | `remind INDEX d/DATE t/TIME note/NOTE` | [6) Set Reminder](#6-set-reminder-remind) |
 | Search Contacts | `find [NAME_KEYWORD]... [t/TAG]...` | [8) Search Contacts](#8-search-contacts-find) |
-| Export encounters (CSV) | `export l/LOCATION` | [10) Export encounters](#10-export-encounters-to-csv-export) |
 | Sort Contacts | `sort CRITERION` | [9) Sort Contacts](#9-sort-contacts-sort) |
+| Export encounters (CSV) | `export l/LOCATION` | [10) Export encounters](#10-export-encounters-to-csv-export) |
 | Clear All Data | `clear` | [11) Clear All Data](#11-clear-all-data-clear) |
 | Exit Application | `exit` | [12) Exit Application](#12-exit-application-exit) |
 
@@ -186,15 +186,17 @@ Updates details of an existing contact without deleting and re-adding the profil
 
 **Parameters**
 - `INDEX` (compulsory): target contact in current list
-- At least one prefixed field must be provided
+- At least one prefixed field must be provided (including `pw/` alone when allowed)
 - Any omitted field remains unchanged
+- **`pw/PASSWORD`:** If the contact **already has** a password, use this to supply the **current** password so the edit is allowed (for example `edit 1 n/NewName pw/oldSecret`). If the contact **does not** have a password, `pw/` **sets** a new password (`pw/newpassword`) or **clears** it with `pw/` (empty value).
 - `p/PHONE` (optional): Singapore phone number, exactly 8 digits and must start with `6`, `8`, or `9`
 
 **Examples**
 - `edit 1 p/91234567 e/johndoe@example.com`
 - `edit 2 r/high note/More cooperative in latest meeting`
-- `edit 1 pw/newpassword`
-- `edit 1 pw/`
+- `edit 1 pw/newpassword` (only when the contact is not password-protected yet)
+- `edit 1 pw/` (remove password protection, only when the contact is not password-protected)
+- `edit 1 n/UpdatedName pw/oldSecret` (required when the contact already has a password)
 
 **Validation**
 - INDEX must exist in the current list.
@@ -231,7 +233,7 @@ Removes a contact permanently, including all associated encounters and reminders
 Records an interaction with a contact and appends it to the contact’s encounter history.
 
 **Format**
-`log INDEX d/DATE t/TIME l/LOCATION desc/DESCRIPTION [out/OUTCOME]`
+`log INDEX d/DATE t/TIME l/LOCATION desc/DESCRIPTION [out/OUTCOME] [pw/PASSWORD]`
 
 **Parameters**
 - `d/DATE` (compulsory): `YYYY-MM-DD`
@@ -239,9 +241,13 @@ Records an interaction with a contact and appends it to the contact’s encounte
 - `l/LOCATION` (compulsory): location text
 - `desc/DESCRIPTION` (compulsory): what happened (1–500 chars, not blank)
 - `out/OUTCOME` (optional): result/follow-up (up to 300 chars)
+- **`pw/PASSWORD`:** if the contact is password-protected, supply the **current** password (same as for `edit`, `view`, and `remind`).
 
 **Example**
 `log 1 d/2026-02-21 t/18:30 l/Maxwell Road desc/Met at coffee shop out/Agreed to cooperate`
+
+**Example (password-protected contact)**
+`log 1 d/2026-02-21 t/18:30 l/Maxwell Road desc/Met at coffee shop pw/oldSecret`
 
 **Validation**
 - DATE must be a valid calendar date
@@ -249,6 +255,8 @@ Records an interaction with a contact and appends it to the contact’s encounte
 - TIME must be valid 24-hour `HH:mm`
   Error: `Invalid time. Use 24-hour format HH:mm.`
 - DESCRIPTION cannot be blank; 1–500 characters
+- Repeating `d/`, `t/`, `l/`, `desc/`, `out/`, or `pw/` in the same command is not allowed.
+- If the contact is not password-protected, do not supply `pw/`.
 
 **Success output**
 `Encounter logged for [Name] on 2026-02-21 18:30.`
@@ -291,24 +299,27 @@ Updates an existing encounter for a contact.
 Adds a reminder entry to a contact.
 
 **Format**
-`remind INDEX d/DATE t/TIME note/NOTE`
+`remind INDEX d/DATE t/TIME note/NOTE [pw/PASSWORD]`
 
 **Parameters**
 - `INDEX` (compulsory): target contact in current list
 - `d/DATE` (compulsory): `YYYY-MM-DD`
 - `t/TIME` (compulsory): `HH:mm` (24-hour)
 - `note/NOTE` (compulsory): reminder text (not blank)
+- **`pw/PASSWORD`:** if the contact is password-protected, supply the **current** password (same as for `edit` and `view`).
 
 **Examples**
 - `remind 1 d/2026-03-28 t/20:00 note/Meet informant`
 - `remind 2 d/2026-04-01 t/09:15 note/Follow up on statement`
+- `remind 1 d/2026-03-28 t/20:00 note/Meet informant pw/oldSecret` (when the contact already has a password)
 
 **Validation**
 - INDEX must exist in the current contact list.
 - DATE must be valid and use `YYYY-MM-DD`.
 - TIME must be valid and use 24-hour `HH:mm`.
 - NOTE cannot be blank.
-- Repeating `d/`, `t/`, or `note/` in the same command is not allowed.
+- Repeating `d/`, `t/`, `note/`, or `pw/` in the same command is not allowed.
+- If the contact is not password-protected, do not supply `pw/`.
 
 **Success output**
 `Reminder set for [Name] on [DATE] [TIME].`

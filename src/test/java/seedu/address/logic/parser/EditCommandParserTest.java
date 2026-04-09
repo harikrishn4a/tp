@@ -7,18 +7,23 @@ import static seedu.address.logic.commands.CommandTestUtil.INVALID_ADDRESS_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_NAME_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_RISK_DESC;
 import static seedu.address.logic.commands.CommandTestUtil.NAME_DESC_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.PW_DESC_VALID;
 import static seedu.address.logic.commands.CommandTestUtil.RISK_DESC_HIGH;
 import static seedu.address.logic.commands.CommandTestUtil.RISK_DESC_LOW;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_ADDRESS_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_AMY;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_PASSWORD;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ALIAS;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_PASSWORD;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_RISK;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseSuccess;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_PERSON;
 import static seedu.address.testutil.TypicalIndexes.INDEX_THIRD_PERSON;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
@@ -91,6 +96,17 @@ public class EditCommandParserTest {
     }
 
     @Test
+    public void parse_passwordPrefixSpecified_success() {
+        Index targetIndex = INDEX_FIRST_PERSON;
+        String userInput = targetIndex.getOneBased() + NAME_DESC_AMY + PW_DESC_VALID;
+
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName(VALID_NAME_AMY).build();
+        EditCommand expectedCommand = new EditCommand(targetIndex, descriptor, Optional.of(VALID_PASSWORD));
+
+        assertParseSuccess(parser, userInput, expectedCommand);
+    }
+
+    @Test
     public void parse_someFieldsSpecified_success() {
         Index targetIndex = INDEX_FIRST_PERSON;
         String userInput = targetIndex.getOneBased() + ADDRESS_DESC_AMY;
@@ -150,6 +166,14 @@ public class EditCommandParserTest {
         String userInput = targetIndex.getOneBased() + RISK_DESC_LOW + RISK_DESC_HIGH;
         assertParseFailure(parser, userInput,
                 Messages.getErrorMessageForDuplicatePrefixes(PREFIX_RISK));
+    }
+
+    @Test
+    public void parse_multipleRepeatedPassword_failure() {
+        Index targetIndex = INDEX_FIRST_PERSON;
+        String userInput = targetIndex.getOneBased() + NAME_DESC_AMY + PW_DESC_VALID + PW_DESC_VALID;
+        assertParseFailure(parser, userInput,
+                Messages.getErrorMessageForDuplicatePrefixes(PREFIX_PASSWORD));
     }
 
     @Test

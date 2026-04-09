@@ -88,21 +88,18 @@ public class EditCommandParser implements Parser<EditCommand> {
             Risk risk = ParserUtil.parseRisk(argMultimap.getValue(PREFIX_RISK).get());
             editPersonDescriptor.setRisk(risk);
         }
-        if (argMultimap.getValue(PREFIX_PASSWORD).isPresent()) {
-            String rawPassword = argMultimap.getValue(PREFIX_PASSWORD).get();
-            if (rawPassword.trim().isEmpty()) {
-                editPersonDescriptor.clearPassword();
-            } else {
-                editPersonDescriptor.setPassword(ParserUtil.parsePassword(rawPassword));
-            }
-        }
         parseTagsForEdit(argMultimap.getAllValues(PREFIX_TAG)).ifPresent(editPersonDescriptor::setTags);
 
-        if (!editPersonDescriptor.isAnyFieldEdited()) {
+        boolean passwordPrefixPresent = argMultimap.getValue(PREFIX_PASSWORD).isPresent();
+        Optional<String> passwordPrefix = passwordPrefixPresent
+                ? Optional.of(argMultimap.getValue(PREFIX_PASSWORD).get())
+                : Optional.empty();
+
+        if (!editPersonDescriptor.isAnyFieldEdited() && !passwordPrefixPresent) {
             throw new ParseException(EditCommand.MESSAGE_NOT_EDITED);
         }
 
-        return new EditCommand(index, editPersonDescriptor);
+        return new EditCommand(index, editPersonDescriptor, passwordPrefix);
     }
 
     private Optional<Set<Tag>> parseTagsForEdit(Collection<String> tags) throws ParseException {

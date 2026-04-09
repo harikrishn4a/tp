@@ -6,6 +6,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ALIAS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_PASSWORD;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_RISK;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_STAGE;
@@ -45,6 +46,8 @@ public class CommandTestUtil {
     public static final String VALID_RISK_HIGH = "high";
     public static final String VALID_TAG_HUSBAND = "husband";
     public static final String VALID_TAG_FRIEND = "friend";
+    /** Sample password string for edit / password tests (alphanumeric). */
+    public static final String VALID_PASSWORD = "hunter2";
 
     public static final String NAME_DESC_AMY = " " + PREFIX_NAME + VALID_NAME_AMY;
     public static final String NAME_DESC_BOB = " " + PREFIX_NAME + VALID_NAME_BOB;
@@ -63,6 +66,7 @@ public class CommandTestUtil {
     public static final String RISK_DESC_HIGH = " " + PREFIX_RISK + VALID_RISK_HIGH;
     public static final String TAG_DESC_FRIEND = " " + PREFIX_TAG + VALID_TAG_FRIEND;
     public static final String TAG_DESC_HUSBAND = " " + PREFIX_TAG + VALID_TAG_HUSBAND;
+    public static final String PW_DESC_VALID = " " + PREFIX_PASSWORD + VALID_PASSWORD;
 
     public static final String INVALID_NAME_DESC = " " + PREFIX_NAME + "James&";
     public static final String INVALID_ALIAS_DESC = " " + PREFIX_ALIAS + "James&";

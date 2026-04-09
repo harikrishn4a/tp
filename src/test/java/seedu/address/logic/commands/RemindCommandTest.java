@@ -12,7 +12,9 @@ import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Comparator;
+import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
@@ -29,12 +31,19 @@ import seedu.address.testutil.PersonBuilder;
  */
 public class RemindCommandTest {
 
+    private static final String SAMPLE_PASSWORD = "hunter2";
+
     private static final Reminder REMINDER_LATER = new Reminder(
             LocalDate.of(2026, 3, 28), LocalTime.of(20, 0), "Meet informant");
     private static final Reminder REMINDER_EARLIER = new Reminder(
             LocalDate.of(2026, 3, 20), LocalTime.of(9, 30), "Check case file");
 
-    private Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+    private Model model;
+
+    @BeforeEach
+    public void setUp() {
+        model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+    }
 
     @Test
     public void execute_validIndexUnfilteredList_success() {
@@ -84,10 +93,11 @@ public class RemindCommandTest {
     @Test
     public void execute_validIndexUnfilteredList_passwordPreserved() {
         Person original = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
-        Person passwordProtected = new PersonBuilder(original).withPassword("hunter2").build();
+        Person passwordProtected = new PersonBuilder(original).withPassword(SAMPLE_PASSWORD).build();
         model.setPerson(original, passwordProtected);
 
-        RemindCommand remindCommand = new RemindCommand(INDEX_FIRST_PERSON, REMINDER_LATER);
+        RemindCommand remindCommand = new RemindCommand(INDEX_FIRST_PERSON, REMINDER_LATER,
+                Optional.of(SAMPLE_PASSWORD));
 
         Person expectedUpdated = new Person(
                 passwordProtected.getName(),
@@ -108,6 +118,32 @@ public class RemindCommandTest {
         String expectedMessage = String.format(RemindCommand.MESSAGE_SUCCESS,
                 passwordProtected.getName(), REMINDER_LATER.getDate(), REMINDER_LATER.getTime());
         assertCommandSuccess(remindCommand, model, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_protectedPasswordRequired_failure() {
+        Person original = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person passwordProtected = new PersonBuilder(original).withPassword(SAMPLE_PASSWORD).build();
+        model.setPerson(original, passwordProtected);
+
+        RemindCommand remindCommand = new RemindCommand(INDEX_FIRST_PERSON, REMINDER_LATER);
+        assertCommandFailure(remindCommand, model, RemindCommand.MESSAGE_PASSWORD_REQUIRED_FOR_REMIND);
+    }
+
+    @Test
+    public void execute_protectedWrongPassword_failure() {
+        Person original = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person passwordProtected = new PersonBuilder(original).withPassword(SAMPLE_PASSWORD).build();
+        model.setPerson(original, passwordProtected);
+
+        RemindCommand remindCommand = new RemindCommand(INDEX_FIRST_PERSON, REMINDER_LATER, Optional.of("wrong"));
+        assertCommandFailure(remindCommand, model, ViewCommand.MESSAGE_INCORRECT_PASSWORD);
+    }
+
+    @Test
+    public void execute_unprotectedUnexpectedPassword_failure() {
+        RemindCommand remindCommand = new RemindCommand(INDEX_FIRST_PERSON, REMINDER_LATER, Optional.of("x"));
+        assertCommandFailure(remindCommand, model, RemindCommand.MESSAGE_UNEXPECTED_PASSWORD_FOR_REMIND);
     }
 
     @Test
@@ -170,13 +206,15 @@ public class RemindCommandTest {
         assertFalse(first.equals(5));
         assertFalse(first.equals(second));
         assertFalse(first.equals(firstDifferentReminder));
+        assertFalse(first.equals(new RemindCommand(INDEX_FIRST_PERSON, REMINDER_LATER, Optional.of("a"))));
     }
 
     @Test
     public void toStringMethod() {
         RemindCommand remindCommand = new RemindCommand(INDEX_FIRST_PERSON, REMINDER_LATER);
         String expected = RemindCommand.class.getCanonicalName()
-                + "{index=" + INDEX_FIRST_PERSON + ", reminder=" + REMINDER_LATER + "}";
+                + "{index=" + INDEX_FIRST_PERSON + ", reminder=" + REMINDER_LATER
+                + ", passwordPrefixProvided=false}";
         assertEquals(expected, remindCommand.toString());
     }
 }

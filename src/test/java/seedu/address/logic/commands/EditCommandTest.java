@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.DESC_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.DESC_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_PASSWORD;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_RISK_HIGH;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
@@ -40,7 +42,12 @@ import seedu.address.testutil.PersonBuilder;
  */
 public class EditCommandTest {
 
-    private Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+    private Model model;
+
+    @BeforeEach
+    public void setUp() {
+        model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+    }
 
     @Test
     public void execute_allFieldsSpecifiedUnfilteredList_success() {
@@ -158,6 +165,68 @@ public class EditCommandTest {
     }
 
     @Test
+    public void execute_protectedContactWithoutPasswordPrefix_failure() {
+        Person first = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person protectedPerson = new PersonBuilder(first).withPassword(VALID_PASSWORD).build();
+        model.setPerson(first, protectedPerson);
+
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName(VALID_NAME_BOB).build();
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor);
+
+        assertCommandFailure(editCommand, model, EditCommand.MESSAGE_PASSWORD_REQUIRED_FOR_EDIT);
+    }
+
+    @Test
+    public void execute_protectedContactWrongPassword_failure() {
+        Person first = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person protectedPerson = new PersonBuilder(first).withPassword(VALID_PASSWORD).build();
+        model.setPerson(first, protectedPerson);
+
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName(VALID_NAME_BOB).build();
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor, Optional.of("wrongpass"));
+
+        assertCommandFailure(editCommand, model, ViewCommand.MESSAGE_INCORRECT_PASSWORD);
+    }
+
+    @Test
+    public void execute_protectedContactWithPasswordPrefix_success() {
+        Person first = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person protectedPerson = new PersonBuilder(first).withPassword(VALID_PASSWORD).build();
+        model.setPerson(first, protectedPerson);
+
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName(VALID_NAME_BOB).build();
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor, Optional.of(VALID_PASSWORD));
+
+        Person expectedEdited = new PersonBuilder(protectedPerson).withName(VALID_NAME_BOB).build();
+        String expectedMessage =
+                String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(expectedEdited));
+
+        Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+        expectedModel.setPerson(protectedPerson, expectedEdited);
+
+        CommandResult expectedResult = new CommandResult(expectedMessage, expectedEdited);
+        assertCommandSuccess(editCommand, model, expectedResult, expectedModel);
+    }
+
+    @Test
+    public void execute_unprotectedPassword_success() {
+        Person firstBefore = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        EditPersonDescriptor descriptor = new EditPersonDescriptorBuilder().withName(VALID_NAME_BOB).build();
+        EditCommand editCommand = new EditCommand(INDEX_FIRST_PERSON, descriptor, Optional.of(VALID_PASSWORD));
+
+        Person expectedEdited = new PersonBuilder(firstBefore).withName(VALID_NAME_BOB).withPassword(VALID_PASSWORD)
+                .build();
+        String expectedMessage =
+                String.format(EditCommand.MESSAGE_EDIT_PERSON_SUCCESS, Messages.format(expectedEdited));
+
+        Model expectedModel = new ModelManager(new AddressBook(model.getAddressBook()), new UserPrefs());
+        expectedModel.setPerson(firstBefore, expectedEdited);
+
+        CommandResult expectedResult = new CommandResult(expectedMessage, expectedEdited);
+        assertCommandSuccess(editCommand, model, expectedResult, expectedModel);
+    }
+
+    @Test
     public void execute_editFieldsSpecified_preservesEncounters() {
         Encounter existingEncounter = new Encounter(
                 LocalDateTime.of(2026, 3, 10, 9, 30),
@@ -272,6 +341,10 @@ public class EditCommandTest {
 
         // different descriptor -> returns false
         assertFalse(standardCommand.equals(new EditCommand(INDEX_FIRST_PERSON, DESC_BOB)));
+
+        // different authentication password -> returns false
+        assertFalse(standardCommand.equals(
+                new EditCommand(INDEX_FIRST_PERSON, new EditPersonDescriptor(DESC_AMY), Optional.of("x"))));
     }
 
     @Test
@@ -280,7 +353,7 @@ public class EditCommandTest {
         EditPersonDescriptor editPersonDescriptor = new EditPersonDescriptor();
         EditCommand editCommand = new EditCommand(index, editPersonDescriptor);
         String expected = EditCommand.class.getCanonicalName() + "{index=" + index + ", editPersonDescriptor="
-                + editPersonDescriptor + "}";
+                + editPersonDescriptor + ", passwordPrefixProvided=false}";
         assertEquals(expected, editCommand.toString());
     }
 

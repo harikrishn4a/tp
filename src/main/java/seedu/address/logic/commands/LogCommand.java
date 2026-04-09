@@ -5,10 +5,12 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_DATE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DESCRIPTION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_LOCATION;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_OUTCOME;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_PASSWORD;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TIME;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.ToStringBuilder;
@@ -34,28 +36,50 @@ public class LogCommand extends Command {
             + PREFIX_TIME + "TIME "
             + PREFIX_LOCATION + "LOCATION "
             + PREFIX_DESCRIPTION + "DESCRIPTION "
-            + "[" + PREFIX_OUTCOME + "OUTCOME]\n"
+            + "[" + PREFIX_OUTCOME + "OUTCOME] "
+            + "[" + PREFIX_PASSWORD + "PASSWORD]\n"
+            + "If the contact is password-protected, " + PREFIX_PASSWORD + " must be the current password.\n"
             + "Example: " + COMMAND_WORD + " 1 "
             + PREFIX_DATE + "2026-02-21 "
             + PREFIX_TIME + "18:30 "
             + PREFIX_LOCATION + "Maxwell Road "
             + PREFIX_DESCRIPTION + "Met at coffee shop "
-            + PREFIX_OUTCOME + "Agreed to cooperate";
+            + PREFIX_OUTCOME + "Agreed to cooperate\n"
+            + "Example (protected): " + COMMAND_WORD + " 1 "
+            + PREFIX_DATE + "2026-02-21 "
+            + PREFIX_TIME + "18:30 "
+            + PREFIX_LOCATION + "Maxwell Road "
+            + PREFIX_DESCRIPTION + "Met at coffee shop "
+            + PREFIX_PASSWORD + "hunter2";
 
     public static final String MESSAGE_SUCCESS = "Encounter logged for %1$s on %2$s.";
+    public static final String MESSAGE_PASSWORD_REQUIRED_FOR_LOG =
+            "This contact is password-protected. Include " + PREFIX_PASSWORD + "CURRENT_PASSWORD in your log.";
+    public static final String MESSAGE_UNEXPECTED_PASSWORD_FOR_LOG =
+            "This contact is not password-protected. Remove " + PREFIX_PASSWORD + ".";
 
     private final Index index;
     private final Encounter encounter;
+    private final Optional<String> passwordPrefix;
 
     /**
      * @param index     of the person in the filtered person list to log the encounter for
      * @param encounter the encounter to append to the person's history
      */
     public LogCommand(Index index, Encounter encounter) {
+        this(index, encounter, Optional.empty());
+    }
+
+    /**
+     * @param passwordPrefix raw string after {@code pw/}, or empty if {@code pw/} was not in the command
+     */
+    public LogCommand(Index index, Encounter encounter, Optional<String> passwordPrefix) {
         requireNonNull(index);
         requireNonNull(encounter);
+        requireNonNull(passwordPrefix);
         this.index = index;
         this.encounter = encounter;
+        this.passwordPrefix = passwordPrefix;
     }
 
     @Override
@@ -68,6 +92,17 @@ public class LogCommand extends Command {
         }
 
         Person personToLog = lastShownList.get(index.getZeroBased());
+
+        if (personToLog.hasPassword()) {
+            if (passwordPrefix.isEmpty()) {
+                throw new CommandException(MESSAGE_PASSWORD_REQUIRED_FOR_LOG);
+            }
+            if (!personToLog.isPasswordMatch(passwordPrefix.get())) {
+                throw new CommandException(ViewCommand.MESSAGE_INCORRECT_PASSWORD);
+            }
+        } else if (passwordPrefix.isPresent()) {
+            throw new CommandException(MESSAGE_UNEXPECTED_PASSWORD_FOR_LOG);
+        }
 
         List<Encounter> updatedEncounters = new ArrayList<>(personToLog.getEncounters());
         updatedEncounters.add(encounter);
@@ -127,7 +162,8 @@ public class LogCommand extends Command {
 
         LogCommand otherLogCommand = (LogCommand) other;
         return index.equals(otherLogCommand.index)
-                && encounter.equals(otherLogCommand.encounter);
+                && encounter.equals(otherLogCommand.encounter)
+                && passwordPrefix.equals(otherLogCommand.passwordPrefix);
     }
 
     @Override
@@ -135,6 +171,7 @@ public class LogCommand extends Command {
         return new ToStringBuilder(this)
                 .add("index", index)
                 .add("encounter", encounter)
+                .add("passwordPrefixProvided", passwordPrefix.isPresent())
                 .toString();
     }
 }

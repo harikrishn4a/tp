@@ -12,6 +12,7 @@ import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
@@ -28,6 +29,8 @@ import seedu.address.testutil.PersonBuilder;
  * Contains integration tests (interaction with the Model) and unit tests for {@code LogCommand}.
  */
 public class LogCommandTest {
+
+    private static final String SAMPLE_PASSWORD = "hunter2";
 
     private static final Encounter ENCOUNTER_NO_OUTCOME = new Encounter(
             LocalDateTime.of(2026, 2, 21, 18, 30),
@@ -51,7 +54,12 @@ public class LogCommandTest {
             java.time.LocalTime.of(20, 0),
             "Meet informant");
 
-    private Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+    private Model model;
+
+    @BeforeEach
+    public void setUp() {
+        model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+    }
 
     // ── execute: success ─────────────────────────────────────────────────────
 
@@ -198,7 +206,7 @@ public class LogCommandTest {
                 .build();
         model.setPerson(original, protectedPerson);
 
-        LogCommand logCommand = new LogCommand(INDEX_FIRST_PERSON, ENCOUNTER_NO_OUTCOME);
+        LogCommand logCommand = new LogCommand(INDEX_FIRST_PERSON, ENCOUNTER_NO_OUTCOME, Optional.of("hunter2"));
         String expectedMessage = String.format(
                 LogCommand.MESSAGE_SUCCESS,
                 protectedPerson.getName(),
@@ -226,6 +234,56 @@ public class LogCommandTest {
         assertTrue(result.getPersonToView().isPresent());
         assertEquals(model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased()),
                 result.getPersonToView().get());
+    }
+
+    @Test
+    public void execute_protectedPassword_success() {
+        Person original = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person passwordProtected = new PersonBuilder(original).withPassword(SAMPLE_PASSWORD).build();
+        model.setPerson(original, passwordProtected);
+
+        LogCommand logCommand = new LogCommand(INDEX_FIRST_PERSON, ENCOUNTER_NO_OUTCOME, Optional.of(SAMPLE_PASSWORD));
+
+        String expectedMessage = String.format(
+                LogCommand.MESSAGE_SUCCESS,
+                passwordProtected.getName(),
+                ENCOUNTER_NO_OUTCOME.getFormattedDateTime());
+
+        Person updatedPerson = new PersonBuilder(passwordProtected)
+                .withEncounters(ENCOUNTER_NO_OUTCOME)
+                .build();
+
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.setPerson(passwordProtected, updatedPerson);
+
+        CommandResult expectedResult = new CommandResult(expectedMessage, updatedPerson);
+        assertCommandSuccess(logCommand, model, expectedResult, expectedModel);
+    }
+
+    @Test
+    public void execute_protectedPasswordRequired_failure() {
+        Person original = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person passwordProtected = new PersonBuilder(original).withPassword(SAMPLE_PASSWORD).build();
+        model.setPerson(original, passwordProtected);
+
+        LogCommand logCommand = new LogCommand(INDEX_FIRST_PERSON, ENCOUNTER_NO_OUTCOME);
+        assertCommandFailure(logCommand, model, LogCommand.MESSAGE_PASSWORD_REQUIRED_FOR_LOG);
+    }
+
+    @Test
+    public void execute_protectedWrongPassword_failure() {
+        Person original = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person passwordProtected = new PersonBuilder(original).withPassword(SAMPLE_PASSWORD).build();
+        model.setPerson(original, passwordProtected);
+
+        LogCommand logCommand = new LogCommand(INDEX_FIRST_PERSON, ENCOUNTER_NO_OUTCOME, Optional.of("wrong"));
+        assertCommandFailure(logCommand, model, ViewCommand.MESSAGE_INCORRECT_PASSWORD);
+    }
+
+    @Test
+    public void execute_unprotectedUnexpectedPassword_failure() {
+        LogCommand logCommand = new LogCommand(INDEX_FIRST_PERSON, ENCOUNTER_NO_OUTCOME, Optional.of("x"));
+        assertCommandFailure(logCommand, model, LogCommand.MESSAGE_UNEXPECTED_PASSWORD_FOR_LOG);
     }
 
     // ── execute: failures ────────────────────────────────────────────────────
@@ -274,6 +332,8 @@ public class LogCommandTest {
 
         // different encounter -> returns false
         assertFalse(logFirst.equals(logFirstOtherEncounter));
+
+        assertFalse(logFirst.equals(new LogCommand(INDEX_FIRST_PERSON, ENCOUNTER_NO_OUTCOME, Optional.of("a"))));
     }
 
     // ── toString ─────────────────────────────────────────────────────────────
@@ -283,7 +343,8 @@ public class LogCommandTest {
         LogCommand logCommand = new LogCommand(INDEX_FIRST_PERSON, ENCOUNTER_NO_OUTCOME);
         String expected = LogCommand.class.getCanonicalName()
                 + "{index=" + INDEX_FIRST_PERSON
-                + ", encounter=" + ENCOUNTER_NO_OUTCOME + "}";
+                + ", encounter=" + ENCOUNTER_NO_OUTCOME
+                + ", passwordPrefixProvided=false}";
         assertEquals(expected, logCommand.toString());
     }
 }
