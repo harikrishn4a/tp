@@ -72,7 +72,21 @@ public class LogCommand extends Command {
         List<Encounter> updatedEncounters = new ArrayList<>(personToLog.getEncounters());
         updatedEncounters.add(encounter);
 
-        Person updatedPerson = new Person(
+        Person updatedPerson = createLoggedPerson(personToLog, updatedEncounters);
+
+        model.setPerson(personToLog, updatedPerson);
+
+        return new CommandResult(
+                String.format(MESSAGE_SUCCESS,
+                        personToLog.getName(),
+                        encounter.getFormattedDateTime()));
+    }
+
+    /**
+     * Rebuilds the logged contact with updated encounter history.
+     */
+    private Person createLoggedPerson(Person personToLog, List<Encounter> updatedEncounters) {
+        return new Person(
                 personToLog.getName(),
                 personToLog.getPhone(),
                 personToLog.getEmail(),
@@ -83,13 +97,6 @@ public class LogCommand extends Command {
                 personToLog.getRisk(),
                 personToLog.getTags(),
                 updatedEncounters);
-
-        model.setPerson(personToLog, updatedPerson);
-
-        return new CommandResult(
-                String.format(MESSAGE_SUCCESS,
-                        personToLog.getName(),
-                        encounter.getFormattedDateTime()));
     }
 
     @Override
