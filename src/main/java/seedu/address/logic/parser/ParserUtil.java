@@ -230,7 +230,7 @@ public class ParserUtil {
     public static Password parsePassword(String password) throws ParseException {
         requireNonNull(password);
         String trimmedPassword = password.trim();
-        if (!Password.isValidPassword(trimmedPassword)) {
+        if (trimmedPassword.matches(".*\\s+.*") || !Password.isValidPassword(trimmedPassword)) {
             throw new ParseException(Password.MESSAGE_CONSTRAINTS);
         }
         return new Password(trimmedPassword);
