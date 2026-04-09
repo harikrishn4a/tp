@@ -1,0 +1,31 @@
+@startuml HighLevelSequence
+title High-Level Sequence Diagram
+
+actor User
+participant UI
+participant Logic
+participant Model
+participant Storage
+
+User -> UI: Enter command
+activate UI
+
+UI -> Logic: execute(commandText)
+activate Logic
+
+Logic -> Model: parse + execute command\n(read/update in-memory data)
+activate Model
+Model --> Logic: Command result / updated state
+deactivate Model
+
+Logic -> Storage: saveAddressBook(model data)
+activate Storage
+Storage --> Logic: save success
+deactivate Storage
+
+Logic --> UI: CommandResult
+deactivate Logic
+
+UI --> User: Show feedback + refreshed list
+deactivate UI
+@enduml
