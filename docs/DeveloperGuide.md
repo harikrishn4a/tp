@@ -680,11 +680,11 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 Use case ends.
 
 **Extensions**
-* 1a. Index is invalid.  
-  * 1a1. System shows an error message.  
+* 1a. Index is invalid.
+  * 1a1. System shows an error message.
   Use case ends.
-* 3a. Password is missing or incorrect.  
-  * 3a1. System shows an error message.  
+* 3a. Password is missing or incorrect.
+  * 3a1. System shows an error message.
   Use case ends.
 
 **Use case: Log an encounter**
@@ -698,9 +698,9 @@ Use case ends.
 Use case ends.
 
 **Extensions**
-* 1a. Target index is invalid.  
+* 1a. Target index is invalid.
   * 1a1. System shows an error message.
-* 2a. Required fields are missing/invalid.  
+* 2a. Required fields are missing/invalid.
   * 2a1. System shows an error message.
 
 ### Non-Functional Requirements
@@ -733,23 +733,23 @@ Given below are manual tests for major functional paths and edge cases.
 
 1. Initial launch
    1. Download the jar file and place it in an empty folder.
-   1. Run the jar file.  
+   1. Run the jar file.
       Expected: app window opens with sample contacts.
 
 2. Window preference persistence
    1. Resize and reposition the app window, then close the app.
-   1. Relaunch the app.  
+   1. Relaunch the app.
       Expected: previous window size and location are restored.
 
 ### Add and edit contact
 
 1. Add contact with required + optional fields
-   1. Test case:  
+   1. Test case:
       `add n/Mark Tan p/91234567 e/mark@example.com a/Blk 10 Clementi Ave 2 s/surveillance al/MT note/Seen near station r/high t/caseA`
    1. Expected: contact added with provided values.
 
 2. Add contact with invalid stage
-   1. Test case:  
+   1. Test case:
       `add n/Mark Tan p/91234567 e/mark@example.com a/Blk 10 Clementi Ave 2 s/unknown`
    1. Expected: command rejected with stage validation message.
 
@@ -783,7 +783,7 @@ Given below are manual tests for major functional paths and edge cases.
 ### Log encounter and edit encounter
 
 1. Log encounter successfully
-   1. Test case:  
+   1. Test case:
       `log 1 d/2026-04-09 t/18:30 l/Maxwell Road desc/Observed exchange out/No immediate action`
    1. Expected: encounter added and success message shown.
 
