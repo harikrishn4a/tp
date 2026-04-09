@@ -161,10 +161,12 @@ This section describes some noteworthy details on how certain features are imple
 
 The current `add` command format is:
 
-`add n/NAME a/ADDRESS s/STAGE [al/ALIAS(,ALIAS...)] [note/NOTES] [r/RISK] [t/TAG]...`
+`add n/NAME p/PHONE e/EMAIL a/ADDRESS s/STAGE [al/ALIAS(,ALIAS...)] [note/NOTES] [r/RISK] [pw/PASSWORD] [t/TAG]...`
 
 Required fields:
 - `n/` name
+- `p/` phone
+- `e/` email
 - `a/` address
 - `s/` stage
 
@@ -172,6 +174,7 @@ Optional fields:
 - `al/` aliases (comma-separated)
 - `note/` notes
 - `r/` risk (defaults to `medium`)
+- `pw/` password (contact-level protection)
 - `t/` tags (repeatable)
 
 #### Parsing flow
@@ -184,7 +187,7 @@ Implementation references:
 
 Key parser behavior:
 - Rejects missing required prefixes with `MESSAGE_INVALID_COMMAND_FORMAT`.
-- Uses `verifyNoDuplicatePrefixesFor(...)` for `n/`, `a/`, `al/`, `note/`, `r/`, `s/`.
+- Uses `verifyNoDuplicatePrefixesFor(...)` for `n/`, `p/`, `e/`, `a/`, `al/`, `note/`, `r/`, `pw/`, `s/`.
 - Parses aliases via `ParserUtil.parseAliases(...)`; empty alias payload is rejected.
 - Applies default risk via `Risk.getDefault()` when `r/` is omitted.
 - Parses tags from all `t/` occurrences into a `Set<Tag>`.
@@ -193,19 +196,27 @@ Key parser behavior:
 
 Validation is enforced in model/value objects and parser utilities:
 - `Name`: alphanumeric + spaces, non-blank.
+- `Phone`: digits only, at least 3 digits.
+- `Email`: must satisfy email format constraints.
+- `Address`: non-blank.
 - `Alias`: trimmed, 1-50 chars, alphanumeric + spaces.
 - `Stage`: one of `surveillance`, `approached`, `cooperating`, `arrested`, `closed`.
 - `Notes`: optional text, max 500 chars, no newlines.
 - `Risk`: one of `low`, `medium`, `high` (case-insensitive parser).
+- `Password`: alphanumeric + spaces, non-blank when provided.
 - `Tag`: alphanumeric.
 
 Relevant classes:
 - [`src/main/java/seedu/address/logic/parser/ParserUtil.java`](../src/main/java/seedu/address/logic/parser/ParserUtil.java)
 - [`src/main/java/seedu/address/model/person/Name.java`](../src/main/java/seedu/address/model/person/Name.java)
+- [`src/main/java/seedu/address/model/person/Phone.java`](../src/main/java/seedu/address/model/person/Phone.java)
+- [`src/main/java/seedu/address/model/person/Email.java`](../src/main/java/seedu/address/model/person/Email.java)
+- [`src/main/java/seedu/address/model/person/Address.java`](../src/main/java/seedu/address/model/person/Address.java)
 - [`src/main/java/seedu/address/model/person/Alias.java`](../src/main/java/seedu/address/model/person/Alias.java)
 - [`src/main/java/seedu/address/model/person/Stage.java`](../src/main/java/seedu/address/model/person/Stage.java)
 - [`src/main/java/seedu/address/model/person/Notes.java`](../src/main/java/seedu/address/model/person/Notes.java)
 - [`src/main/java/seedu/address/model/person/Risk.java`](../src/main/java/seedu/address/model/person/Risk.java)
+- [`src/main/java/seedu/address/model/person/Password.java`](../src/main/java/seedu/address/model/person/Password.java)
 - [`src/main/java/seedu/address/model/tag/Tag.java`](../src/main/java/seedu/address/model/tag/Tag.java)
 ### Sort feature
 
@@ -297,7 +308,7 @@ Optional, contact-level password protection. Each contact can be protected with 
 
 ```bash
 # Add contact with password protection
-add n/John Doe p/98765432 e/john@example.com a/123 Main St s/suspect pw/password123
+add n/John Doe p/98765432 e/john@example.com a/123 Main St s/surveillance pw/password123
 
 # Update/remove password
 edit 1 pw/newpassword   # Change password
@@ -442,7 +453,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | -------- | --------------------------------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------- |
 | `* * *`  | undercover officer                      | create contact profiles                                 | keep all suspect details organised in one secure place                       |
 | `* * *`  | undercover officer                      | log encounters immediately after they happen            | preserve accurate details while they are still fresh                         |
-| `* * *`  | undercover officer                      | search contacts by name, alias, or keyword              | retrieve critical information quickly under time pressure                    |
+| `* * *`  | undercover officer                      | search contacts by name and tag                          | retrieve critical information quickly under time pressure                    |
 | `* * *`  | undercover officer                      | update contact profiles                                 | keep their information up to date                                            |
 | `* * *`  | undercover officer                      | delete contact profiles                                 | remove any profile if no longer required                                     |
 | `* * *`  | undercover officer                      | record aliases and multiple identifiers for a contact   | track individuals who use different identities                               |

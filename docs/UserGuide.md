@@ -51,11 +51,11 @@ CrimeWatch supports 11 core features: **Add**, **Edit**, and **Delete** contacts
 | Delete Contact | `delete INDEX` | [3) Delete Contact](#3-delete-contact-delete) |
 | Log Encounter | `log INDEX d/DATE t/TIME l/LOCATION desc/DESCRIPTION [out/OUTCOME]` | [4) Log Encounter](#4-log-encounter-log) |
 | Edit Encounter | `editencounter PERSON_INDEX ENCOUNTER_INDEX [d/DATE] [t/TIME] [l/LOCATION] [desc/DESCRIPTION] [out/OUTCOME]` | [5) Edit Encounter](#5-edit-encounter-editencounter) |
-| View Contact | `view INDEX [pw/PASSWORD]` | [6) View Contact](#6-view-contact-view) |
-| Set Reminder | `remind INDEX d/DATE t/TIME note/NOTE` | [7) Set Reminder](#7-set-reminder-remind) |
+| View Contact | `view INDEX [pw/PASSWORD]` | [7) View Contact](#7-view-contact-view) |
+| Set Reminder | `remind INDEX d/DATE t/TIME note/NOTE` | [6) Set Reminder](#6-set-reminder-remind) |
 | Search Contacts | `find [NAME_KEYWORD]... [t/TAG]...` | [8) Search Contacts](#8-search-contacts-find) |
-| Export encounters (CSV) | `export l/LOCATION` | [9) Export encounters](#9-export-encounters-to-csv-export) |
-| Sort Contacts | `sort CRITERION` | [10) Sort Contacts](#10-sort-contacts-sort) |
+| Export encounters (CSV) | `export l/LOCATION` | [10) Export encounters](#10-export-encounters-to-csv-export) |
+| Sort Contacts | `sort CRITERION` | [9) Sort Contacts](#9-sort-contacts-sort) |
 | Clear All Data | `clear` | [11) Clear All Data](#11-clear-all-data-clear) |
 | Exit Application | `exit` | [12) Exit Application](#12-exit-application-exit) |
 
@@ -69,7 +69,7 @@ CrimeWatch supports 11 core features: **Add**, **Edit**, and **Delete** contacts
 1. Ensure Java `17` or above is installed.
   **Mac users:** verify the exact JDK setup [here](https://se-education.org/guides/tutorials/javaInstallationMac.html).
 
-2. Download the latest CrimeWatch `.jar` file from [Releases](https://github.com/se-edu/addressbook-level3/releases).
+2. Download the latest CrimeWatch `.jar` file from [Releases](https://github.com/AY2526S2-CS2103T-T16-4/tp/releases).
 
 3. Move the `.jar` file into a folder you want to use as your CrimeWatch home folder.
   A new empty folder is recommended.
@@ -86,17 +86,17 @@ CrimeWatch supports 11 core features: **Add**, **Edit**, and **Delete** contacts
 
    ![Opening the .jar file](images/ug-terminal-command.png)
 
-5. Confirm the app opens and sample data is visible.
+6. Confirm the app opens and sample data is visible.
    ![Ui](images/Ui.png)
 
-6. Try this 60-second typed-command tutorial:
+7. Try this 60-second typed-command tutorial:
    - `help` to open this user guide.
    - `list` to show all contacts.
    - `add n/John Doe p/98765432 e/john@example.com a/Maxwell Road s/surveillance al/JD r/high note/Observed near station` to add a suspect profile.
    - `view 1` to inspect the first contact.
    - `log 1 d/2026-03-31 t/21:15 l/Maxwell Road desc/Short conversation out/Agreed to follow up` to log an encounter.
 
-7. Expected result after Step 6:
+8. Expected result after Step 7:
    - You should see one newly added contact.
    - You should see one newly added encounter for that contact.
 
@@ -104,7 +104,7 @@ CrimeWatch supports 11 core features: **Add**, **Edit**, and **Delete** contacts
 Do not store classified or highly sensitive intelligence in `note/` or `desc/` fields. Data is saved locally and contact passwords are plain text.
 </div>
 
-8. Continue with [Features](#features) for full command details.
+9. Continue with [Features](#features) for full command details.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -209,7 +209,7 @@ Updates details of an existing contact without deleting and re-adding the profil
 
 ### 3) Delete Contact: `delete`
 
-Removes a contact **and all associated encounters** permanently.
+Removes a contact permanently, including all associated encounters and reminders.
 
 **Format**
 `delete INDEX`
@@ -219,10 +219,10 @@ Removes a contact **and all associated encounters** permanently.
 
 **Validation**
 - INDEX must exist in the current list.
-- Error: `Invalid index.`
+- Error: `The person index provided is invalid`
 
 **Success output**
-`Deleted contact: [Name]. All associated encounters are removed.`
+`Deleted Person: [person details]`
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -317,7 +317,7 @@ Adds a reminder entry to a contact.
 
 ### 7) View Contact: `view`
 
-Displays the full profile of a contact and their chronological encounter history.
+Displays the full profile of a contact and their encounter cards.
 
 **Format**
 `view INDEX [pw/PASSWORD]`
@@ -339,7 +339,7 @@ Displays the full profile of a contact and their chronological encounter history
 - Stage
 - Risk
 - Notes
-- Encounter History (sorted by date-time ascending)
+- Encounter History (`#1` is the most recently logged encounter)
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -388,11 +388,11 @@ Sorts the currently displayed contact list by a chosen criterion.
 
 **Behavior**
 - Sorting is applied to the displayed list view.
-- `sort location`: uses each contact's most recently logged encounter location; contacts without encounters appear last.
+- `sort location`: uses each contact's latest logged encounter location (the last encounter in that contact's history); contacts without encounters appear last.
 - `sort tag`: uses each contact's alphabetically smallest tag; contacts without tags appear last.
 - `sort alphabetical`: sorts by contact name (A-Z).
 - `sort status`: sorts by stage/status alphabetically.
-- `sort recent`: sorts by most recently encountered first.
+- `sort recent`: sorts by latest logged encounter time first (the last encounter in each contact's history).
 - Ties are resolved by contact name in alphabetical order.
 
 --------------------------------------------------------------------------------------------------------------------
