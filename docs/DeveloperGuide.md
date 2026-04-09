@@ -336,6 +336,32 @@ The following sequence diagram shows how the `view` command processes a password
 
 ![View Protected Contact Sequence Diagram](images/ViewProtectedContactSequenceDiagram.png)
 
+### Remind command
+
+The `remind` command resolves its target using the same filtered and sorted contact list currently shown to the user. This is important because `ModelManager#getFilteredPersonList()` returns `sortedPersons`, so the displayed index must be interpreted against the sorted view rather than the raw address book order.
+
+The command first performs bounds checking against the displayed list in `RemindCommand#execute(Model)`, then delegates the actual update to `Model#addReminderToContact(Index, Reminder)`. `ModelManager` retrieves the target from `sortedPersons`, copies the existing reminder list, adds the new reminder, sorts the updated reminders chronologically, and rebuilds the `Person` before calling `setPerson(...)`.
+
+![Remind Command Sequence Diagram](images/RemindSequenceDiagram.png)
+
+Key classes:
+- [`src/main/java/seedu/address/logic/commands/RemindCommand.java`](../src/main/java/seedu/address/logic/commands/RemindCommand.java)
+- [`src/main/java/seedu/address/model/Model.java`](../src/main/java/seedu/address/model/Model.java)
+- [`src/main/java/seedu/address/model/ModelManager.java`](../src/main/java/seedu/address/model/ModelManager.java)
+
+### Edit Encounter command
+
+The `editencounter` command uses two indices: `PERSON_INDEX` identifies the contact in the displayed contact list, while `ENCOUNTER_INDEX` refers to the encounter cards shown in `view`. The UI renders those encounter cards in reverse-chronological order, so display index `1` refers to the most recent encounter rather than the first element stored in the underlying encounter list.
+
+To preserve that user-facing numbering, `EditEncounterCommand#execute(Model)` converts the displayed encounter index back into the stored zero-based index using `existingEncounters.size() - encounterDisplayOneBased`. It then replaces only the selected encounter in a copied list and rebuilds the `Person` with the updated encounters while preserving other fields such as reminders and password protection.
+
+![Edit Encounter Sequence Diagram](images/EditEncounterSequenceDiagram.png)
+
+Key classes:
+- [`src/main/java/seedu/address/logic/commands/EditEncounterCommand.java`](../src/main/java/seedu/address/logic/commands/EditEncounterCommand.java)
+- [`src/main/java/seedu/address/ui/ViewPanel.java`](../src/main/java/seedu/address/ui/ViewPanel.java)
+- [`src/main/java/seedu/address/model/person/Person.java`](../src/main/java/seedu/address/model/person/Person.java)
+
 ### \[Proposed\] Undo/redo feature
 
 #### Proposed Implementation
