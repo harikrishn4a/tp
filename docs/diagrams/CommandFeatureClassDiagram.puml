@@ -4,25 +4,35 @@
 skinparam arrowThickness 1.1
 skinparam arrowColor LOGIC_COLOR_T4
 skinparam classBackgroundColor LOGIC_COLOR
+skinparam linetype ortho
+top to bottom direction
 
 package Logic {
 Class "{abstract}\nCommand" as Command
 Class CommandResult
 
+package "Contact Commands" as ContactCommands {
 Class AddCommand
 Class EditCommand
 Class DeleteCommand
 Class ViewCommand
+Class FindCommand
+Class SortCommand
+}
+
+package "Encounter Commands" as EncounterCommands {
 Class LogCommand
 Class EditEncounterCommand
 Class RemindCommand
-Class FindCommand
-Class SortCommand
 Class ExportCommand
+}
+
+package "System Commands" as SystemCommands {
 Class ListCommand
 Class ClearCommand
 Class HelpCommand
 Class ExitCommand
+}
 
 Class "EditCommand.EditPersonDescriptor" as EditPersonDescriptor
 Class "EditEncounterCommand.EditEncounterDescriptor" as EditEncounterDescriptor
@@ -36,6 +46,22 @@ Class Person
 Class Encounter
 Class Reminder
 }
+
+ContactCommands -[hidden]down-> EncounterCommands
+EncounterCommands -[hidden]down-> SystemCommands
+AddCommand -[hidden]down-> EditCommand
+EditCommand -[hidden]down-> DeleteCommand
+DeleteCommand -[hidden]down-> ViewCommand
+ViewCommand -[hidden]down-> FindCommand
+FindCommand -[hidden]down-> SortCommand
+
+LogCommand -[hidden]down-> EditEncounterCommand
+EditEncounterCommand -[hidden]down-> RemindCommand
+RemindCommand -[hidden]down-> ExportCommand
+
+ListCommand -[hidden]down-> ClearCommand
+ClearCommand -[hidden]down-> HelpCommand
+HelpCommand -[hidden]down-> ExitCommand
 
 AddCommand -up-|> Command
 EditCommand -up-|> Command
