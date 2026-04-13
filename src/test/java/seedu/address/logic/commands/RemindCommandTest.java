@@ -133,7 +133,7 @@ public class RemindCommandTest {
         RemindCommand remindCommand = new RemindCommand(INDEX_FIRST_PERSON, REMINDER_LATER);
         assertCommandFailure(remindCommand, model, RemindCommand.MESSAGE_DUPLICATE_REMINDER);
     }
-    
+    @Test
     public void execute_protectedPasswordRequired_failure() {
         Person original = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
         Person passwordProtected = new PersonBuilder(original).withPassword(SAMPLE_PASSWORD).build();
