@@ -57,13 +57,13 @@ public class PersonCard extends UiPart<Region> {
         this.person = person;
         id.setText(displayedIndex + ". ");
         name.setText(person.getName().fullName);
-        phone.setText(person.getPhone().value);
-        email.setText(person.getEmail().value);
-        address.setText(person.getAddress().value);
-        stage.setText(person.getStage().toString());
-        aliases.setText(String.join(", ", person.getAliases().stream().map(a -> a.value).toList()));
-        notes.setText(person.getNotes().value);
-        risk.setText(person.getRisk().toString());
+        phone.setText("Phone: " + person.getPhone().value);
+        email.setText("Email: " + person.getEmail().value);
+        address.setText("Address: " + person.getAddress().value);
+        stage.setText("Stage: " + person.getStage().toString());
+        aliases.setText("Aliases: " + String.join(", ", person.getAliases().stream().map(a -> a.value).toList()));
+        notes.setText("Notes: " + person.getNotes().value);
+        risk.setText("Risk: " + person.getRisk().toString());
         person.getTags().stream()
                 .sorted(Comparator.comparing(tag -> tag.tagName))
                 .forEach(tag -> tags.getChildren().add(new Label(tag.tagName)));
