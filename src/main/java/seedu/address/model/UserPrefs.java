@@ -15,6 +15,10 @@ public class UserPrefs implements ReadOnlyUserPrefs {
 
     private GuiSettings guiSettings = new GuiSettings();
     private Path addressBookFilePath = Paths.get("data" , "addressbook.json");
+    private String sortCriterion = "";
+
+    public String getSortCriterion() { return sortCriterion; }
+    public void setSortCriterion(String criterion) { this.sortCriterion = criterion; }
 
     /**
      * Creates a {@code UserPrefs} with default values.
@@ -36,6 +40,7 @@ public class UserPrefs implements ReadOnlyUserPrefs {
         requireNonNull(newUserPrefs);
         setGuiSettings(newUserPrefs.getGuiSettings());
         setAddressBookFilePath(newUserPrefs.getAddressBookFilePath());
+        setSortCriterion(newUserPrefs.getSortCriterion());
     }
 
     public GuiSettings getGuiSettings() {

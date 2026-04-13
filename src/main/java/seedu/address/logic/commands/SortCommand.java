@@ -42,6 +42,7 @@ public class SortCommand extends Command {
     public CommandResult execute(Model model) {
         requireNonNull(model);
         model.setPersonSortComparator(getComparator());
+        model.saveSortCriterion(criterion.getToken());
         return new CommandResult(String.format(MESSAGE_SUCCESS, criterion.getToken()));
     }
 

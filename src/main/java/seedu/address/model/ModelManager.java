@@ -17,6 +17,7 @@ import javafx.collections.transformation.SortedList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.core.index.Index;
+import seedu.address.logic.commands.SortCommand;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.Reminder;
 
@@ -56,6 +57,8 @@ public class ModelManager implements Model {
         this.addressBookDataCorrupted = addressBookDataCorrupted;
         filteredPersons = new FilteredList<>(this.addressBook.getPersonList());
         sortedPersons = new SortedList<>(filteredPersons);
+        SortCommand.SortCriterion.fromString(this.userPrefs.getSortCriterion())
+                .ifPresent(c -> sortedPersons.setComparator(c.getComparator()));
     }
 
     public ModelManager() {
@@ -184,7 +187,11 @@ public class ModelManager implements Model {
     @Override
     public void clearPersonSortComparator() {
         sortedPersons.setComparator(null);
+        userPrefs.setSortCriterion("");
     }
+
+    @Override
+    public void saveSortCriterion(String criterion) { userPrefs.setSortCriterion(criterion); }
 
     @Override
     public void updateFilteredPersonList(Predicate<Person> predicate) {
