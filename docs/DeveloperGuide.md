@@ -510,7 +510,17 @@ _{more aspects and alternatives to be added}_
 
 ### \[Proposed\] Data archiving
 
-_{Explain here how the data archiving feature will be implemented}_
+Data archiving allows officers to hide outdated contacts from daily operations without deleting historical records.
+
+The feature can be implemented by adding an `isArchived` boolean field to each `Person`.
+New commands can then toggle this state:
+* `archive INDEX` marks the selected contact as archived.
+* `unarchive INDEX` restores the selected archived contact.
+
+To keep current workflows simple, existing list/search commands should operate on non-archived contacts by default.
+An explicit command such as `list-archived` (or an archive filter flag) can be used to view archived records when needed.
+
+Archived contacts remain in the same local JSON file, preserving data portability and manual editability.
 
 --------------------------------------------------------------------------------------------------------------------
 
