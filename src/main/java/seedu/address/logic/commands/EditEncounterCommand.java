@@ -56,7 +56,7 @@ public class EditEncounterCommand extends Command {
 
     /**
      * @param personIndex of the person in the filtered person list
-        * @param encounterIndex display index of encounter shown in view panel (#1 is latest by date/time)
+      * @param encounterIndex display index of encounter shown in view panel (#1 is latest by date/time)
      * @param editEncounterDescriptor encounter fields to edit
      */
     public EditEncounterCommand(
