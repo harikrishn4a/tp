@@ -207,6 +207,8 @@ Updates details of an existing contact without deleting and re-adding the profil
 **Success output**
 `Edited Person: [person details]`
 
+> **Note:** After a successful `edit` command, the view panel will automatically update to display the edited contact, even if a different contact was previously shown via `view`. To view a different contact again, use the `view` command explicitly.
+
 --------------------------------------------------------------------------------------------------------------------
 
 ### 3) Delete Contact: `delete`
