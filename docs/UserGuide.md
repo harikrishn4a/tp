@@ -205,6 +205,7 @@ Updates details of an existing contact without deleting and re-adding the profil
 - For `p/PHONE`, only valid Singapore numbers are accepted: exactly 8 digits, starting with `6`, `8`, or `9`.
 - If the contact is password-protected, `pw/CURRENT_PASSWORD` is required. Omitting it or supplying the wrong password will result in an error.
 - Once a contact has a password, it cannot be changed or removed via `edit` in the current version.
+- Supplying `pw/` with no value (e.g. `edit 1 pw/`) on a contact that has no password is accepted but has no effect.
 
 **Success output**
 `Edited Person: [person details]`
