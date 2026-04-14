@@ -62,7 +62,7 @@ public class RemindCommandTest {
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         expectedModel.setPerson(personToRemind, updatedPerson);
 
-        assertCommandSuccess(remindCommand, model, expectedMessage, expectedModel);
+        assertCommandSuccess(remindCommand, model, new CommandResult(expectedMessage, updatedPerson), expectedModel);
     }
 
     @Test
@@ -87,7 +87,7 @@ public class RemindCommandTest {
 
         String expectedMessage = String.format(RemindCommand.MESSAGE_SUCCESS,
                 withOneReminder.getName(), REMINDER_EARLIER.getDate(), REMINDER_EARLIER.getTime());
-        assertCommandSuccess(remindCommand, model, expectedMessage, expectedModel);
+        assertCommandSuccess(remindCommand, model, new CommandResult(expectedMessage, expectedUpdated), expectedModel);
     }
 
     @Test
@@ -117,9 +117,22 @@ public class RemindCommandTest {
 
         String expectedMessage = String.format(RemindCommand.MESSAGE_SUCCESS,
                 passwordProtected.getName(), REMINDER_LATER.getDate(), REMINDER_LATER.getTime());
-        assertCommandSuccess(remindCommand, model, expectedMessage, expectedModel);
+        assertCommandSuccess(remindCommand, model, new CommandResult(expectedMessage, expectedUpdated), expectedModel);
     }
 
+    @Test
+    public void execute_duplicateReminder_failure() {
+        Person original = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person withReminder = new Person(
+                original.getName(), original.getPhone(), original.getEmail(),
+                original.getAddress(), original.getStage(), original.getAliases(),
+                original.getNotes(), original.getRisk(), original.getTags(),
+                original.getEncounters(), java.util.List.of(REMINDER_LATER), original.getPassword());
+        model.setPerson(original, withReminder);
+
+        RemindCommand remindCommand = new RemindCommand(INDEX_FIRST_PERSON, REMINDER_LATER);
+        assertCommandFailure(remindCommand, model, RemindCommand.MESSAGE_DUPLICATE_REMINDER);
+    }
     @Test
     public void execute_protectedPasswordRequired_failure() {
         Person original = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
@@ -173,7 +186,7 @@ public class RemindCommandTest {
 
         String expectedMessage = String.format(RemindCommand.MESSAGE_SUCCESS,
                 personToRemind.getName(), REMINDER_LATER.getDate(), REMINDER_LATER.getTime());
-        assertCommandSuccess(remindCommand, model, expectedMessage, expectedModel);
+        assertCommandSuccess(remindCommand, model, new CommandResult(expectedMessage, expectedUpdated), expectedModel);
     }
 
     @Test
@@ -192,6 +205,14 @@ public class RemindCommandTest {
 
         RemindCommand remindCommand = new RemindCommand(outOfBound, REMINDER_LATER);
         assertCommandFailure(remindCommand, model, Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+    }
+
+    @Test
+    public void execute_success_returnsPersonToView() throws Exception {
+        RemindCommand remindCommand = new RemindCommand(INDEX_FIRST_PERSON, REMINDER_LATER);
+        CommandResult result = remindCommand.execute(model);
+
+        assertTrue(result.getPersonToView().isPresent());
     }
 
     @Test

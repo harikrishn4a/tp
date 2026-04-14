@@ -53,6 +53,8 @@ public class LogCommand extends Command {
             + PREFIX_PASSWORD + "hunter2";
 
     public static final String MESSAGE_SUCCESS = "Encounter logged for %1$s on %2$s.";
+    public static final String MESSAGE_DUPLICATE_ENCOUNTER =
+            "This encounter already exists in the contact's encounter log.";
     public static final String MESSAGE_PASSWORD_REQUIRED_FOR_LOG =
             "This contact is password-protected. Include " + PREFIX_PASSWORD + "CURRENT_PASSWORD in your log.";
     public static final String MESSAGE_UNEXPECTED_PASSWORD_FOR_LOG =
@@ -105,6 +107,9 @@ public class LogCommand extends Command {
         }
 
         List<Encounter> updatedEncounters = new ArrayList<>(personToLog.getEncounters());
+        if (updatedEncounters.contains(encounter)) {
+            throw new CommandException(MESSAGE_DUPLICATE_ENCOUNTER);
+        }
         updatedEncounters.add(encounter);
 
         Person updatedPerson = createLoggedPerson(personToLog, updatedEncounters);

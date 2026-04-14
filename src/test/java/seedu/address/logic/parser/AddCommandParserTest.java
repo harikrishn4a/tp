@@ -189,6 +189,10 @@ public class AddCommandParserTest {
         assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + INVALID_EMAIL_DESC
                 + ADDRESS_DESC_BOB + STAGE_DESC_BOB, Email.MESSAGE_CONSTRAINTS);
 
+        // invalid email (missing dot in domain)
+        assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + " e/bob@example"
+                + ADDRESS_DESC_BOB + STAGE_DESC_BOB, Email.MESSAGE_CONSTRAINTS);
+
         // invalid address
         assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB
                 + INVALID_ADDRESS_DESC + STAGE_DESC_BOB, Address.MESSAGE_CONSTRAINTS);

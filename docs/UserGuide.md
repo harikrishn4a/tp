@@ -87,7 +87,7 @@ CrimeWatch supports the following features: **Add**, **Edit**, and **Delete** co
    ![Opening the .jar file](images/ug-terminal-command.png)
 
 6. Confirm the app opens and sample data is visible.
-   ![Ui](images/Ui.png)
+   ![Ui](images/Ui-new.png)
 
 7. Try this 60-second typed-command tutorial:
    - `help` to open this user guide.
@@ -171,6 +171,7 @@ Creates a new suspect profile.
 **Validation**
 - All required fields must be present
 - Repeating single-value prefixes in the same command is not allowed
+- Duplicate contacts are not allowed. A contact is considered a duplicate if it has the same name as an existing contact (name matching is **case-insensitive**, e.g. `john tan` and `John Tan` are treated as the same contact)
 
 **Success output**
 `New person added: [person details]`
@@ -206,6 +207,8 @@ Updates details of an existing contact without deleting and re-adding the profil
 
 **Success output**
 `Edited Person: [person details]`
+
+> **Note:** After a successful `edit` command, the view panel will automatically update to display the edited contact, even if a different contact was previously shown via `view`. To view a different contact again, use the `view` command explicitly.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -276,8 +279,10 @@ Updates an existing encounter for a contact.
 - At least one prefixed field must be provided
 
 **Encounter index mapping**
-- Encounter cards shown in `view` are numbered newest first.
-- `ENCOUNTER_INDEX 1` means the most recent encounter shown as `#1`.
+- Encounters shown in `view` are numbered by date/time in descending order (most recent first).
+- `ENCOUNTER_INDEX 1` means the encounter currently shown as `#1`.
+- Indexes are ordered dynamically based on date/time
+- If encounter date/time changes (for example via `editencounter`), indexes may change accordingly.
 
 **Examples**
 - `editencounter 1 1 desc/Updated observation notes`
@@ -345,12 +350,19 @@ Displays the full profile of a contact and their encounter cards.
 - For protected contacts without/with wrong password: command fails with a password-related error.
 
 **Output (view panel)**
-- Name
-- Alias(es)
-- Stage
-- Risk
-- Notes
-- Encounter History (`#1` is the most recently logged encounter)
+
+The view panel displays the following fields in order:
+- **Name** — shown as a large heading at the top
+- **Stage** — displayed as a coloured badge (e.g. `surveillance`)
+- **Risk** — displayed as a coloured badge next to Stage (e.g. `MEDIUM RISK`)
+- **Phone**
+- **Email**
+- **Address**
+- **Aliases** — shows `None` if no aliases are set
+- **Notes** — shows `None` if no notes are set
+- **Tags** — each tag shown as a coloured badge; section omitted if no tags
+- **Upcoming Reminders** — shows `No reminders set.` if none exist
+- **Encounter History** — shows `No encounters logged.` if none exist; otherwise `#1` is the most recently logged encounter
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -399,11 +411,11 @@ Sorts the currently displayed contact list by a chosen criterion.
 
 **Behavior**
 - Sorting is applied to the displayed list view.
-- `sort location`: uses each contact's latest logged encounter location (the last encounter in that contact's history); contacts without encounters appear last.
+- `sort location`: uses the location from each contact's chronologically latest encounter (maximum encounter date-time); contacts without encounters appear last.
 - `sort tag`: uses each contact's alphabetically smallest tag; contacts without tags appear last.
 - `sort alphabetical`: sorts by contact name (A-Z).
 - `sort status`: sorts by stage/status alphabetically.
-- `sort recent`: sorts by latest logged encounter time first (the last encounter in each contact's history).
+- `sort recent`: sorts by each contact's chronologically latest encounter date-time first (most recent by date-time).
 - Ties are resolved by contact name in alphabetical order.
 
 --------------------------------------------------------------------------------------------------------------------
@@ -453,7 +465,7 @@ CrimeWatch data are saved in the hard disk automatically after any command that 
 
 ### Editing the data file
 
-CrimeWatch data are saved automatically as a JSON file `[JAR file location]/data/addressbook.json`. Advanced users are welcome to update data directly by editing that data file.
+CrimeWatch data are saved automatically as a JSON file `[JAR file location]/data/crimewatch.json`. Advanced users are welcome to update data directly by editing that data file.
 
 <div markdown="span" class="alert alert-warning">:exclamation: **Caution:**
 If your changes to the data file make its format invalid, CrimeWatch will discard all data and start with an empty data file at the next run. Hence, it is recommended to back up the file before editing it.<br>
@@ -471,7 +483,7 @@ _Details coming soon ..._
 ## FAQ
 
 **Q: How do I transfer my data to another computer?**<br>
-**A**: Install the app on the other computer and overwrite the empty data file it creates with the `addressbook.json` file from your previous CrimeWatch home folder.
+**A**: Install the app on the other computer and overwrite the empty data file it creates with the `crimewatch.json` file from your previous CrimeWatch home folder.
 
 **Q: Can I edit suspect records after adding them?**<br>
 **A**: Yes, use the `edit` command to update any field—name, aliases, stage, risk level, or notes. Existing encounters are preserved.
@@ -505,5 +517,8 @@ _Details coming soon ..._
 
 1. **When using multiple screens**, if you move the application to a secondary screen, and later switch to using only the primary screen, the GUI will open off-screen. The remedy is to delete the `preferences.json` file created by the application before running the application again.
 2. **If you minimize the Help Window** and then run the `help` command (or use the `Help` menu, or the keyboard shortcut `F1`) again, the original Help Window will remain minimized, and no new Help Window will appear. The remedy is to manually restore the minimized Help Window.
+3. **Command output can exceed the default window size**, especially for long validation errors (e.g., malformed `find` usage). This may require both horizontal and vertical scrolling in the result area. The remedy is to widen the app window when reading long outputs.
+4. **At minimum window size, full profile content may be obscured after `view INDEX`**. In some cases, not all profile details are visible/scrollable unless the window is widened. The remedy is to increase the window width or height before reviewing full profile details.
+5. **Duplicate names are currently not allowed in `add`/`edit`**. Editing a contact’s name to another existing name can produce `This person already exists in CrimeWatch.` even when they are different people. The workaround is to keep names distinct (for example by adding an identifier in the name) and use aliases/tags for disambiguation.
 
 --------------------------------------------------------------------------------------------------------------------

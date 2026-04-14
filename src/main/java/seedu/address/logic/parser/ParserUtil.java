@@ -263,7 +263,8 @@ public class ParserUtil {
         requireNonNull(time);
         String trimmed = time.trim();
         try {
-            return LocalTime.parse(trimmed, DateTimeFormatter.ofPattern("HH:mm"));
+            return LocalTime.parse(trimmed,
+                    DateTimeFormatter.ofPattern("HH:mm").withResolverStyle(ResolverStyle.STRICT));
         } catch (DateTimeParseException e) {
             throw new ParseException("Invalid time. Use 24-hour format HH:mm.");
         }

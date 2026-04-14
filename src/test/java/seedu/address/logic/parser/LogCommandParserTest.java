@@ -38,6 +38,7 @@ public class LogCommandParserTest {
     private static final String INVALID_DATE_DESC = " " + PREFIX_DATE + "21-02-2026"; // wrong format
     private static final String INVALID_DATE_NONEXISTENT = " " + PREFIX_DATE + "2026-02-30"; // non-existent date
     private static final String INVALID_TIME_DESC = " " + PREFIX_TIME + "25:00"; // invalid hour
+    private static final String INVALID_TIME_EDGE = " " + PREFIX_TIME + "24:00"; // invalid upper bound
     private static final String INVALID_TIME_FORMAT = " " + PREFIX_TIME + "6:30pm"; // 12-hour not allowed
     private static final String INVALID_DESCRIPTION_BLANK = " " + PREFIX_DESCRIPTION + " "; // blank
 
@@ -207,6 +208,14 @@ public class LogCommandParserTest {
         assertParseFailure(
                 parser,
                 VALID_INDEX + DATE_DESC + INVALID_TIME_DESC + LOCATION_DESC + DESCRIPTION_DESC,
+                "Invalid time. Use 24-hour format HH:mm.");
+    }
+
+    @Test
+    public void parse_edgeTime2400_throwsParseException() {
+        assertParseFailure(
+                parser,
+                VALID_INDEX + DATE_DESC + INVALID_TIME_EDGE + LOCATION_DESC + DESCRIPTION_DESC,
                 "Invalid time. Use 24-hour format HH:mm.");
     }
 

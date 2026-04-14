@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<ScrollPane fitToWidth="true" styleClass="pane-with-border"
+<ScrollPane fitToWidth="true" fitToHeight="true" styleClass="pane-with-border"
             xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
   <VBox id="viewPanel" fx:id="viewPanel" spacing="8">
     <padding>
