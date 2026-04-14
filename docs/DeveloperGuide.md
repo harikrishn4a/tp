@@ -371,7 +371,7 @@ Optional, contact-level password protection. Each contact can be protected with 
 |---------|-------------|
 | **Scope** | Per-contact (individual contacts can be protected) |
 | **Type** | Optional (contacts don't require passwords) |
-| **Usage** | Add `pw/PASSWORD` to `add` or `edit` commands to protect; provide it with `view` to access |
+| **Usage** | Add `pw/PASSWORD` to `add` or `edit` commands to protect; provide current password for `view`, `delete`, `log`, and `remind` on protected contacts |
 | **Validation** | Alphanumeric characters and spaces only |
 
 ### Usage
@@ -390,9 +390,13 @@ edit 1 pw/              # Remove protection
 view 1 pw/password123   # Show full details if password correct
 view 1                  # Error: password required
 
+### Delete protected contact
+delete 1 pw/password123 # Delete succeeds if password is correct
+delete 1                # Error: password required (if protected)
+
 ### Behavior
 - **Without password**: Contact viewable normally
-- **With password**: `view` command requires correct password to display full details
+- **With password**: `view`, `delete`, `log`, and `remind` require the correct current password
 - **Plain text**: Passwords stored without encryption (not production-ready)
 
 ### Sequence Diagram
@@ -605,6 +609,12 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
     Use case resumes at step 2.
 
+* 3b. The target contact is password-protected and password is missing or incorrect.
+
+   * 3b1. CrimeWatch shows an error message.
+
+      Use case resumes at step 2.
+
 **Use case: Edit a person**
 
 **MSS**
@@ -760,6 +770,12 @@ Given below are manual tests for major functional paths and edge cases.
    1. Prerequisites: List all persons using the `list` command. Multiple persons in the list.
    1. Test case: `delete 1`
       Expected: First contact is deleted from the list. Details of the deleted contact are shown in the status message. Timestamp in the status bar is updated.
+   1. Test case (password-protected contact): `delete 1 pw/hunter2`
+      Expected: Contact is deleted only when the supplied password is correct.
+   1. Test case (password-protected contact): `delete 1`
+      Expected: No person is deleted. Password-required error is shown.
+   1. Test case (unprotected contact): `delete 1 pw/hunter2`
+      Expected: No person is deleted. Error indicates `pw/` should be removed.
    1. Test case: `delete 0`
       Expected: No person is deleted. Error details are shown in the status message. Status bar remains the same.
    1. Other incorrect delete commands to try: `delete`, `delete x`, `...` (where x is larger than the list size)

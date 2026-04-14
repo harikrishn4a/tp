@@ -48,7 +48,7 @@ CrimeWatch supports the following features: **Add**, **Edit**, and **Delete** co
 | --- | --- | --- |
 | Add Contact | `add n/NAME p/PHONE e/EMAIL a/ADDRESS s/STAGE [al/ALIAS(,ALIAS...)] [note/NOTES] [r/RISK] [pw/PASSWORD] [t/TAG]...` | [1) Add Contact](#1-add-contact-add) |
 | Edit Contact | `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [a/ADDRESS] [s/STAGE] [al/ALIAS(,ALIAS...)] [note/NOTES] [r/RISK] [pw/PASSWORD] [t/TAG]...` | [2) Edit Contact](#2-edit-contact-edit) |
-| Delete Contact | `delete INDEX` | [3) Delete Contact](#3-delete-contact-delete) |
+| Delete Contact | `delete INDEX [pw/PASSWORD]` | [3) Delete Contact](#3-delete-contact-delete) |
 | Log Encounter | `log INDEX d/DATE t/TIME l/LOCATION desc/DESCRIPTION [out/OUTCOME] [pw/PASSWORD]` | [4) Log Encounter](#4-log-encounter-log) |
 | Edit Encounter | `editencounter PERSON_INDEX ENCOUNTER_INDEX [d/DATE] [t/TIME] [l/LOCATION] [desc/DESCRIPTION] [out/OUTCOME]` | [5) Edit Encounter](#5-edit-encounter-editencounter) |
 | Set Reminder | `remind INDEX d/DATE t/TIME note/NOTE [pw/PASSWORD]` | [6) Set Reminder](#6-set-reminder-remind) |
@@ -218,13 +218,21 @@ Updates details of an existing contact without deleting and re-adding the profil
 Removes a contact permanently, including all associated encounters and reminders.
 
 **Format**
-`delete INDEX`
+`delete INDEX [pw/PASSWORD]`
 
-**Example**
-`delete 3`
+**Parameters**
+- `INDEX` (compulsory): target contact in current list
+- **`pw/PASSWORD` (optional):** if the contact is password-protected, supply the **current** password
+
+**Examples**
+- `delete 3`
+- `delete 3 pw/oldSecret` (when the contact is password-protected)
 
 **Validation**
 - INDEX must exist in the current list.
+- If the contact is password-protected, omitting `pw/` causes a password-required error.
+- If the contact is password-protected, wrong `pw/` causes an incorrect-password error.
+- If the contact is not password-protected, do not supply `pw/`.
 - Error: `The person index provided is invalid`
 
 **Success output**

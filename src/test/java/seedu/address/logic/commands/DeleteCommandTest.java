@@ -18,6 +18,7 @@ import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.person.Person;
+import seedu.address.testutil.PersonBuilder;
 
 /**
  * Contains integration tests (interaction with the Model) and unit tests for
@@ -80,9 +81,52 @@ public class DeleteCommandTest {
     }
 
     @Test
+    public void execute_protectedContactWithoutPassword_throwsCommandException() {
+        Person original = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person passwordProtected = new PersonBuilder(original).withPassword("secret").build();
+        model.setPerson(original, passwordProtected);
+
+        DeleteCommand deleteCommand = new DeleteCommand(INDEX_FIRST_PERSON);
+        assertCommandFailure(deleteCommand, model, DeleteCommand.MESSAGE_PASSWORD_REQUIRED_FOR_DELETE);
+    }
+
+    @Test
+    public void execute_protectedContactWrongPassword_throwsCommandException() {
+        Person original = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person passwordProtected = new PersonBuilder(original).withPassword("secret").build();
+        model.setPerson(original, passwordProtected);
+
+        DeleteCommand deleteCommand = new DeleteCommand(INDEX_FIRST_PERSON, "wrong");
+        assertCommandFailure(deleteCommand, model, ViewCommand.MESSAGE_INCORRECT_PASSWORD);
+    }
+
+    @Test
+    public void execute_protectedContactCorrectPassword_success() {
+        Person original = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        Person passwordProtected = new PersonBuilder(original).withPassword("secret").build();
+        model.setPerson(original, passwordProtected);
+
+        DeleteCommand deleteCommand = new DeleteCommand(INDEX_FIRST_PERSON, "secret");
+        String expectedMessage = String.format(DeleteCommand.MESSAGE_DELETE_PERSON_SUCCESS,
+                Messages.format(passwordProtected));
+
+        ModelManager expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.deletePerson(passwordProtected);
+
+        assertCommandSuccess(deleteCommand, model, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_unprotectedContactWithPassword_throwsCommandException() {
+        DeleteCommand deleteCommand = new DeleteCommand(INDEX_FIRST_PERSON, "secret");
+        assertCommandFailure(deleteCommand, model, DeleteCommand.MESSAGE_UNEXPECTED_PASSWORD_FOR_DELETE);
+    }
+
+    @Test
     public void equals() {
         DeleteCommand deleteFirstCommand = new DeleteCommand(INDEX_FIRST_PERSON);
         DeleteCommand deleteSecondCommand = new DeleteCommand(INDEX_SECOND_PERSON);
+        DeleteCommand deleteFirstWithPasswordCommand = new DeleteCommand(INDEX_FIRST_PERSON, "secret");
 
         // same object -> returns true
         assertTrue(deleteFirstCommand.equals(deleteFirstCommand));
@@ -90,6 +134,9 @@ public class DeleteCommandTest {
         // same values -> returns true
         DeleteCommand deleteFirstCommandCopy = new DeleteCommand(INDEX_FIRST_PERSON);
         assertTrue(deleteFirstCommand.equals(deleteFirstCommandCopy));
+
+        // same index but different password -> returns false
+        assertFalse(deleteFirstCommand.equals(deleteFirstWithPasswordCommand));
 
         // different types -> returns false
         assertFalse(deleteFirstCommand.equals(1));
@@ -105,7 +152,8 @@ public class DeleteCommandTest {
     public void toStringMethod() {
         Index targetIndex = Index.fromOneBased(1);
         DeleteCommand deleteCommand = new DeleteCommand(targetIndex);
-        String expected = DeleteCommand.class.getCanonicalName() + "{targetIndex=" + targetIndex + "}";
+        String expected = DeleteCommand.class.getCanonicalName()
+                + "{targetIndex=" + targetIndex + ", hasProvidedPassword=false}";
         assertEquals(expected, deleteCommand.toString());
     }
 
