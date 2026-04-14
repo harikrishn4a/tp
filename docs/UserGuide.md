@@ -160,7 +160,7 @@ Creates a new suspect profile.
 - `al/ALIAS(,ALIAS...)` (optional): alias list, comma-separated
 - `note/NOTES` (optional): notes up to 500 characters, no newlines
 - `r/RISK` (optional): one of `low`, `medium`, `high` (default: `medium`)
-- `pw/PASSWORD` (optional): sets a contact-level password. Once set, the correct password must be supplied via `pw/CURRENT_PASSWORD` to use `view`, `edit`, `log`, and `remind` on that contact
+- `pw/PASSWORD` (optional): sets a contact-level password. Once set, it cannot be changed or removed via commands in the current version. The correct password must be supplied via `pw/CURRENT_PASSWORD` to use `view`, `edit`, `delete`, `log`, and `remind` on that contact
 - `t/TAG` (optional, repeatable): tags
 
 **Examples**
@@ -189,14 +189,13 @@ Updates details of an existing contact without deleting and re-adding the profil
 - `INDEX` (compulsory): target contact in current list
 - At least one prefixed field must be provided (including `pw/` alone when allowed)
 - Any omitted field remains unchanged
-- **`pw/PASSWORD`:** If the contact **already has** a password, use this to supply the **current** password so the edit is allowed (for example `edit 1 n/NewName pw/oldSecret`). If the contact **does not** have a password, `pw/` **sets** a new password (`pw/newpassword`) or **clears** it with `pw/` (empty value).
+- **`pw/PASSWORD`:** If the contact **already has** a password, use this to supply the **current** password so the edit is allowed (for example `edit 1 n/NewName pw/oldSecret`). If the contact **does not** have a password, `pw/newpassword` sets a new password.
 - `p/PHONE` (optional): Singapore phone number, exactly 8 digits and must start with `6`, `8`, or `9`
 
 **Examples**
 - `edit 1 p/91234567 e/johndoe@example.com`
 - `edit 2 r/high note/More cooperative in latest meeting`
 - `edit 1 pw/newpassword` (only when the contact is not password-protected yet)
-- `edit 1 pw/` (remove password protection, only when the contact is not password-protected)
 - `edit 1 n/UpdatedName pw/oldSecret` (required when the contact already has a password)
 
 **Validation**
@@ -205,6 +204,7 @@ Updates details of an existing contact without deleting and re-adding the profil
 - Repeating non-tag prefixes in the same command is not allowed.
 - For `p/PHONE`, only valid Singapore numbers are accepted: exactly 8 digits, starting with `6`, `8`, or `9`.
 - If the contact is password-protected, `pw/CURRENT_PASSWORD` is required. Omitting it or supplying the wrong password will result in an error.
+- Once a contact has a password, it cannot be changed or removed via `edit` in the current version.
 
 **Success output**
 `Edited Person: [person details]`
@@ -353,6 +353,7 @@ Displays the full profile of a contact and their encounter cards.
 - Without password: contact is viewable normally.
 - With password: `view` requires the correct `pw/PASSWORD` to display full details.
 - `view INDEX` on a protected contact fails with password-required error.
+- Password protection applies to the full-profile `view` panel. The contact list (`list`, `find`, sorted list view) remains visible and shows contact details.
 - Passwords are stored in plain text (not production-ready).
 
 **Expected output**
@@ -461,6 +462,7 @@ Exports all encounters whose **location** matches the value you give, to a UTF-8
 ### 11) List All Contacts: `list`
 
 Resets any active `find` filter and displays all contacts in the default order. Also closes any open contact profile in the side panel.
+Password protection does not hide entries in this list; it only gates full-profile access via `view`.
 
 **Format**
 `list`

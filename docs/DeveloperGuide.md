@@ -364,14 +364,15 @@ Key classes:
 
 ### Password Feature
 
-### Overview
+#### Overview
 Optional, contact-level password protection. Each contact can be protected with a password to restrict viewing its full details.
+In the current implementation, once a password is set for a contact, it cannot be changed or removed through commands.
 
 | Feature | Description |
 |---------|-------------|
 | **Scope** | Per-contact (individual contacts can be protected) |
 | **Type** | Optional (contacts don't require passwords) |
-| **Usage** | Add `pw/PASSWORD` to `add` or `edit` commands to protect; provide current password for `view`, `delete`, `log`, and `remind` on protected contacts |
+| **Usage** | Add `pw/PASSWORD` to `add` or (only if unprotected) `edit` to set protection; provide current password for `view`, `delete`, `log`, and `remind` on protected contacts |
 | **Validation** | Alphanumeric characters and spaces only |
 
 ### Usage
@@ -380,9 +381,8 @@ Optional, contact-level password protection. Each contact can be protected with 
 # Add contact with password protection
 add n/John Doe p/98765432 e/john@example.com a/123 Main St s/surveillance pw/password123
 
-# Update/remove password
-edit 1 pw/newpassword   # Change password
-edit 1 pw/              # Remove protection
+# Set password via edit (only when contact is currently unprotected)
+edit 1 pw/newpassword
 ```
 
 ### View protected contact
@@ -397,6 +397,8 @@ delete 1                # Error: password required (if protected)
 ### Behavior
 - **Without password**: Contact viewable normally
 - **With password**: `view`, `delete`, `log`, and `remind` require the correct current password
+- **List visibility**: Password protection applies to encounter details access via `view`; the contact list still shows contact details
+- **Password lifecycle**: Once set, password cannot be changed or removed via commands in current version
 - **Plain text**: Passwords stored without encryption (not production-ready)
 
 ### Sequence Diagram
@@ -724,6 +726,7 @@ Use case ends.
 * **Encounter**: time-stamped interaction record linked to a contact.
 * **Reminder**: scheduled note linked to a contact.
 * **Protected contact**: contact with a configured `pw/` value.
+* **Full Profile**: all details of a contact, including encounters and reminders, shown when viewing a protected contact with the correct password.
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -866,3 +869,24 @@ Currently, `find` only searches by name, alias, and tag. A future version will e
 - `r/RISK` — filter contacts by risk level (e.g. `high`, `medium`, `low`)
 
 This allows investigators to narrow down contacts more precisely (e.g. all high-risk contacts currently under surveillance).
+
+---
+
+**4. Add challenge for clear**
+
+Currently, `clear` can be executed without confirmation, which may lead to accidental data loss. A future version will add a confirmation step that prompts the user to type a randomly generated challenge string, e.g. `ABC123`, before proceeding with the clear operation. 
+
+This helps prevent unintended deletions while still allowing power users to execute the command efficiently when needed.
+
+---
+
+**5. Redact protected contacts in list views**
+
+Currently, password-protected contacts still show details in list-based views (e.g. `list`, `find`, and sorted results). A future version will redact sensitive fields for protected contacts in these views until successful authentication via `view INDEX pw/PASSWORD`.
+
+Proposed behavior:
+- Keep basic identity context visible (e.g. index and name) so users can still target commands.
+- Replace sensitive summary fields (phone, email, address, notes, aliases, reminders/encounter hints) with placeholders such as `REDACTED`.
+- Continue to show full details only in the profile panel after successful password validation.
+
+This reduces shoulder-surfing and incidental exposure risks while preserving operational usability.
