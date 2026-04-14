@@ -100,11 +100,13 @@ public class RemindCommand extends Command {
         }
 
         model.addReminderToContact(index, reminder);
+        Person updatedPerson = model.getFilteredPersonList().get(index.getZeroBased());
 
         return new CommandResult(String.format(MESSAGE_SUCCESS,
                 targetPerson.getName(),
                 reminder.getDate(),
-                reminder.getTime()));
+                reminder.getTime()),
+                updatedPerson);
     }
 
     @Override

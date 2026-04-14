@@ -62,7 +62,7 @@ public class RemindCommandTest {
         Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
         expectedModel.setPerson(personToRemind, updatedPerson);
 
-        assertCommandSuccess(remindCommand, model, expectedMessage, expectedModel);
+        assertCommandSuccess(remindCommand, model, new CommandResult(expectedMessage, updatedPerson), expectedModel);
     }
 
     @Test
@@ -87,7 +87,7 @@ public class RemindCommandTest {
 
         String expectedMessage = String.format(RemindCommand.MESSAGE_SUCCESS,
                 withOneReminder.getName(), REMINDER_EARLIER.getDate(), REMINDER_EARLIER.getTime());
-        assertCommandSuccess(remindCommand, model, expectedMessage, expectedModel);
+        assertCommandSuccess(remindCommand, model, new CommandResult(expectedMessage, expectedUpdated), expectedModel);
     }
 
     @Test
@@ -117,7 +117,7 @@ public class RemindCommandTest {
 
         String expectedMessage = String.format(RemindCommand.MESSAGE_SUCCESS,
                 passwordProtected.getName(), REMINDER_LATER.getDate(), REMINDER_LATER.getTime());
-        assertCommandSuccess(remindCommand, model, expectedMessage, expectedModel);
+        assertCommandSuccess(remindCommand, model, new CommandResult(expectedMessage, expectedUpdated), expectedModel);
     }
 
     @Test
@@ -186,7 +186,7 @@ public class RemindCommandTest {
 
         String expectedMessage = String.format(RemindCommand.MESSAGE_SUCCESS,
                 personToRemind.getName(), REMINDER_LATER.getDate(), REMINDER_LATER.getTime());
-        assertCommandSuccess(remindCommand, model, expectedMessage, expectedModel);
+        assertCommandSuccess(remindCommand, model, new CommandResult(expectedMessage, expectedUpdated), expectedModel);
     }
 
     @Test
@@ -205,6 +205,14 @@ public class RemindCommandTest {
 
         RemindCommand remindCommand = new RemindCommand(outOfBound, REMINDER_LATER);
         assertCommandFailure(remindCommand, model, Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+    }
+
+    @Test
+    public void execute_success_returnsPersonToView() throws Exception {
+        RemindCommand remindCommand = new RemindCommand(INDEX_FIRST_PERSON, REMINDER_LATER);
+        CommandResult result = remindCommand.execute(model);
+
+        assertTrue(result.getPersonToView().isPresent());
     }
 
     @Test
