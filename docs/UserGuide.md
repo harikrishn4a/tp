@@ -160,7 +160,7 @@ Creates a new suspect profile.
 - `al/ALIAS(,ALIAS...)` (optional): alias list, comma-separated
 - `note/NOTES` (optional): notes up to 500 characters, no newlines
 - `r/RISK` (optional): one of `low`, `medium`, `high` (default: `medium`)
-- `pw/PASSWORD` (optional): sets a contact-level password. Once set, it cannot be changed or removed via commands in the current version. The correct password must be supplied via `pw/CURRENT_PASSWORD` to use `view`, `edit`, `log`, and `remind` on that contact
+- `pw/PASSWORD` (optional): sets a contact-level password. Once set, it cannot be changed or removed via commands in the current version. The correct password must be supplied via `pw/CURRENT_PASSWORD` to use `view`, `edit`, `delete`, `log`, and `remind` on that contact
 - `t/TAG` (optional, repeatable): tags
 
 **Examples**
@@ -353,7 +353,7 @@ Displays the full profile of a contact and their encounter cards.
 - Without password: contact is viewable normally.
 - With password: `view` requires the correct `pw/PASSWORD` to display full details.
 - `view INDEX` on a protected contact fails with password-required error.
-- Password protection applies to the full-profile `view` panel. The contact list (`list`, `find`, sorted list view) remains visible and shows abbreviated fields.
+- Password protection applies to the full-profile `view` panel. The contact list (`list`, `find`, sorted list view) remains visible and shows contact details.
 - Passwords are stored in plain text (not production-ready).
 
 **Expected output**

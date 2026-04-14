@@ -397,7 +397,7 @@ delete 1                # Error: password required (if protected)
 ### Behavior
 - **Without password**: Contact viewable normally
 - **With password**: `view`, `delete`, `log`, and `remind` require the correct current password
-- **List visibility**: Password protection applies to full-profile access via `view`; the contact list still shows abbreviated details
+- **List visibility**: Password protection applies to encounter details access via `view`; the contact list still shows contact details
 - **Password lifecycle**: Once set, password cannot be changed or removed via commands in current version
 - **Plain text**: Passwords stored without encryption (not production-ready)
 
@@ -726,6 +726,7 @@ Use case ends.
 * **Encounter**: time-stamped interaction record linked to a contact.
 * **Reminder**: scheduled note linked to a contact.
 * **Protected contact**: contact with a configured `pw/` value.
+* **Full Profile**: all details of a contact, including encounters and reminders, shown when viewing a protected contact with the correct password.
 
 --------------------------------------------------------------------------------------------------------------------
 
