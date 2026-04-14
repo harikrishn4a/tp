@@ -450,13 +450,29 @@ Exports all encounters whose **location** matches the value you give, to a UTF-8
 
 --------------------------------------------------------------------------------------------------------------------
 
-### 11) Clear All Data: `clear`
+### 11) List All Contacts: `list`
+
+Resets any active `find` filter and displays all contacts in the default order. Also closes any open contact profile in the side panel.
+
+**Format**
+`list`
+
+**When to use**
+- After a `find` command, to return to the full contact list
+- To close a currently open contact profile without opening another
+
+**Success output**
+`Listed all persons`
+
+--------------------------------------------------------------------------------------------------------------------
+
+### 12) Clear All Data: `clear`
 
 Clears all entries from CrimeWatch.
 
 Format: `clear`
 
-### 12) Exit Application: `exit`
+### 13) Exit Application: `exit`
 
 Exits the program.
 
