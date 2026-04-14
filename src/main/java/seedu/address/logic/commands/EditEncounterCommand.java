@@ -11,9 +11,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.CollectionUtil;
@@ -54,7 +56,7 @@ public class EditEncounterCommand extends Command {
 
     /**
      * @param personIndex of the person in the filtered person list
-     * @param encounterIndex display index of encounter shown in view panel (#1 is most recent)
+      * @param encounterIndex display index of encounter shown in view panel (#1 is latest by date/time)
      * @param editEncounterDescriptor encounter fields to edit
      */
     public EditEncounterCommand(
@@ -84,8 +86,8 @@ public class EditEncounterCommand extends Command {
             throw new CommandException(MESSAGE_INVALID_ENCOUNTER_DISPLAYED_INDEX);
         }
 
-        // Encounter cards are shown in reverse-chronological order where #1 is the most recent.
-        int encounterZeroBased = existingEncounters.size() - encounterDisplayOneBased;
+        // Encounter cards are indexed by reverse chronological date/time order where #1 is latest.
+        int encounterZeroBased = getEncounterZeroBasedIndex(existingEncounters, encounterDisplayOneBased);
         Encounter encounterToEdit = existingEncounters.get(encounterZeroBased);
         Encounter editedEncounter = createEditedEncounter(encounterToEdit, editEncounterDescriptor);
 
@@ -96,6 +98,17 @@ public class EditEncounterCommand extends Command {
 
         model.setPerson(personToEdit, editedPerson);
         return createSuccessResult(encounterDisplayOneBased, editedPerson);
+    }
+
+    /**
+     * Converts a 1-based display index into the underlying encounter list index using reverse-chronological order.
+     */
+    private static int getEncounterZeroBasedIndex(List<Encounter> encounters, int displayOneBasedIndex) {
+        List<Integer> sortedIndices = IntStream.range(0, encounters.size())
+                .boxed()
+                .sorted(Comparator.comparing((Integer i) -> encounters.get(i).dateTime).reversed())
+                .toList();
+        return sortedIndices.get(displayOneBasedIndex - 1);
     }
 
     /**

@@ -333,6 +333,8 @@ Compatibility updates:
 
 The `log` command appends a new encounter to the selected contact in the current displayed list. After validating the target index against `Model#getFilteredPersonList()`, `LogCommand#execute(Model)` copies the contact's existing encounters, appends the new `Encounter`, rebuilds the `Person`, and calls `model.setPerson(...)`.
 
+Encounter display indexes remain chronological and dynamic: encounter cards are numbered by encounter date/time descending (most recent first), independent of append position in the stored list.
+
 The reconstructed `Person` preserves all unrelated fields, including reminders and password, while updating only the encounter history. The returned `CommandResult` includes the updated person so the UI can continue showing the refreshed profile.
 
 Key classes:
@@ -414,9 +416,9 @@ Key classes:
 
 ### Edit Encounter command
 
-The `editencounter` command uses two indices: `PERSON_INDEX` identifies the contact in the displayed contact list, while `ENCOUNTER_INDEX` refers to the encounter cards shown in `view`. The UI renders those encounter cards in reverse-chronological order, so display index `1` refers to the most recent encounter rather than the first element stored in the underlying encounter list.
+The `editencounter` command uses two indices: `PERSON_INDEX` identifies the contact in the displayed contact list, while `ENCOUNTER_INDEX` refers to the encounter cards shown in `view`. Encounter cards are displayed in descending encounter date/time order (most recent first), so display index `1` always refers to the currently most recent encounter.
 
-To preserve that user-facing numbering, `EditEncounterCommand#execute(Model)` converts the displayed encounter index back into the stored zero-based index using `existingEncounters.size() - encounterDisplayOneBased`. It then replaces only the selected encounter in a copied list and rebuilds the `Person` with the updated encounters while preserving other fields such as reminders and password protection.
+To preserve that user-facing numbering, `EditEncounterCommand#execute(Model)` dynamically maps the displayed encounter index to the underlying list position by sorting encounter indices using encounter date/time descending and selecting the requested display slot. It then replaces only the selected encounter in a copied list and rebuilds the `Person` with the updated encounters while preserving other fields such as reminders and password protection.
 
 ![Edit Encounter Sequence Diagram](images/EditEncounterSequenceDiagram.png)
 

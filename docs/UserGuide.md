@@ -279,8 +279,10 @@ Updates an existing encounter for a contact.
 - At least one prefixed field must be provided
 
 **Encounter index mapping**
-- Encounter cards shown in `view` are numbered newest first.
-- `ENCOUNTER_INDEX 1` means the most recent encounter shown as `#1`.
+- Encounters shown in `view` are numbered by date/time in descending order (most recent first).
+- `ENCOUNTER_INDEX 1` means the encounter currently shown as `#1`.
+- Indexes are ordered dynamically based on date/time
+- If encounter date/time changes (for example via `editencounter`), indexes may change accordingly.
 
 **Examples**
 - `editencounter 1 1 desc/Updated observation notes`

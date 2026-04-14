@@ -200,6 +200,38 @@ public class EditEncounterCommandTest {
     }
 
     @Test
+    public void execute_indexingUsesChronologicalOrder_success() throws Exception {
+        Person original = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+
+        // Simulate logging order that does not match chronological order.
+        Encounter mostRecentByDateTime = new Encounter(
+                LocalDateTime.of(2026, 3, 25, 19, 15),
+                "Marina Bay",
+                "Chronologically newest",
+                Optional.of("Pending"));
+        Encounter oldestByDateTime = new Encounter(
+                LocalDateTime.of(2026, 3, 20, 10, 30),
+                "Chinatown",
+                "Chronologically oldest",
+                Optional.of("Observed"));
+
+        Person withEncounters = new PersonBuilder(original)
+                .withEncounters(mostRecentByDateTime, oldestByDateTime)
+                .build();
+        model.setPerson(original, withEncounters);
+
+        EditEncounterDescriptor descriptor = new EditEncounterDescriptor();
+        descriptor.setDescription("Edited by index #1");
+        EditEncounterCommand command = new EditEncounterCommand(INDEX_FIRST_PERSON, Index.fromOneBased(1), descriptor);
+
+        command.execute(model);
+
+        List<Encounter> result = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased()).getEncounters();
+        assertEquals("Edited by index #1", result.get(0).description);
+        assertEquals("Chronologically oldest", result.get(1).description);
+    }
+
+    @Test
     public void execute_preservesReminders() {
         Person original = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
         Person withEncounterAndReminder = new Person(
